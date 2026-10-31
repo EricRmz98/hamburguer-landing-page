@@ -2,7 +2,7 @@
 
 Los sprites del [minijuego](PLAN.md) no son imágenes: son **definiciones de texto**. Cada una declara su tamaño en pixeles, qué color representa cada letra y una matriz de caracteres con el dibujo. La IA (el agente que trabaja en el proyecto) los escribe directamente en el código. Al arrancar, el motor los convierte una sola vez en imágenes y los muestra con un solo elemento HTML por sprite.
 
-Estado: **F3 en revisión**. El formato (`src/game/sprites/`), la validación, el horneado, la página de revisión y el set ancla (pan, carne, queso y bote) están implementados; falta aprobar el set ancla antes de dibujar el resto del inventario (F4). Este enfoque sustituye al flujo anterior basado en generar imágenes con IA y normalizarlas, que queda solo como importación opcional.
+Estado: **inventario completo en el juego (F4)**. 20 sprites en `src/game/sprites/` (`ingredients.ts`, `utensils.ts`, `people.ts`, `ui.ts`, `tiles.ts`), registrados en `index.ts`, válidos y conformes a la guía de estilo. Este enfoque sustituye al flujo anterior basado en generar imágenes con IA y normalizarlas, que queda solo como importación opcional.
 
 ## Por qué texto
 
@@ -85,6 +85,8 @@ Rampas por material (contorno → sombra → base → luz). Viven en código com
 | Avisos (UI) | — | — | `alerta`, `cian`, `azul` | — |
 
 Algunas rampas comparten colores (pan y madera, tomate y cátsup). Se distinguen por forma, textura y posición, y la base de cada una es distinta.
+
+Con el inventario completo se agregaron rampas para `ceramica` (plato), `acento` (flecha), `corazon`, `contorno`, `pelo-oscuro` y `pelo-claro`, y `ropa-azul`, `ropa-roja`, `ropa-verde` y `ropa-morada` (clientes). La lista completa vive en `RAMPS`.
 
 ### Definición de un sprite
 
@@ -184,61 +186,34 @@ Estas reglas aplican tanto a quien escribe los sprites como al agente que los ge
 4. Usar `mirror` en sprites simétricos y módulos en piezas grandes.
 5. Registrar el sprite en `index.ts`, ejecutar `pnpm test` (valida y revisa el estilo de todos los sprites registrados) y revisar el resultado en `/sprites` antes de darlo por terminado.
 
-## Inventario inicial
+## Inventario
 
-Tamaños en pixeles lógicos dentro del escenario de 320 × 200. Son valores iniciales que se ajustarán al ver el set ancla.
+Tamaños en pixeles lógicos dentro del escenario de 320 × 200. Ancho y alto de los ingredientes coinciden con los de `INGREDIENTS`, que usa la pila del plato.
 
-### Ingredientes (vista lateral)
-
-| id | Tamaño | Variantes y técnica |
+| Sprite | Tamaño | Variantes, cuadros y uso |
 | --- | --- | --- |
-| `pan_base` | 32 × 8 | Simétrico (`mirror`) |
-| `pan_medio` | 32 × 6 | Simétrico |
-| `pan_tapa` | 32 × 14 | Domo con ajonjolí |
-| `carne` | 32 × 6 | `cruda`, `cocinandose`, `perfecta` y `quemada` por paleta. La quemada lleva además un `patch` de grietas |
-| `queso` | 34 × 5 | Esquinas que escurren |
-| `lechuga` | 34 × 5 | Borde ondulado |
-| `tomate` | 30 × 3 | |
-| `cebolla` | 30 × 3 | |
-| `salsa` | 30 × 3 | `catsup`, `mostaza` y `mayonesa` por paleta |
+| `pan_base` · `pan_medio` · `pan_tapa` | 32 × 8 · 32 × 6 · 32 × 14 | Pan de arriba en domo con ajonjolí; también es el ícono de la casilla de pan |
+| `carne` | 32 × 6 | `cruda`, `cocinandose`, `perfecta` y `quemada` (con grietas) |
+| `queso` · `lechuga` | 34 × 5 | Sobresalen 1 px por lado |
+| `tomate` · `cebolla` | 30 × 3 | |
+| `salsa` | 30 × 3 | `catsup`, `mostaza` y `mayonesa`, con gotas |
+| `bote` | 16 × 32 | 2 cuadros (normal y apretado al poner salsa); `catsup`, `mostaza` y `mayonesa` |
+| `plato` | 48 × 8 | En espejo |
+| `charola` | 38 × 18 | Charola con tres carnes crudas |
+| `basura` | 26 × 25 | `alerta` (tapa roja) cuando hay carne quemada |
+| `cliente` · `clienta` | 48 × 80 | Hombre y mujer de la cintura para arriba (pelo largo, pestañas y aretes en la mujer), con proporciones reales. 3 cuadros (esperando, feliz, enojado) y 4 looks cada uno (`azul`, `rojo`, `verde`, `morado`; `roja`, `amarilla`, `verde`, `morada`). La cabeza queda por encima de la hamburguesa y la barra tapa la cintura. `CUSTOMERS` alterna los 8 aspectos |
+| `humo` | 8 × 8 | 4 cuadros; `blanco` (carne por quemarse) y `negro` (quemada) |
+| `flecha` | 9 × 8 | Flecha del tutorial |
+| `corazon` | 7 × 6 | `lleno` y `vacio` (vidas) |
+| `azulejo` · `madera` | 20 × 20 | Tiles que se repiten en la pared y en la barra |
 
-La receta más alta del catálogo (cuatro carnes con queso) mide unos 75 px. El generador de recetas limita la altura total a 100 px (valor inicial) para que la pila quepa sobre el plato en la disposición horizontal. Los íconos de la comanda son los mismos sprites a escala 1, sin definiciones aparte.
+Los clientes, por su tamaño y detalle, se generaron con un script que traza las formas (cabeza, cuello, torso, pelo), les pone contorno y sombrea cada material con luz desde la izquierda; el resultado es texto en el formato de siempre y se edita igual. Una primera versión de 32 px de ancho con el torso alargado se veía como un poste: lo que da proporciones naturales es el ancho (cabeza de unos 22 px y hombros de 44).
 
-### Utensilios
-
-| id | Tamaño | Variantes y técnica |
-| --- | --- | --- |
-| `bote` | 16 × 32 | 2 cuadros (normal y apretado); `catsup`, `mayonesa` y `mostaza` por paleta; simétrico |
-| `plancha` | 4 lugares de 34 × 32 (30 × 33 en vertical) | Módulos: lugar y marco, en fila. `lugar_apagado` por paleta para los que no se usan. El indicador de cocción se hace con CSS, sin sprite |
-| `plato` | 48 × 8 | Simétrico |
-| `charola_carne` | 32 × 20 | Reutiliza la carne cruda apilada |
-| `basura` | 34 × 26 | 2 cuadros (cerrada y abierta); `alerta` por paleta cuando hay carne quemada |
-| `casilla` | 34 × 24 | Fondo de los botones de ingrediente; `activa` y `atenuada` (tutorial) por paleta |
-
-### Clientes
-
-Dos o tres cuerpos base de 32 × 48. Cada uno se multiplica por paleta (piel, pelo, ropa) en varios personajes y lleva expresiones `esperando`, `feliz` y `enojado` como `patch` de las filas de la cara. Son los sprites más difíciles de escribir como texto: si la calidad no convence, se dibujan o generan como imagen y se convierten con el importador.
-
-### Fondos (tiles de 20 × 20)
-
-`pared`, `azulejo`, `azulejo_borde`, `madera`, `mostrador`, `ventana` y `estante`, más los mapas `cocina_horizontal` (16 × 10) y `cocina_vertical` (9 × 14).
-
-### Efectos y UI
-
-| id | Tamaño | Variantes y técnica |
-| --- | --- | --- |
-| `humo` | 8 × 8 | 4 cuadros; `blanco` y `negro` por paleta |
-| `chispa` | 4 × 4 | 3 cuadros |
-| `destello` | 8 × 8 | 3 cuadros |
-| `flecha` | 12 × 12 | El rebote se hace con GSAP |
-| `bocadillo` · `comanda` | 24 × 16 | Se estiran con 9-slice (`border-image`) |
-| `corazon` | 8 × 8 | `lleno` y `vacio` por paleta |
-| `bocina` | 10 × 10 | `con_sonido` y `sin_sonido` por `patch` |
-
-La barra de paciencia y el marcador se hacen con HTML y CSS, sin sprites.
+Las casillas de ingredientes muestran un montoncito de 2 a 4 rebanadas apiladas, y la comanda, el globo de texto y los indicadores se hacen con HTML y CSS en colores de Endesga 32.
 
 ## Pendientes
 
-- Aprobar el set ancla. Primer ajuste ya hecho: la carne perfecta pasó a café oscuro (`cafe` con contorno `negro`) y la rampa anterior quedó para «cocinándose»; el queso escurre más.
+- En la disposición vertical la basura queda sobre la pared, junto al cliente, porque la barra no tiene espacio libre; buscarle un lugar en la barra si molesta.
+- Los fondos usan tiles repetidos por CSS (azulejo y madera); los mapas de tiles (`defineTilemap`) quedan para cuando el fondo tenga elementos y animaciones.
 - Confirmar con los primeros clientes si su calidad como texto es suficiente o si conviene el importador.
 - Ajustar el tamaño de tile si 20 px no encaja bien con las piezas del escenario.

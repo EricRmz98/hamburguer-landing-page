@@ -58,3 +58,96 @@ export const queso = defineSprite({
     .oo...........oo...............oo.
   `,
 });
+
+export const panMedio = defineSprite({
+  id: 'pan_medio',
+  size: [32, 6],
+  materials: ['pan'],
+  colors: { o: 'cafe', s: 'canela', b: 'durazno', l: 'crema' },
+  pixels: `
+    ..oooooooooooooooooooooooooooo..
+    .sllllllllllllllllllllllllllllo.
+    sllbbbbbbbbbbbbbbbbbbbbbbbbbbbso
+    sbbbbbbbbbbbbbbbbbbbbbbbbbbbssso
+    osssssssssssssssssssssssssssssso
+    .oooooooooooooooooooooooooooooo.
+  `,
+});
+
+export const panTapa = defineSprite({
+  id: 'pan_tapa',
+  size: [32, 14],
+  materials: ['pan'],
+  colors: { o: 'cafe', s: 'canela', b: 'durazno', l: 'crema', e: 'crema' },
+  pixels: `
+    ..........oooooooooooo..........
+    .......olllllbbbbbbbbbsso.......
+    .....ollllbbbbbebbbbbbebsso.....
+    ...olllbbebbbbbbbbebbbbbbssso...
+    ..ollbbbbbbbbbbebbbbbebbbsssso..
+    .ollbbbbebbbbbbbbbebbbbbbssssso.
+    .olbbbbbbbbebbbbbbbbbbbbsssssso.
+    obbbbbbbbbbbbbbbbbbbbbbbbsssssso
+    obbbbbbbbbbbbbbbbbbbbbbbssssssso
+    obbbbbbbbbbbbbbbbbbbbbbsssssssso
+    obbbbbbbbbbbbbbbbbbbbsssssssssso
+    obbbbbbbbbbbbbbbbsssssssssssssso
+    osssssssssssssssssssssssssssssso
+    .oooooooooooooooooooooooooooooo.
+  `,
+});
+
+export const lechuga = defineSprite({
+  id: 'lechuga',
+  size: [34, 5],
+  materials: ['lechuga'],
+  colors: { o: 'verde-noche', s: 'verde-oscuro', b: 'verde', l: 'verde-claro' },
+  pixels: `
+    .ooo..oooo.ooooo..oooo.ooooo..ooo.
+    ollllbbbbbblllbbbbbbbbllbbbbbbbsso
+    obblbbbbbbbbbbbbbbbbbbbbbbbbssssso
+    obbbbbbbbssbbbbbbsssssssssssssssso
+    .oooo.oooooo.oooooo.oooooo.ooooo..
+  `,
+});
+
+export const tomate = defineSprite({
+  id: 'tomate',
+  size: [30, 3],
+  materials: ['tomate'],
+  colors: { o: 'rojo-oscuro', s: 'rojo-oscuro', b: 'rojo', l: 'rosa' },
+  pixels: `
+    .oooooooooooooooooooooooooooo.
+    ollllbbbbbbbbbbbbbbbbbbbbbbsso
+    .oooooooooooooooooooooooooooo.
+  `,
+});
+
+export const cebolla = defineSprite({
+  id: 'cebolla',
+  size: [30, 3],
+  materials: ['cebolla'],
+  colors: { o: 'ciruela', s: 'magenta', b: 'piel-clara', l: 'blanco' },
+  pixels: `
+    .oooooooooooooooooooooooooooo.
+    ollbbbbbsbbbbbbsbbbbbbsbbbbsso
+    .oooooooooooooooooooooooooooo.
+  `,
+});
+
+export const salsa = defineSprite({
+  id: 'salsa',
+  size: [30, 3],
+  materials: ['catsup'],
+  colors: { o: 'cafe-oscuro', s: 'rojo-oscuro', b: 'rojo', l: 'rosa' },
+  pixels: `
+    ..oooooooooooooooooooooooooo..
+    olllbbbbbbbbbbbbbbbbbbbbbbssso
+    .oo...oo......ooo.....oo....oo
+  `,
+  variants: {
+    catsup: {  },
+    mostaza: { materials: ['mostaza'], colors: { o: 'oxido', s: 'tostado', b: 'ambar', l: 'amarillo' } },
+    mayonesa: { materials: ['mayonesa'], colors: { o: 'canela', s: 'durazno', b: 'crema', l: 'blanco' } },
+  },
+});

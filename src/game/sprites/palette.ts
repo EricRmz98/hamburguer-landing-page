@@ -72,7 +72,17 @@ export const RAMPS = {
   pared: ['negro', 'noche', 'pizarra', 'azul-oscuro'],
   piel: ['cafe', 'canela', 'piel', 'piel-clara', 'crema'],
   etiqueta: ['blanco', 'gris-claro'],
+  ceramica: ['gris-azul', 'gris', 'gris-claro', 'blanco'],
   avisos: ['alerta', 'cian', 'azul', 'blanco'],
+  acento: ['oxido', 'naranja', 'ambar', 'amarillo'],
+  corazon: ['rojo-oscuro', 'rojo', 'rosa'],
+  contorno: ['negro'],
+  'pelo-oscuro': ['negro', 'cafe-oscuro', 'cafe'],
+  'pelo-claro': ['cafe', 'oxido', 'tostado', 'ambar', 'amarillo'],
+  'ropa-azul': ['azul-oscuro', 'azul', 'cian'],
+  'ropa-roja': ['rojo-oscuro', 'rojo', 'rosa'],
+  'ropa-verde': ['verde-oscuro', 'verde', 'verde-claro'],
+  'ropa-morada': ['ciruela', 'magenta', 'rosa'],
 } as const satisfies Record<string, readonly ColorName[]>;
 
 export type Material = keyof typeof RAMPS;

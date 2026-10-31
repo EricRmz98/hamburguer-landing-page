@@ -37,7 +37,7 @@ export interface Order {
   recipe: Recipe;
   patience: number;
   patienceMax: number;
-  look: number; // variante visual del cliente
+  look: number; // aspecto del cliente; la vista lo reduce a sus opciones con un módulo
 }
 
 /**
@@ -192,7 +192,7 @@ export class Game {
     }
     const recipe = generateRecipe(level.tier, this.config.maxStackHeight, this.rng);
     const patience = patienceFor(recipe.stack, level, this.config);
-    this.order = { recipe, patience, patienceMax: patience, look: Math.floor(this.rng() * 6) };
+    this.order = { recipe, patience, patienceMax: patience, look: Math.floor(this.rng() * 1024) };
     this.stack = [];
     this.emit({ type: 'customer-arrived', number: this.customerNumber, recipe });
     if (recipe.stack.includes('pan_medio')) this.showHint('tres-panes');

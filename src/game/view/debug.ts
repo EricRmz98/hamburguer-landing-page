@@ -1,6 +1,6 @@
 import { minimumTime } from '../game/difficulty.ts';
 import type { Game } from '../game/session.ts';
-import type { GreyboxView } from './greybox.ts';
+import type { GameView } from './game-view.ts';
 
 // Panel para ajustar tiempos mientras se juega. Aparece en desarrollo o con ?ajustes en la URL.
 
@@ -14,7 +14,7 @@ interface Slider {
   set(value: number): void;
 }
 
-export function mountDebug(game: Game, view: GreyboxView) {
+export function mountDebug(game: Game, view: GameView) {
   const c = game.config;
   const panel = document.createElement('details');
   panel.className = 'mg-debug';

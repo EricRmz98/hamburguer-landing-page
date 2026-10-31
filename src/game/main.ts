@@ -2,12 +2,12 @@ import { createClock } from './engine/clock.ts';
 import { createConfig } from './game/config.ts';
 import { Game } from './game/session.ts';
 import { localStore } from './game/storage.ts';
-import { GreyboxView } from './view/greybox.ts';
+import { GameView } from './view/game-view.ts';
 
 export function mountMiniGame(root: HTMLElement) {
   const config = createConfig();
   const game = new Game(config, localStore());
-  const view = new GreyboxView(root, game);
+  const view = new GameView(root, game);
   const clock = createClock((dt) => {
     game.update(dt * config.timeScale);
     view.sync();

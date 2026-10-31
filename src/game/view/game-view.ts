@@ -1,22 +1,59 @@
 import gsap from 'gsap';
 import { fitStage, type Layout, type Rect } from '../engine/stage.ts';
 import type { PattyState } from '../game/grill.ts';
-import { BIN_IDS, INGREDIENTS, SALSAS, inputColor, inputLabel, type BinId, type SalsaId } from '../game/ingredients.ts';
+import { BIN_IDS, INGREDIENTS, SALSAS, inputLabel, type BinId, type IngredientId, type SalsaId } from '../game/ingredients.ts';
 import type { Game, GameEvent, HintId, RejectReason } from '../game/session.ts';
 import type { Target } from '../game/tutorial.ts';
 import { LAYOUTS } from '../layouts/index.ts';
+import { atlasKey } from '../sprites/atlas.ts';
+import { atlasStyle, bakeAtlas, bakeSprite, type BakedAtlas } from '../sprites/bake.ts';
+import { SPRITES } from '../sprites/index.ts';
+import { CUSTOMERS } from '../sprites/people.ts';
 
-// Vista provisional con bloques de color: sirve para fijar mecánica y tiempos antes de los sprites.
+// Vista del juego: cada pieza es un elemento HTML cuyo fondo es su sprite dentro del atlas.
+// Escucha los eventos del juego para animar; la lógica no conoce el DOM.
 
-const PATTY: Record<PattyState, { color: string; label: string }> = {
-  cruda: { color: '#e8908a', label: 'cruda' },
-  cocinandose: { color: '#b86a4b', label: 'cocinando' },
-  perfecta: { color: '#a0602a', label: '¡lista!' },
-  aviso: { color: '#4a2a14', label: '¡ya!' },
-  quemada: { color: '#151111', label: 'quemada' },
+const PATTY_LABEL: Record<PattyState, string> = {
+  cruda: 'cruda',
+  cocinandose: 'cocinándose',
+  perfecta: 'lista',
+  aviso: 'por quemarse',
+  quemada: 'quemada',
 };
 
-const LOOKS = ['#e07a5f', '#3d85c6', '#81b29a', '#f2cc8f', '#9b5de5', '#ef476f'];
+// Variante del sprite de carne para cada estado (en el aviso aún se ve perfecta, pero echa humo).
+const PATTY_SPRITE: Record<PattyState, string> = {
+  cruda: 'carne:cruda',
+  cocinandose: 'carne:cocinandose',
+  perfecta: 'carne:perfecta',
+  aviso: 'carne:perfecta',
+  quemada: 'carne:quemada',
+};
+
+const STACK_SPRITE: Record<IngredientId, string> = {
+  pan_base: 'pan_base',
+  pan_medio: 'pan_medio',
+  pan_tapa: 'pan_tapa',
+  carne: 'carne:perfecta',
+  queso: 'queso',
+  lechuga: 'lechuga',
+  tomate: 'tomate',
+  cebolla: 'cebolla',
+  catsup: 'salsa:catsup',
+  mostaza: 'salsa:mostaza',
+  mayonesa: 'salsa:mayonesa',
+};
+
+const BIN_SPRITE: Record<BinId, string> = {
+  pan: 'pan_tapa',
+  queso: 'queso',
+  lechuga: 'lechuga',
+  tomate: 'tomate',
+  cebolla: 'cebolla',
+};
+
+const FACE = { esperando: 0, feliz: 1, enojado: 2 } as const;
+const SMOKE_FRAME_MS = 140;
 
 const REJECT_TEXT: Partial<Record<RejectReason, string>> = {
   'no-toca': 'Ese no va ahora',
@@ -51,20 +88,31 @@ function setText(node: HTMLElement, text: string) {
 interface SlotView {
   button: HTMLButtonElement;
   patty: HTMLDivElement;
-  label: HTMLSpanElement;
+  smoke: HTMLDivElement;
   gauge: HTMLDivElement;
   fill: HTMLDivElement;
 }
 
-export class GreyboxView {
+/** Sprite dentro de un contenedor: se centra (o se apoya abajo) en pixeles lógicos enteros. */
+interface SpriteSlot {
+  key: string;
+  frame: number;
+  parent?: Rect; // tamaño del contenedor; si falta, el nodo ya está posicionado
+  align?: 'center' | 'bottom';
+}
+
+export class GameView {
   readonly stage: HTMLDivElement;
 
   private root: HTMLElement;
   private game: Game;
+  private atlas: BakedAtlas;
   private layout: Layout = LAYOUTS.horizontal;
   private scale = 0;
   private reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  private sprites = new Map<HTMLElement, SpriteSlot>();
 
+  private wall: HTMLDivElement;
   private hud: HTMLDivElement;
   private lives: HTMLSpanElement;
   private score: HTMLSpanElement;
@@ -73,7 +121,6 @@ export class GreyboxView {
   private ticketName: HTMLDivElement;
   private ticketRows: HTMLOListElement;
   private customer: HTMLDivElement;
-  private face: HTMLSpanElement;
   private patience: HTMLDivElement;
   private patienceBar: HTMLDivElement;
   private counter: HTMLDivElement;
@@ -81,10 +128,12 @@ export class GreyboxView {
   private stackLayer: HTMLDivElement;
   private grill: HTMLDivElement;
   private slots: SlotView[] = [];
-  private bottles = new Map<SalsaId, HTMLButtonElement>();
-  private bins = new Map<BinId, HTMLButtonElement>();
+  private bottles = new Map<SalsaId, { button: HTMLButtonElement; sprite: HTMLDivElement }>();
+  private bins = new Map<BinId, { button: HTMLButtonElement; pile: HTMLDivElement[] }>();
   private charola: HTMLButtonElement;
+  private charolaSprite: HTMLDivElement;
   private basura: HTMLButtonElement;
+  private basuraSprite: HTMLDivElement;
   private bubble: HTMLDivElement;
   private bubbleText: HTMLParagraphElement;
   private okButton: HTMLButtonElement;
@@ -95,18 +144,26 @@ export class GreyboxView {
 
   private ticketKey: string | null = null;
   private stackKey: string | null = null;
+  private livesKey = '';
   private overlayKey = '';
   private lastRecord = false;
   private toastTimer = 0;
+  /** Cliente que se va: se sigue viendo un momento, feliz o enojado. */
+  private leaving: { key: string; face: number; until: number } | null = null;
 
   constructor(root: HTMLElement, game: Game) {
     this.root = root;
     this.game = game;
+    this.atlas = bakeAtlas(Object.values(SPRITES));
     root.replaceChildren();
     const stage = (this.stage = el('div', 'mg-stage', root));
 
+    this.wall = el('div', 'mg-wall', stage);
+    this.wall.style.backgroundImage = `url(${bakeSprite(SPRITES.azulejo).url})`;
+
     this.hud = el('div', 'mg-hud', stage);
     this.lives = el('span', 'mg-lives', this.hud);
+    this.lives.setAttribute('role', 'img');
     this.score = el('span', 'mg-score', this.hud);
     this.pauseButton = el('button', 'mg-pause', stage, '❚❚');
     this.pauseButton.type = 'button';
@@ -114,49 +171,50 @@ export class GreyboxView {
     this.pauseButton.addEventListener('click', () => this.act(() => game.pause()));
 
     // Orden de pintado: el cliente queda detrás de la barra, y todo lo de cocina encima de ella.
-    this.customer = el('div', 'mg-customer', stage);
-    this.face = el('span', 'mg-face', this.customer);
-    this.patience = el('div', 'mg-patience', stage);
-    this.patienceBar = el('div', 'mg-patience-bar', this.patience);
+    this.customer = el('div', 'mg-customer mg-sprite', stage);
     this.counter = el('div', 'mg-counter', stage);
+    this.counter.style.backgroundImage = `url(${bakeSprite(SPRITES.madera).url})`;
 
     this.ticket = el('div', 'mg-ticket', stage);
     this.ticketName = el('div', 'mg-ticket-name', this.ticket);
     this.ticketRows = el('ol', 'mg-ticket-rows', this.ticket);
     this.ticket.setAttribute('aria-label', 'Comanda');
 
-    this.plate = el('div', 'mg-plate', stage, 'plato');
+    this.plate = el('div', 'mg-plate mg-sprite', stage);
     this.stackLayer = el('div', 'mg-stack', stage);
+    // La paciencia va encima de la pila para que una hamburguesa alta no la tape.
+    this.patience = el('div', 'mg-patience', stage);
+    this.patienceBar = el('div', 'mg-patience-bar', this.patience);
 
     for (const id of SALSAS) {
-      const button = this.button('mg-bottle', INGREDIENTS[id].short, `Bote de ${INGREDIENTS[id].label}`, () =>
-        game.tapIngredient(id),
-      );
-      button.style.background = INGREDIENTS[id].color;
-      this.bottles.set(id, button);
+      const button = this.button('mg-bottle', `Bote de ${INGREDIENTS[id].label}`, () => game.tapIngredient(id));
+      this.bottles.set(id, { button, sprite: el('div', 'mg-sprite', button) });
     }
 
     this.grill = el('div', 'mg-grill', stage);
     for (let i = 0; i < game.config.grill.maxSlots; i++) {
-      const button = this.button('mg-slot', '', '', () => game.tapSlot(i));
+      const button = this.button('mg-slot', '', () => game.tapSlot(i));
       const gauge = el('div', 'mg-gauge', button);
       gauge.setAttribute('aria-hidden', 'true');
       this.slots.push({
         button,
-        patty: el('div', 'mg-patty', button),
-        label: el('span', 'mg-slot-label', button),
+        patty: el('div', 'mg-patty mg-sprite', button),
+        smoke: el('div', 'mg-smoke mg-sprite', button),
         gauge,
         fill: el('div', 'mg-gauge-fill', gauge),
       });
     }
 
-    this.charola = this.button('mg-charola', 'Carne cruda', 'Poner carne en la plancha', () => game.tapCharola());
-    this.basura = this.button('mg-basura', 'Basura', 'Tirar las carnes quemadas', () => game.tapBasura());
+    this.charola = this.button('mg-charola', 'Poner carne en la plancha', () => game.tapCharola());
+    this.charolaSprite = el('div', 'mg-sprite', this.charola);
+    this.basura = this.button('mg-basura', 'Tirar las carnes quemadas', () => game.tapBasura());
+    this.basuraSprite = el('div', 'mg-sprite', this.basura);
 
+    // Cada casilla muestra un montoncito del ingrediente: rebanadas apiladas, con un leve desfase.
     for (const id of BIN_IDS) {
-      const button = this.button('mg-bin', inputLabel(id), inputLabel(id), () => game.tapIngredient(id));
-      button.style.background = inputColor(id);
-      this.bins.set(id, button);
+      const button = this.button('mg-bin', inputLabel(id), () => game.tapIngredient(id));
+      const copies = id === 'pan' ? 1 : 4;
+      this.bins.set(id, { button, pile: Array.from({ length: copies }, () => el('div', 'mg-sprite', button)) });
     }
 
     this.bubble = el('div', 'mg-bubble', stage);
@@ -165,7 +223,7 @@ export class GreyboxView {
     this.okButton.type = 'button';
     this.okButton.addEventListener('click', () => this.act(() => game.ok()));
 
-    this.arrow = el('div', 'mg-arrow', stage, '▼');
+    this.arrow = el('div', 'mg-arrow mg-sprite', stage);
     this.arrow.setAttribute('aria-hidden', 'true');
     this.toast = el('div', 'mg-toast', stage);
     this.overlay = el('div', 'mg-overlay', stage);
@@ -180,8 +238,8 @@ export class GreyboxView {
     this.fit();
   }
 
-  private button(className: string, text: string, label: string, action: () => void) {
-    const button = el('button', `mg-btn ${className}`, this.stage, text);
+  private button(className: string, label: string, action: () => void) {
+    const button = el('button', `mg-btn ${className}`, this.stage);
     button.type = 'button';
     if (label) button.setAttribute('aria-label', label);
     button.addEventListener('click', () => this.act(action));
@@ -191,6 +249,30 @@ export class GreyboxView {
   private act(action: () => void) {
     action();
     this.sync();
+  }
+
+  // ── Sprites ──────────────────────────────────────────────────────────────
+
+  /** Asigna un sprite del atlas a un nodo; solo toca el DOM si cambió. */
+  private setSprite(node: HTMLElement, key: string, frame = 0, parent?: Rect, align: SpriteSlot['align'] = 'center') {
+    const current = this.sprites.get(node);
+    if (current && current.key === key && current.frame === frame && current.parent === parent) return;
+    this.sprites.set(node, { key, frame, parent, align });
+    this.applySprite(node);
+  }
+
+  private applySprite(node: HTMLElement) {
+    const slot = this.sprites.get(node);
+    if (!slot) return;
+    const s = this.scale;
+    Object.assign(node.style, atlasStyle(this.atlas, slot.key, s, slot.frame));
+    if (slot.parent) {
+      const entry = this.atlas.entries[slot.key];
+      const [, , pw, ph] = slot.parent;
+      const left = Math.floor((pw - entry.width) / 2);
+      const top = slot.align === 'bottom' ? ph - entry.height : Math.floor((ph - entry.height) / 2);
+      Object.assign(node.style, { left: `${left * s}px`, top: `${top * s}px` });
+    }
   }
 
   // ── Escalado y posiciones ────────────────────────────────────────────────
@@ -217,12 +299,40 @@ export class GreyboxView {
     this.place(this.charola, layout.charola);
     this.place(this.basura, layout.basura);
     this.slots.forEach((slot, i) => this.place(slot.button, layout.slots[i]));
-    for (const [id, button] of this.bottles) this.place(button, layout.bottles[id]);
-    for (const [id, button] of this.bins) this.place(button, layout.bins[id]);
+    for (const [id, { button }] of this.bottles) this.place(button, layout.bottles[id]);
+    for (const [id, { button }] of this.bins) this.place(button, layout.bins[id]);
+    this.wall.style.backgroundSize = `${20 * scale}px`;
+    this.counter.style.backgroundSize = `${20 * scale}px`;
+
+    // Sprites que dependen del tamaño de su contenedor.
+    this.setSprite(this.plate, 'plato');
+    this.setSprite(this.charolaSprite, 'charola', 0, layout.charola);
+    for (const [id, { pile }] of this.bins) this.layoutPile(pile, BIN_SPRITE[id], layout.bins[id]);
+    for (const [id, { sprite }] of this.bottles) this.setSprite(sprite, atlasKey('bote', id), 0, layout.bottles[id]);
+    for (const node of this.sprites.keys()) this.applySprite(node);
 
     this.ticketKey = null;
     this.stackKey = null;
+    this.livesKey = '';
     this.sync();
+  }
+
+  /** Apila en la casilla tantas rebanadas como quepan (máximo las creadas), centradas y con desfase. */
+  private layoutPile(pile: HTMLDivElement[], key: string, [, , w, h]: Rect) {
+    const entry = this.atlas.entries[key];
+    const gap = 1;
+    const fit = Math.max(1, Math.min(pile.length, Math.floor((h - 4 + gap) / (entry.height + gap))));
+    const total = fit * entry.height + (fit - 1) * gap;
+    const top = Math.floor((h - total) / 2);
+    const offsets = [0, -1, 1, 0];
+    pile.forEach((node, i) => {
+      node.hidden = i >= fit;
+      if (i >= fit) return;
+      const y = top + (fit - 1 - i) * (entry.height + gap);
+      const x = Math.floor((w - entry.width) / 2) + offsets[i % offsets.length];
+      this.sprites.set(node, { key, frame: 0 }); // posición propia: fit() la recalcula al reescalar
+      Object.assign(node.style, atlasStyle(this.atlas, key, this.scale), { left: `${x * this.scale}px`, top: `${y * this.scale}px` });
+    });
   }
 
   private place(node: HTMLElement, [x, y, w, h]: Rect) {
@@ -257,7 +367,7 @@ export class GreyboxView {
       case 'slot':
         return target.index === undefined ? null : this.slots[target.index].button;
       case 'ingredient':
-        return this.bins.get(target.id as BinId) ?? this.bottles.get(target.id as SalsaId) ?? null;
+        return this.bins.get(target.id as BinId)?.button ?? this.bottles.get(target.id as SalsaId)?.button ?? null;
     }
   }
 
@@ -266,17 +376,29 @@ export class GreyboxView {
   sync() {
     const g = this.game;
     const order = g.order;
+    const now = performance.now();
 
     this.hud.hidden = !(g.mode === 'infinito' || g.mode === 'fin');
     this.pauseButton.hidden = !g.playing || g.paused;
-    const lost = Math.max(0, g.config.lives - g.lives);
-    setText(this.lives, '♥'.repeat(Math.max(0, g.lives)) + '♡'.repeat(lost));
+    const livesKey = `${g.lives}/${g.config.lives}`;
+    if (livesKey !== this.livesKey) {
+      this.livesKey = livesKey;
+      this.lives.replaceChildren();
+      this.lives.setAttribute('aria-label', `${g.lives} de ${g.config.lives} vidas`);
+      for (let i = 0; i < g.config.lives; i++) {
+        this.setSprite(el('span', 'mg-heart mg-sprite', this.lives), i < g.lives ? 'corazon:lleno' : 'corazon:vacio');
+      }
+    }
     setText(this.score, `Clientes ${g.served} · Récord ${g.best}`);
 
+    // Cliente: su look sale de la orden; la cara, de la paciencia (o de cómo se fue).
     const ratio = order && Number.isFinite(order.patienceMax) ? Math.max(0, order.patience / order.patienceMax) : 1;
-    this.customer.classList.toggle('is-away', !order);
-    if (order) this.customer.style.background = LOOKS[order.look % LOOKS.length];
-    setText(this.face, ratio < 0.3 ? '•︵•' : '•‿•');
+    if (this.leaving && (order || now > this.leaving.until)) this.leaving = null;
+    const shown = order
+      ? { key: CUSTOMERS[order.look % CUSTOMERS.length], face: ratio < 0.3 ? FACE.enojado : FACE.esperando }
+      : this.leaving;
+    this.customer.classList.toggle('is-away', !shown);
+    if (shown) this.setSprite(this.customer, shown.key, shown.face);
     this.patience.hidden = !order || !Number.isFinite(order.patienceMax);
     this.patienceBar.style.width = `${ratio * 100}%`;
     this.patienceBar.classList.toggle('is-low', ratio < 0.3);
@@ -298,19 +420,22 @@ export class GreyboxView {
     this.stage.style.setProperty('--g1', `${(c.cookTime / total) * 100}%`);
     this.stage.style.setProperty('--g2', `${((c.cookTime + c.perfectWindow) / total) * 100}%`);
 
-    this.basura.classList.toggle(
-      'is-alert',
-      g.grill.cooking.some((_, i) => g.grill.state(i) === 'quemada'),
-    );
+    const burnt = g.grill.cooking.some((_, i) => g.grill.state(i) === 'quemada');
+    this.basura.classList.toggle('is-alert', burnt);
+    this.setSprite(this.basuraSprite, burnt ? 'basura:alerta' : 'basura', 0, this.layout.basura);
 
+    const smokeFrame = this.reduced ? 0 : Math.floor(now / SMOKE_FRAME_MS);
     this.slots.forEach((slot, i) => {
       const state = g.grill.state(i);
+      const rect = this.layout.slots[i];
       slot.button.classList.toggle('is-off', i >= g.grill.active);
       slot.button.dataset.state = state ?? '';
+      slot.button.setAttribute('aria-label', `Lugar ${i + 1} de la plancha: ${state ? PATTY_LABEL[state] : 'vacío'}`);
       slot.patty.hidden = !state;
-      if (state) slot.patty.style.background = PATTY[state].color;
-      setText(slot.label, state ? PATTY[state].label : '');
-      slot.button.setAttribute('aria-label', `Lugar ${i + 1} de la plancha: ${state ? PATTY[state].label : 'vacío'}`);
+      if (state) this.setSprite(slot.patty, PATTY_SPRITE[state], 0, [0, 0, rect[2], rect[3] - 6]);
+      const smoking = state === 'aviso' || state === 'quemada';
+      slot.smoke.hidden = !smoking;
+      if (smoking) this.setSprite(slot.smoke, state === 'quemada' ? 'humo:negro' : 'humo:blanco', smokeFrame, [0, 0, rect[2], 14]);
       slot.gauge.hidden = !state;
       if (state) slot.fill.style.width = `${Math.min(1, g.grill.progress(i, c)) * 100}%`;
     });
@@ -325,8 +450,8 @@ export class GreyboxView {
     const dim = (node: HTMLElement, target: Target) => node.classList.toggle('is-dim', tutorial && !g.allows(target));
     dim(this.charola, { kind: 'charola' });
     dim(this.basura, { kind: 'basura' });
-    for (const [id, node] of this.bins) dim(node, { kind: 'ingredient', id });
-    for (const [id, node] of this.bottles) dim(node, { kind: 'ingredient', id });
+    for (const [id, { button }] of this.bins) dim(button, { kind: 'ingredient', id });
+    for (const [id, { button }] of this.bottles) dim(button, { kind: 'ingredient', id });
     this.slots.forEach((slot, index) => dim(slot.button, { kind: 'slot', index }));
 
     const step = g.step;
@@ -342,9 +467,10 @@ export class GreyboxView {
     const rect = target ? this.rectFor(target) : null;
     this.arrow.hidden = !rect;
     if (rect) {
-      const [x, y, w] = rect;
-      const top = y - 10 < 0 ? y + rect[3] + 2 : y - 10;
-      this.place(this.arrow, [x + w / 2 - 4, top, 8, 8]);
+      const [x, y, w, h] = rect;
+      const top = y - 10 < 0 ? y + h + 2 : y - 10;
+      this.place(this.arrow, [Math.floor(x + w / 2 - 4), top, 9, 8]);
+      this.setSprite(this.arrow, 'flecha');
     }
   }
 
@@ -423,24 +549,28 @@ export class GreyboxView {
   private renderStack() {
     const s = this.scale;
     const [px, py, pw] = this.layout.plate;
+    for (const node of this.stackLayer.children) this.sprites.delete(node as HTMLElement);
     this.stackLayer.replaceChildren();
     let y = py;
     for (const id of this.game.stack) {
       const info = INGREDIENTS[id];
       y -= info.height;
-      const item = el('div', 'mg-stack-item', this.stackLayer);
+      const item = el('div', 'mg-stack-item mg-sprite', this.stackLayer);
       item.title = info.label;
-      Object.assign(item.style, {
-        left: `${(px + pw / 2 - info.width / 2) * s}px`,
-        top: `${y * s}px`,
-        width: `${info.width * s}px`,
-        height: `${info.height * s}px`,
-        background: info.color,
-      });
+      this.setSprite(item, STACK_SPRITE[id]);
+      Object.assign(item.style, { left: `${(px + Math.floor(pw / 2 - info.width / 2)) * s}px`, top: `${y * s}px` });
     }
   }
 
   // ── Eventos ──────────────────────────────────────────────────────────────
+
+  private squeeze(id: SalsaId) {
+    const bottle = this.bottles.get(id);
+    if (!bottle) return;
+    const rect = this.layout.bottles[id];
+    this.setSprite(bottle.sprite, atlasKey('bote', id), 1, rect);
+    setTimeout(() => this.setSprite(bottle.sprite, atlasKey('bote', id), 0, this.layout.bottles[id]), 180);
+  }
 
   private onEvent(event: GameEvent) {
     const s = this.scale;
@@ -448,6 +578,7 @@ export class GreyboxView {
     switch (event.type) {
       case 'placed': {
         this.sync();
+        if (INGREDIENTS[event.id].kind === 'salsa') this.squeeze(event.id as SalsaId);
         const item = this.stackLayer.lastElementChild;
         if (item && anim) {
           gsap.fromTo(item, { y: -12 * s, opacity: 0 }, { y: 0, opacity: 1, duration: 0.18, ease: 'power2.out', clearProps: 'transform,opacity' });
@@ -463,7 +594,7 @@ export class GreyboxView {
       }
       case 'patty-added':
         this.sync();
-        if (anim) gsap.fromTo(this.slots[event.slot].patty, { scaleX: 0.5 }, { scaleX: 1, duration: 0.2, ease: 'back.out(3)', clearProps: 'transform' });
+        if (anim) gsap.fromTo(this.slots[event.slot].patty, { y: -8 * s }, { y: 0, duration: 0.2, ease: 'bounce.out', clearProps: 'transform' });
         break;
       case 'patty-state':
         if (event.state === 'perfecta') this.announce(`Carne lista en el lugar ${event.slot + 1}`);
@@ -473,24 +604,31 @@ export class GreyboxView {
         }
         break;
       case 'patty-discarded':
-        if (anim) gsap.fromTo(this.basura, { scale: 1.25 }, { scale: 1, duration: 0.3, ease: 'back.out(3)', clearProps: 'transform' });
+        if (anim) gsap.fromTo(this.basura, { scale: 1.2 }, { scale: 1, duration: 0.3, ease: 'back.out(3)', clearProps: 'transform' });
         break;
       case 'customer-arrived':
+        this.leaving = null;
         this.sync();
         this.announce(`Cliente nuevo: ${event.recipe.name}`);
         if (anim) {
           gsap.fromTo(this.customer, { x: -16 * s, opacity: 0 }, { x: 0, opacity: 1, duration: 0.3, ease: 'power2.out', clearProps: 'transform,opacity' });
         }
         break;
-      case 'served':
+      case 'served': {
         this.announce('¡Orden entregada!');
+        const key = this.sprites.get(this.customer)?.key;
+        if (key) this.leaving = { key, face: FACE.feliz, until: performance.now() + 800 };
         if (anim) gsap.fromTo(this.customer, { y: 0 }, { y: -6 * s, duration: 0.15, yoyo: true, repeat: 1, ease: 'power1.out', clearProps: 'transform' });
         break;
-      case 'customer-left':
+      }
+      case 'customer-left': {
         this.showToast('¡Se fue enojado!');
         this.announce(`El cliente se fue enojado. Te quedan ${event.lives} vidas.`);
+        const key = this.sprites.get(this.customer)?.key;
+        if (key) this.leaving = { key, face: FACE.enojado, until: performance.now() + 800 };
         if (anim) gsap.fromTo(this.customer, { x: -2 * s }, { x: 0, duration: 0.4, ease: 'elastic.out(1, 0.25)', clearProps: 'transform' });
         break;
+      }
       case 'game-over':
         this.lastRecord = event.record;
         this.announce(`Fin del turno: atendiste a ${event.served} clientes.`);

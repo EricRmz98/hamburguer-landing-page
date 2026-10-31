@@ -2,7 +2,7 @@
 
 Crear un minijuego de pixel art en la segunda sección de la landing: el visitante prepara hamburguesas para clientes que llegan al mostrador. La primera partida es un tutorial guiado que termina invitando a pedir la hamburguesa real; quien decide seguir jugando entra en un modo infinito, al estilo del dinosaurio de Chrome, donde cada cliente pide una orden distinta y la dificultad sube hasta que el jugador falla.
 
-Estado: **F1 y F2 listas; F3 en revisión**. El flujo completo se juega con bloques de color y la mecánica y la dificultad se ajustaron jugando. El formato de sprites y el set ancla están listos para revisar en `/sprites`; siguen el inventario completo y después el sonido. Este documento reúne las decisiones acordadas, la arquitectura y los valores iniciales que se afinarán jugando. El formato de los sprites (texto con paleta) y sus herramientas se describen en [ASSETS.md](ASSETS.md).
+Estado: **F1 a F4 listas**. El juego completo ya se dibuja con sprites de pixel art (Endesga 32) generados desde texto y horneados en un atlas. Siguen el sonido (F5) y la integración final (F6). Este documento reúne las decisiones acordadas, la arquitectura y los valores iniciales que se afinarán jugando. El formato de los sprites (texto con paleta) y sus herramientas se describen en [ASSETS.md](ASSETS.md).
 
 ## Decisiones acordadas
 
@@ -241,14 +241,14 @@ src/game/
     storage.ts       localStorage protegido, o memoria en pruebas
   layouts/index.ts   Mapas de piezas horizontal (320 × 200) y vertical (180 × 280)
   view/
-    greybox.ts       Vista provisional con bloques de color
+    game-view.ts     Vista con sprites desde el atlas (antes, vista con bloques)
     debug.ts         Panel de ajuste (desarrollo o ?ajustes)
   sprites/           palette.ts (Endesga 32 y rampas) · define.ts · validate.ts (errores y estilo) ·
                      atlas.ts · bake.ts · convert.ts (PNG → texto) · index.ts (registro) y las definiciones
 src/dev/sprites.astro   Página de revisión (solo con pnpm dev)
 ```
 
-La vista con bloques se sustituye en F4 por una vista con sprites que escucha los mismos eventos. No hay carpeta de imágenes: los sprites viajarán dentro del JavaScript del juego.
+La vista con bloques se sustituyó en F4 por la vista con sprites, que escucha los mismos eventos. No hay carpeta de imágenes: los sprites viajan dentro del JavaScript del juego.
 
 Principios:
 
@@ -299,8 +299,8 @@ El juego se construye primero completo con bloques (`div` y botones de color con
 
 - [x] **F1 · Flujo completo con bloques**: escenario y escalado, reloj, plancha, armado, recetas (gramática, generador y validador), clientes, vidas, dificultad, modo infinito, récord, tutorial y pistas. Incluye un panel de ajuste para cambiar los tiempos mientras se juega. Tutorial, modo infinito, quema, pistas y disposición vertical revisados en navegador; 37 pruebas de lógica.
 - [x] **F2 · Ajuste de tiempos y sensación**: casilla única de pan, sin pepinillos, indicador de cocción, barra de preparación, pausa, basura funcional y curva de dificultad ajustada tras partidas de prueba. Los valores pueden seguir afinándose con el panel.
-- [ ] **F3 · Sprites como texto**: formato `defineSprite`/`defineTilemap`, paleta, validación, horneado, página de revisión y set ancla (pan base, carne, queso y bote). Ver [ASSETS.md](ASSETS.md). Implementado, con atlas único, revisión de estilo e ida y vuelta con Aseprite; 34 pruebas de sprites. **Pendiente la aprobación del set ancla**.
-- [ ] **F4 · Inventario completo de sprites**: el resto de ingredientes, utensilios, clientes, efectos, UI y fondos de tiles, sustituyendo los bloques. El importador de PNG se usa solo si algún sprite lo necesita.
+- [x] **F3 · Sprites como texto**: formato `defineSprite`/`defineTilemap`, paleta, validación, horneado, página de revisión y set ancla (pan base, carne, queso y bote). Ver [ASSETS.md](ASSETS.md). Implementado, con atlas único, revisión de estilo e ida y vuelta con Aseprite. Set ancla aprobado.
+- [x] **F4 · Inventario completo de sprites**: 20 sprites (ingredientes, salsas, botes, plato, charola, basura con alerta, clientes hombre y mujer con 3 expresiones y 4 looks cada uno, humo, flecha, corazones, azulejo y madera) que sustituyen a los bloques en el juego. Revisado en escritorio y móvil; 124 pruebas. No hizo falta el importador.
 - [ ] **F5 · Sonido**: efectos sincronizados con las animaciones de los sprites (apretar el bote, chisporroteo, destello de «lista»), silencio y desbloqueo de audio. Va después de los sprites porque su duración y carácter dependen de ellas.
 - [ ] **F6 · Integración y revisión**: sección 2, respaldo sin JS, disposiciones horizontal y vertical, accesibilidad, rendimiento y compilación.
 

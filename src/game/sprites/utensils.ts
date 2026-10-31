@@ -88,3 +88,85 @@ export const bote = defineSprite({
     mayonesa: { materials: ['mayonesa', 'metal', 'etiqueta'], colors: { o: 'canela', s: 'durazno', b: 'crema', l: 'blanco' } },
   },
 });
+
+export const plato = defineSprite({
+  id: 'plato',
+  size: [48, 8],
+  materials: ['ceramica'],
+  colors: { o: 'gris-azul', s: 'gris', l: 'gris-claro', w: 'blanco' },
+  mirror: 'x',
+  pixels: `
+    ......oooooooooooooooooo
+    ...ooollllllllllllllllll
+    .oolllwwwwwwwwwwwwwwwwww
+    ollwwwwwwwwwwwwwwwwwwwww
+    ossllwwwwwwwwwwwwwwwwwww
+    .ossssllllllllllllllllll
+    ...oosssssssssssssssssss
+    .......ooooooooooooooooo
+  `,
+});
+
+export const charola = defineSprite({
+  id: 'charola',
+  size: [38, 18],
+  materials: ['carne-cruda', 'metal'],
+  colors: { o: 'ciruela', s: 'magenta', b: 'rosa', l: 'piel-clara', k: 'negro', m: 'pizarra', n: 'gris-azul', q: 'noche' },
+  pixels: `
+    ......oooooooooooooooooooooooooooo....
+    .....olllbbbbbbbbbbbbbbbbbbbbbbssso...
+    .....obbbbbbbbbbbbbbbbbbbbbbbbsssso...
+    ......oooooooooooooooooooooooooooo....
+    ....oooooooooooooooooooooooooooo......
+    ...olllbbbbbbbbbbbbbbbbbbbbbbssso.....
+    ...obbbbbbbbbbbbbbbbbbbbbbbbsssso.....
+    ....oooooooooooooooooooooooooooo......
+    .....oooooooooooooooooooooooooooo.....
+    ....olllbbbbbbbbbbbbbbbbbbbbbbssso....
+    ....obbbbbbbbbbbbbbbbbbbbbbbbsssso....
+    .....oooooooooooooooooooooooooooo.....
+    knnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnk
+    knnmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmqqk
+    .kmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmqqk
+    ..kmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmqqk..
+    ...kqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqk...
+    ....kkkkkkkkkkkkkkkkkkkkkkkkkkkkkk....
+  `,
+});
+
+export const basura = defineSprite({
+  id: 'basura',
+  size: [26, 25],
+  materials: ['metal'],
+  colors: { k: 'negro', m: 'pizarra', n: 'gris-azul', q: 'noche', r: 'pizarra', t: 'gris-azul' },
+  pixels: `
+    ..........kkkkkk..........
+    ..........k....k..........
+    .kkkkkkkkkkkkkkkkkkkkkkkk.
+    ktttttrrrrrrrrrrrrrrrrrrrk
+    kkkkkkkkkkkkkkkkkkkkkkkkkk
+    ..knnnnnnnnnnnnnnnnnnnnk..
+    ..knnmmmmqmmmmmqmmmmmqqk..
+    ..knnmmmmqmmmmmqmmmmmqqk..
+    ..knnmmmmqmmmmmqmmmmmqqk..
+    ..knnmmmmqmmmmmqmmmmmqqk..
+    ..knnmmmmqmmmmmqmmmmmqqk..
+    ..knnmmmmqmmmmmqmmmmmqqk..
+    ..knnmmmmqmmmmmqmmmmmqqk..
+    ..knnmmmmqmmmmmqmmmmmqqk..
+    ..knnmmmmqmmmmmqmmmmmqqk..
+    ..knnmmmmqmmmmmqmmmmmqqk..
+    ..knnmmmmqmmmmmqmmmmmqqk..
+    ..knnmmmmqmmmmmqmmmmmqqk..
+    ..knnmmmmqmmmmmqmmmmmqqk..
+    ..knnmmmmqmmmmmqmmmmmqqk..
+    ..knnmmmmqmmmmmqmmmmmqqk..
+    ..knnmmmmqmmmmmqmmmmmqqk..
+    ..knnmmmmqmmmmmqmmmmmqqk..
+    ...kqqqqqqqqqqqqqqqqqqk...
+    ...kkkkkkkkkkkkkkkkkkkk...
+  `,
+  variants: {
+    alerta: { materials: ['metal', 'avisos'], colors: { r: 'alerta', t: 'blanco' } },
+  },
+});
