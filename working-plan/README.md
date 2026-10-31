@@ -9,7 +9,7 @@ El nombre de la marca y el hero siguen pendientes.
 | Etapa | Alcance | Estado |
 | --- | --- | --- |
 | 01 | Hero | Alcance por definir |
-| 02 | [Minijuego de hamburguesas](02-minijuego/PLAN.md) | Planeación: mecánica, motor y librería de sprites definidos; implementación pendiente |
+| 02 | [Minijuego de hamburguesas](02-minijuego/PLAN.md) | F1 lista: flujo completo jugable con bloques y panel de ajuste; siguen tiempos, sonido y sprites |
 | 03 | Resto de la landing y contenido comercial | Alcance por definir |
 | 04 | Revisión conjunta de responsive, accesibilidad y rendimiento | Alcance por definir; cada etapa también debe comprobar estos aspectos |
 

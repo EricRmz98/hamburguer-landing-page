@@ -2,7 +2,7 @@
 
 Los sprites del [minijuego](PLAN.md) no son imágenes: son **definiciones de texto**. Cada una declara su tamaño en pixeles, qué color representa cada letra y una matriz de caracteres con el dibujo. La IA (el agente que trabaja en el proyecto) los escribe directamente en el código. Al arrancar, el motor los convierte una sola vez en imágenes y los muestra con un solo elemento HTML por sprite.
 
-Estado: **planeación**. Las rutas, el formato y las herramientas descritas aquí son la propuesta de implementación de la fase F0. Este enfoque sustituye al flujo anterior basado en generar imágenes con IA y normalizarlas, que queda solo como importación opcional.
+Estado: **planeación**. Las rutas, el formato y las herramientas descritas aquí son la propuesta de implementación de la fase F4, que llega después de fijar la mecánica con bloques. Este enfoque sustituye al flujo anterior basado en generar imágenes con IA y normalizarlas, que queda solo como importación opcional.
 
 ## Por qué texto
 
@@ -76,7 +76,7 @@ Reglas del formato:
 
 ### Fondos con tiles
 
-Los fondos no se dibujan pixel por pixel. Se usan tiles de 20 × 20 (valor inicial; 320 × 180 son 16 × 9 tiles, y 180 × 320 son 9 × 16) y un mapa de letras:
+Los fondos no se dibujan pixel por pixel. Se usan tiles de 20 × 20 (valor inicial; 320 × 200 son 16 × 10 tiles, y 180 × 280 son 9 × 14) y un mapa de letras:
 
 ```ts
 // src/game/sprites/tiles.ts
@@ -100,7 +100,7 @@ Cada tile es un sprite normal de 20 × 20 (pared, azulejo, madera, mostrador, ve
 definición de texto ──► validación ──► horneado (una vez) ──► caché de URLs ──► <img>/<button> en el DOM
 ```
 
-- **Horneado**: al arrancar el juego, `bake.ts` dibuja cada sprite, variante y cuadro a escala 1 en un canvas invisible con `putImageData`. Lo convierte en imagen (`toBlob` y una URL de objeto) y la guarda en caché con la clave `id:variante`. Las animaciones se hornean como una tira horizontal para usarla con `steps()`. Los fondos de tiles se hornean como una sola imagen de 320 × 180 o 180 × 320.
+- **Horneado**: al arrancar el juego, `bake.ts` dibuja cada sprite, variante y cuadro a escala 1 en un canvas invisible con `putImageData`. Lo convierte en imagen (`toBlob` y una URL de objeto) y la guarda en caché con la clave `id:variante`. Las animaciones se hornean como una tira horizontal para usarla con `steps()`. Los fondos de tiles se hornean como una sola imagen de 320 × 200 o 180 × 280.
 - **Un elemento por sprite, no por pixel**: en el DOM, cada pieza es un `<button>` o `<img>` con su imagen, escalada por CSS a un múltiplo entero con `image-rendering: pixelated`. Un elemento por pixel produciría decenas de miles de nodos y haría lento el layout y la animación, sobre todo en móvil. Por la misma razón se descarta el truco de `box-shadow` por pixel.
 - **Coste**: hornear sprites tan pequeños es prácticamente instantáneo y ocurre una sola vez, antes de mostrar el juego. Si cambia la paleta de una variante durante la partida, ese resultado también se guarda en caché.
 - **Respaldo sin JavaScript**: la imagen fija de la sección se genera durante la compilación de Astro con los mismos datos, como SVG con un rectángulo por cada tramo horizontal del mismo color. No hay un asset aparte que mantener.
@@ -135,7 +135,7 @@ Estas reglas aplican tanto a quien escribe los sprites como al agente que los ge
 
 ## Inventario inicial
 
-Tamaños en pixeles lógicos dentro del escenario de 320 × 180. Son valores iniciales que se ajustarán al ver el set ancla.
+Tamaños en pixeles lógicos dentro del escenario de 320 × 200. Son valores iniciales que se ajustarán al ver el set ancla.
 
 ### Ingredientes (vista lateral)
 
@@ -148,7 +148,6 @@ Tamaños en pixeles lógicos dentro del escenario de 320 × 180. Son valores ini
 | `queso` | 34 × 5 | Esquinas que escurren |
 | `lechuga` | 34 × 5 | Borde ondulado |
 | `tomate` | 30 × 3 | |
-| `pepinillos` | 28 × 3 | |
 | `cebolla` | 30 × 3 | |
 | `salsa` | 30 × 3 | `catsup`, `mostaza` y `mayonesa` por paleta |
 
@@ -159,11 +158,11 @@ La receta más alta del catálogo (cuatro carnes con queso) mide unos 75 px. El 
 | id | Tamaño | Variantes y técnica |
 | --- | --- | --- |
 | `bote` | 16 × 32 | 2 cuadros (normal y apretado); `catsup`, `mayonesa` y `mostaza` por paleta; simétrico |
-| `plancha` | 144 × 36 | Módulos: extremo, lugar de 32 px ×4 y extremo; `lugar_apagado` por paleta para los que no se usan |
+| `plancha` | 4 lugares de 34 × 32 (30 × 33 en vertical) | Módulos: lugar y marco, en fila. `lugar_apagado` por paleta para los que no se usan. El indicador de cocción se hace con CSS, sin sprite |
 | `plato` | 48 × 8 | Simétrico |
 | `charola_carne` | 32 × 20 | Reutiliza la carne cruda apilada |
-| `basura` | 20 × 24 | 2 cuadros (cerrada y abierta) |
-| `casilla` | 28 × 24 | Fondo de los botones de ingrediente; `activa` y `atenuada` (tutorial) por paleta |
+| `basura` | 34 × 26 | 2 cuadros (cerrada y abierta); `alerta` por paleta cuando hay carne quemada |
+| `casilla` | 34 × 24 | Fondo de los botones de ingrediente; `activa` y `atenuada` (tutorial) por paleta |
 
 ### Clientes
 
@@ -171,7 +170,7 @@ Dos o tres cuerpos base de 32 × 48. Cada uno se multiplica por paleta (piel, pe
 
 ### Fondos (tiles de 20 × 20)
 
-`pared`, `azulejo`, `azulejo_borde`, `madera`, `mostrador`, `ventana` y `estante`, más los mapas `cocina_horizontal` (16 × 9) y `cocina_vertical` (9 × 16).
+`pared`, `azulejo`, `azulejo_borde`, `madera`, `mostrador`, `ventana` y `estante`, más los mapas `cocina_horizontal` (16 × 10) y `cocina_vertical` (9 × 14).
 
 ### Efectos y UI
 

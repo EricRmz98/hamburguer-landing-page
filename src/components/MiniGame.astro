@@ -1,0 +1,474 @@
+---
+// Segunda sección: minijuego de hamburguesas (vista provisional con bloques).
+// El juego se carga cuando la sección se acerca a la vista.
+---
+
+<!-- Sin relleno lateral en móvil: el escenario vertical (180 px) necesita 360 px para escalar a 2×. -->
+<section id="minijuego" class="flex min-h-screen flex-col items-center justify-center gap-6 py-12 sm:px-4" aria-labelledby="mg-title">
+  <h2 id="mg-title" class="px-4 text-center text-3xl font-bold tracking-tight md:text-5xl">Arma la hamburguesa</h2>
+  <div class="mg-root" data-minigame>
+    <div class="mg-fallback">
+      <p>Cocina la carne y arma la orden del cliente.</p>
+      <a href="#pedir">Pídela de verdad</a>
+    </div>
+  </div>
+</section>
+
+<script>
+  const root = document.querySelector<HTMLElement>('[data-minigame]');
+  if (root) {
+    const loader = new IntersectionObserver(
+      (entries) => {
+        if (!entries.some((entry) => entry.isIntersecting)) return;
+        loader.disconnect();
+        import('../game/main.ts').then(({ mountMiniGame }) => mountMiniGame(root));
+      },
+      { rootMargin: '400px 0px' },
+    );
+    loader.observe(root);
+  }
+</script>
+
+<style is:global>
+  .mg-root {
+    position: relative;
+    display: flex;
+    width: 100%;
+    justify-content: center;
+  }
+  .mg-fallback {
+    display: grid;
+    gap: 1rem;
+    justify-items: center;
+    color: #d4d4d4;
+  }
+  .mg-fallback a,
+  .mg-overlay-btn {
+    border-radius: 0.25em;
+    background: #ffd166;
+    color: #1d1a16;
+    font-weight: 700;
+    text-decoration: none;
+  }
+  .mg-fallback a {
+    padding: 0.6rem 1.2rem;
+  }
+
+  .mg-stage {
+    --s: 2;
+    position: relative;
+    overflow: hidden;
+    border-radius: calc(var(--s) * 2px);
+    background: #2b2420;
+    color: #fff;
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    line-height: 1.1;
+    user-select: none;
+    -webkit-user-select: none;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .mg-stage > * {
+    position: absolute;
+    box-sizing: border-box;
+  }
+  .mg-stage [hidden] {
+    display: none !important;
+  }
+
+  .mg-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    border: calc(var(--s) * 1px) solid rgb(0 0 0 / 0.45);
+    border-radius: calc(var(--s) * 1px);
+    color: #1d1a16;
+    font: inherit;
+    font-size: calc(var(--s) * 3.5px);
+    font-weight: 700;
+    text-align: center;
+    cursor: pointer;
+    transition: opacity 0.15s, filter 0.15s;
+  }
+  .mg-btn:active {
+    filter: brightness(0.85);
+  }
+  .mg-stage button:focus-visible,
+  .mg-stage a:focus-visible {
+    outline: calc(var(--s) * 1px) solid #fff;
+    outline-offset: calc(var(--s) * 0.5px);
+  }
+  .mg-btn.is-dim {
+    opacity: 0.25;
+    filter: grayscale(0.7);
+  }
+  .mg-bottle {
+    border-radius: calc(var(--s) * 3px) calc(var(--s) * 3px) calc(var(--s) * 1px) calc(var(--s) * 1px);
+    writing-mode: vertical-rl;
+  }
+  .mg-bin {
+    font-size: calc(var(--s) * 3px);
+  }
+  .mg-charola {
+    background: #e8908a;
+    font-size: calc(var(--s) * 3px);
+  }
+
+  .mg-hud {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: calc(var(--s) * 5px);
+  }
+  .mg-pause {
+    padding: 0;
+    border: 0;
+    border-radius: calc(var(--s) * 1px);
+    background: rgb(255 255 255 / 0.12);
+    color: #fff;
+    font: inherit;
+    font-size: calc(var(--s) * 4.5px);
+    line-height: 1;
+    cursor: pointer;
+  }
+  .mg-pause:hover {
+    background: rgb(255 255 255 / 0.25);
+  }
+  .mg-lives {
+    color: #ef476f;
+    letter-spacing: 0.1em;
+  }
+
+  .mg-ticket {
+    display: flex;
+    flex-direction: column;
+    padding: calc(var(--s) * 1px);
+    border-radius: calc(var(--s) * 1px);
+    background: #fff8e7;
+    color: #1d1a16;
+  }
+  .mg-ticket-name {
+    height: calc(var(--s) * 7px);
+    font-size: calc(var(--s) * 4px);
+    font-weight: 700;
+    text-align: center;
+  }
+  .mg-ticket-rows {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    justify-content: flex-end;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .mg-ticket-row {
+    display: flex;
+    align-items: center;
+    gap: calc(var(--s) * 1px);
+    padding: 0 calc(var(--s) * 1px);
+    font-size: calc(var(--s) * 3.2px);
+    white-space: nowrap;
+  }
+  .mg-ticket-row.is-done {
+    opacity: 0.35;
+    text-decoration: line-through;
+  }
+  .mg-ticket-row.is-next {
+    background: #ffe08a;
+    outline: calc(var(--s) * 0.5px) solid #e63946;
+    font-weight: 700;
+  }
+  .mg-swatch {
+    flex: none;
+    width: calc(var(--s) * 4px);
+    height: calc(var(--s) * 3px);
+    border: calc(var(--s) * 0.25px) solid rgb(0 0 0 / 0.4);
+  }
+
+  .mg-customer {
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding-top: calc(var(--s) * 9px); /* cara arriba: visible aunque la hamburguesa tape el cuerpo */
+    border-radius: calc(var(--s) * 8px) calc(var(--s) * 8px) calc(var(--s) * 2px) calc(var(--s) * 2px);
+    color: #1d1a16;
+    font-size: calc(var(--s) * 6px);
+  }
+  .mg-customer.is-away {
+    opacity: 0;
+  }
+  .mg-patience {
+    overflow: hidden;
+    background: rgb(0 0 0 / 0.5);
+  }
+  .mg-patience-bar {
+    height: 100%;
+    background: #6ee7a8;
+  }
+  .mg-patience-bar.is-low {
+    background: #ef476f;
+  }
+
+  .mg-counter {
+    border-top: calc(var(--s) * 2px) solid #b0835a;
+    background: #4f3a2a;
+    box-shadow: inset 0 calc(var(--s) * 3px) 0 rgb(0 0 0 / 0.25);
+  }
+  .mg-plate {
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    border-radius: 50%;
+    background: #e9e4dc;
+    color: #8a8178;
+    font-size: calc(var(--s) * 3px);
+  }
+  .mg-stack {
+    inset: 0;
+    pointer-events: none;
+  }
+  .mg-stack-item {
+    position: absolute;
+    box-shadow: inset 0 calc(var(--s) * -0.5px) rgb(0 0 0 / 0.35);
+  }
+
+  .mg-grill {
+    border-radius: calc(var(--s) * 1px);
+    background: #4a4a4a;
+  }
+  .mg-slot {
+    position: absolute;
+    background: #2f2f2f;
+    color: #fff;
+  }
+  .mg-slot.is-off {
+    opacity: 0.25;
+    pointer-events: none;
+  }
+  .mg-slot[data-state='quemada'] {
+    background: #3a2a2a;
+  }
+  .mg-patty {
+    position: absolute;
+    top: 42%;
+    right: 0;
+    left: 0;
+    height: calc(var(--s) * 6px);
+    border-radius: calc(var(--s) * 2px);
+  }
+  .mg-slot-label {
+    position: absolute;
+    top: calc(var(--s) * 2px);
+    right: 0;
+    left: 0;
+    font-size: calc(var(--s) * 3px);
+  }
+
+  /* Indicador de cocción: la pista muestra las zonas y el relleno avanza con el color de la zona actual. */
+  .mg-gauge {
+    position: absolute;
+    right: calc(var(--s) * 2px);
+    bottom: calc(var(--s) * 2.5px);
+    left: calc(var(--s) * 2px);
+    height: calc(var(--s) * 3px);
+    overflow: hidden;
+    border-radius: calc(var(--s) * 1px);
+    background: linear-gradient(
+      to right,
+      rgb(244 196 48 / 0.3) 0 var(--g1),
+      rgb(74 222 128 / 0.3) var(--g1) var(--g2),
+      rgb(239 68 68 / 0.3) var(--g2)
+    );
+  }
+  .mg-gauge-fill {
+    height: 100%;
+    background: #f4c430;
+  }
+  .mg-slot[data-state='perfecta'] .mg-gauge-fill {
+    background: #4ade80;
+  }
+  .mg-slot[data-state='aviso'] .mg-gauge-fill,
+  .mg-slot[data-state='quemada'] .mg-gauge-fill {
+    background: #ef4444;
+  }
+  .mg-slot[data-state='aviso'] .mg-gauge {
+    animation: mg-signal 0.4s steps(2, jump-none) infinite;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .mg-slot[data-state='aviso'] .mg-gauge {
+      animation-duration: 1.2s;
+    }
+  }
+  .mg-basura {
+    background: #3c3c3c;
+    color: #aaa;
+    font-size: calc(var(--s) * 3px);
+  }
+  /* Hay carne quemada: la basura avisa que se puede usar. */
+  .mg-basura.is-alert {
+    background: #6b2222;
+    color: #fff;
+    box-shadow: 0 0 0 calc(var(--s) * 1px) #ef4444;
+  }
+
+  .mg-bubble {
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    gap: calc(var(--s) * 2px);
+    align-items: flex-start;
+    padding: calc(var(--s) * 2px) calc(var(--s) * 3px);
+    border-radius: calc(var(--s) * 2px);
+    background: #fffbe6;
+    color: #1d1a16;
+    font-size: calc(var(--s) * 4px);
+    box-shadow: 0 calc(var(--s) * 1px) 0 rgb(0 0 0 / 0.4);
+  }
+  .mg-bubble-text {
+    margin: 0;
+  }
+  .mg-ok {
+    padding: calc(var(--s) * 1px) calc(var(--s) * 3px);
+    border: 0;
+    border-radius: calc(var(--s) * 1px);
+    background: #e63946;
+    color: #fff;
+    font: inherit;
+    font-weight: 700;
+    cursor: pointer;
+  }
+  .mg-arrow {
+    z-index: 3;
+    color: #ffd166;
+    font-size: calc(var(--s) * 8px);
+    line-height: 1;
+    text-align: center;
+    text-shadow: 0 calc(var(--s) * 0.5px) 0 #000;
+    pointer-events: none;
+  }
+  .mg-toast {
+    z-index: 4;
+    top: calc(var(--s) * 16px);
+    left: 50%;
+    padding: calc(var(--s) * 1.5px) calc(var(--s) * 3px);
+    border-radius: calc(var(--s) * 1px);
+    background: rgb(0 0 0 / 0.8);
+    font-size: calc(var(--s) * 4px);
+    white-space: nowrap;
+    opacity: 0;
+    transform: translateX(-50%);
+    transition: opacity 0.2s;
+    pointer-events: none;
+  }
+  .mg-toast.is-on {
+    opacity: 1;
+  }
+
+  .mg-overlay {
+    z-index: 5;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    gap: calc(var(--s) * 3px);
+    align-items: center;
+    justify-content: center;
+    padding: calc(var(--s) * 10px);
+    background: rgb(20 16 13 / 0.82);
+    text-align: center;
+  }
+  .mg-overlay-title {
+    margin: 0;
+    font-size: calc(var(--s) * 9px);
+    font-weight: 700;
+  }
+  .mg-overlay-text {
+    max-width: calc(var(--s) * 160px);
+    margin: 0;
+    font-size: calc(var(--s) * 4.5px);
+  }
+  .mg-overlay-btn {
+    padding: calc(var(--s) * 2px) calc(var(--s) * 6px);
+    border: 0;
+    font: inherit;
+    font-size: calc(var(--s) * 5px);
+    font-weight: 700;
+    cursor: pointer;
+  }
+  .mg-overlay-btn.is-secondary {
+    background: transparent;
+    color: #ffd166;
+    text-decoration: underline;
+  }
+
+  .mg-live {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+
+  @keyframes mg-signal {
+    from {
+      opacity: 1;
+    }
+    to {
+      opacity: 0.15;
+    }
+  }
+
+  .mg-debug {
+    position: fixed;
+    right: 12px;
+    bottom: 12px;
+    z-index: 50;
+    width: min(300px, calc(100vw - 24px));
+    max-height: 80vh;
+    overflow: auto;
+    padding: 8px 12px;
+    border: 1px solid #444;
+    border-radius: 8px;
+    background: rgb(17 17 17 / 0.94);
+    color: #eee;
+    font: 12px/1.4 ui-monospace, SFMono-Regular, Menlo, monospace;
+  }
+  .mg-debug summary {
+    cursor: pointer;
+    font-weight: 700;
+  }
+  .mg-debug-row {
+    display: grid;
+    gap: 2px;
+    margin-top: 8px;
+  }
+  .mg-debug-check {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .mg-debug-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 10px;
+  }
+  .mg-debug-actions input {
+    width: 4em;
+  }
+  .mg-debug button {
+    padding: 2px 8px;
+    border: 1px solid #666;
+    border-radius: 4px;
+    background: #2a2a2a;
+    color: #eee;
+    cursor: pointer;
+  }
+  .mg-debug-info {
+    margin: 10px 0 0;
+    white-space: pre-wrap;
+    color: #9fd;
+  }
+</style>

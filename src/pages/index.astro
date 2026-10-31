@@ -1,17 +1,18 @@
 ---
+import MiniGame from '../components/MiniGame.astro';
 import Layout from '../layouts/Layout.astro';
 ---
 
-<Layout title="Landing base">
-  <section class="flex min-h-screen items-center justify-center px-6">
-    <h1 data-reveal class="text-center text-6xl font-bold tracking-tight md:text-8xl">
-      Landing <span class="text-purple-400">base</span>
-    </h1>
+<Layout title="Hamburguesas">
+  <!-- Hero pendiente de definir (etapa 01 del plan). -->
+  <section class="flex min-h-screen flex-col items-center justify-center gap-4 px-6 text-center">
+    <h1 data-reveal class="text-6xl font-bold tracking-tight md:text-8xl">Hamburguesas</h1>
+    <p data-reveal class="text-lg text-neutral-400">Hero pendiente · baja para jugar</p>
   </section>
 
-  <section class="flex min-h-screen items-center justify-center px-6">
-    <p data-reveal class="max-w-xl text-center text-2xl text-neutral-300">
-      Astro + Tailwind + GSAP + Lenis funcionando.
-    </p>
+  <MiniGame />
+
+  <section id="pedir" class="flex min-h-[50vh] items-center justify-center px-6">
+    <p class="text-center text-xl text-neutral-400">Destino de «Pídela de verdad» pendiente.</p>
   </section>
 </Layout>

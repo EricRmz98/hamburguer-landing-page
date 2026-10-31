@@ -2,14 +2,17 @@
 
 Crear un minijuego de pixel art en la segunda sección de la landing: el visitante prepara hamburguesas para clientes que llegan al mostrador. La primera partida es un tutorial guiado que termina invitando a pedir la hamburguesa real; quien decide seguir jugando entra en un modo infinito, al estilo del dinosaurio de Chrome, donde cada cliente pide una orden distinta y la dificultad sube hasta que el jugador falla.
 
-Estado: **planeación**. No hay código ni sprites. Este documento reúne las decisiones acordadas, la arquitectura propuesta del motor y los valores iniciales que se afinarán al jugar el prototipo. El formato de los sprites (texto con paleta) y sus herramientas se describen en [ASSETS.md](ASSETS.md).
+Estado: **F1 implementada**. El flujo completo se juega con bloques de color y un panel de ajuste de tiempos. Faltan el ajuste fino de tiempos (F2), el sonido y los sprites. Este documento reúne las decisiones acordadas, la arquitectura y los valores iniciales que se afinarán jugando. El formato de los sprites (texto con paleta) y sus herramientas se describen en [ASSETS.md](ASSETS.md).
 
 ## Decisiones acordadas
 
 - El juego ocupa la **segunda sección** de la landing. El hero todavía no está definido.
+- Cada carne tiene un **indicador de cocción**: amarillo, verde cuando está lista (a la mitad o un poco más) y rojo con parpadeo de señal cuando se está pasando.
+- La disposición es una **barra de preparación**, igual en escritorio y móvil: plancha con carnes a la derecha abajo, complementos encima, plato centrado con aderezos a la derecha y comanda a la izquierda. Toda esa zona es la barra, y el cliente está justo del otro lado, recargado en ella (ver «Disposición del escenario»).
 - La mecánica central es la **carne en la plancha**. Todo lo demás (panes, queso, verduras, salsas) se coloca con un solo toque.
 - Se toca la carne cruda y pasa a la plancha, que tiene un número limitado de lugares. Hay que vigilarla: si se quema, se toca para descartarla. Cuando está bien hecha, se toca y pasa **en automático** a la hamburguesa, pero solo si la hamburguesa ya está lista para recibirla (como mínimo, con el pan abajo).
 - La interacción debe ser rápida y ligera: pocos toques por hamburguesa y nada de controles complejos.
+- **La dificultad es el tiempo**: cada cliente da menos tiempo para su orden, siempre con la posibilidad de lograrlo. A partir de un tope, el tiempo deja de bajar y todo depende de la habilidad.
 - **Tutorial**: la primera partida es una hamburguesa clásica guiada con flechas y textos. Los tiempos se congelan, así que no se puede fallar. Al entregarla, un cliente de pixel art la recibe y aparecen dos opciones: **«Pídela de verdad»** y **«Seguir jugando»**.
 - **Modo infinito**: al seguir jugando llega el siguiente cliente con otra orden. A partir de aquí se puede fallar. La partida continúa hasta perder, y se guarda el récord.
 - Las órdenes tienen un **orden de ingredientes lógico**: los panes nunca quedan juntos abajo con los ingredientes encima. Hay variantes de doble, triple y cuádruple carne, y de pan intermedio (tres panes en total).
@@ -53,18 +56,22 @@ Cada carne avanza por estados según su tiempo en la plancha:
 | Quemándose (aviso) | Humo gris y parpadeo | Igual que perfecta (todavía sirve) |
 | Quemada | Negra, humo denso, «puf» | Se descarta a la basura y libera el lugar |
 
-Una carne quemada **ocupa su lugar** hasta que se descarta: ese es el castigo natural. El estado no depende solo del color (ver accesibilidad).
+Una carne quemada **ocupa su lugar** hasta que se descarta: ese es el castigo natural. Se tira tocándola en la plancha o tocando la **basura**, que tira todas las quemadas de una vez. Cuando hay alguna, la basura se ilumina en rojo. El estado no depende solo del color (ver accesibilidad).
 
-Valores iniciales propuestos para el primer cliente del modo infinito: 4 s hasta perfecta, 3 s de ventana perfecta, 1,5 s de aviso y después quemada. La dificultad acorta estos tiempos con un límite inferior.
+**Indicador de cocción.** Cada carne en la plancha lleva una barra que avanza con su cocción. La pista de fondo muestra las tres zonas, para anticipar cuánto falta: amarillo mientras se cocina, verde en la ventana perfecta (empieza a la mitad o un poco más de la barra) y rojo después. En el aviso, la barra parpadea en rojo como una señal; quemada, queda roja fija. Las zonas se calculan con los tiempos de la configuración.
+
+Valores iniciales propuestos: 4 s hasta perfecta, 3 s de ventana perfecta, 1,5 s de aviso y después quemada. Estos tiempos no cambian con la dificultad.
 
 ### Armado
 
 La hamburguesa se arma de abajo hacia arriba sobre el plato. La comanda del cliente muestra la receta como una pila de íconos, con el siguiente paso resaltado.
 
 - Tocar el ingrediente que corresponde lo coloca de inmediato, con una caída corta y un sonido.
+- **Pocos ingredientes**: queso, tres verduras (lechuga, tomate y cebolla) y tres salsas. Los pepinillos se quitaron para simplificar.
+- **Hay una sola casilla de pan**: pone el pan que toque según la comanda (abajo, en medio o arriba). Las recetas conservan sus tres tipos de pan; solo se simplifica el toque.
 - Las salsas se aplican desde los botes de arriba, con una animación de apretar.
 - Si se toca un ingrediente que no toca, se rechaza (propuesta; ver pendientes): sacudida, zumbido y una pequeña pérdida de paciencia del cliente. Así no hace falta una mecánica para deshacer o tirar hamburguesas.
-- Cuando se coloca el pan de arriba, la orden se entrega sola al cliente.
+- Cuando se coloca el último pan, la orden se entrega sola al cliente.
 
 ### Clientes
 
@@ -74,21 +81,46 @@ La hamburguesa se arma de abajo hacia arriba sobre el plato. La comanda del clie
 - Si se le acaba la paciencia, se va enojado y el jugador pierde una vida (propuesta: 3 vidas; ver pendientes).
 - Las variaciones de cliente (personajes distintos) dan vida sin añadir mecánicas.
 
+### Pausa
+
+- Un botón ❚❚ en la esquina superior derecha, visible mientras se juega (también en el tutorial), detiene el tiempo: cocción, paciencia y llegada de clientes. Mientras está en pausa no se aceptan toques.
+- La pantalla de pausa ofrece «Continuar» y «Volver a empezar» (reinicia el modo actual).
+- `P` o `Esc` pausan y reanudan mientras la sección está a la vista.
+- Si el jugador sale de la sección o cambia de pestaña a media partida, el juego queda en pausa. Al volver decide cuándo seguir, en lugar de reanudarse de golpe.
+
 ### Puntuación y récord
 
 Como en el dinosaurio de Chrome, el marcador principal es un solo número: **clientes atendidos**. Se muestra junto al récord, que se guarda en `localStorage` y se protege con `try/catch`. Si el almacenamiento no está disponible, el juego funciona igual, solo que sin récord.
 
-### Dificultad (valores iniciales propuestos)
+### Dificultad
 
-| Clientes | Recetas | Lugares en plancha | Paciencia | Velocidad de cocción |
-| --- | --- | --- | --- | --- |
-| 1–3 | Sencilla o con queso | 2 | 35 s | ×1,0 |
-| 4–7 | Doble carne, más verduras y salsas | 2 | 32 s | ×1,1 |
-| 8–12 | Triple carne | 3 | 30 s | ×1,2 |
-| 13–20 | Cuádruple o pan intermedio | 4 | 28 s | ×1,3 |
-| 21+ | Cualquiera | 4 | baja 0,5 s por cliente hasta 18 s | sube hasta ×1,6 |
+La dificultad es **el tiempo**: cada cliente da menos tiempo que el anterior para su orden. Siempre debe ser posible lograrlo, pero en cierto punto hay que ser muy hábil. Ese tiempo deja de bajar al llegar a un tope, y desde ahí todo depende de la habilidad.
 
-Al pasar el último nivel solo se ajustan el tiempo y la velocidad, hasta que el juego se vuelve imposible de sostener, como en el dinosaurio de Chrome. La paciencia de cada cliente se calcula en función del tamaño de su receta, de modo que una cuádruple no resulte injusta.
+- **Tiempo mínimo de la orden**: lo que tardaría alguien sin errores. Las carnes se cocinan en tandas según los lugares de la plancha, y cada toque (ingredientes, poner y sacar carne) suma un tiempo fijo.
+- **Paciencia** = tiempo mínimo × **holgura**. La holgura baja con cada cliente hasta un mínimo mayor que 1, así que la orden siempre es posible.
+- La cocción no se acelera: la carne tarda siempre lo mismo. La presión viene solo del tiempo del cliente.
+
+Valores iniciales propuestos (ajustables en el panel):
+
+| Parámetro | Valor |
+| --- | --- |
+| Tiempo por toque | 0,4 s |
+| Holgura inicial | ×4,5 |
+| Clientes con holgura completa | 3 |
+| Baja por cliente (después) | 0,1 |
+| Holgura mínima (tope) | ×1,5, alrededor del cliente 33 |
+
+Con estos valores, la clásica del primer cliente da unos 32 s, y una torre de cuatro carnes en el tope, unos 16 s. El arranque se suavizó tras la primera partida de prueba: con ×3 desde el primer cliente, el ritmo inicial resultaba apretado.
+
+Las recetas y la plancha crecen por tramos:
+
+| Clientes | Recetas | Lugares en plancha |
+| --- | --- | --- |
+| 1–3 | Sencilla o con queso | 2 |
+| 4–7 | Doble carne, más verduras y salsas | 2 |
+| 8–12 | Triple carne | 3 |
+| 13–20 | Cuádruple o pan intermedio | 4 |
+| 21+ | Cualquiera | 4 |
 
 ## Recetas
 
@@ -107,7 +139,7 @@ Reglas de validación:
 1. Empieza con `pan_base` y termina con `pan_tapa`. Puede haber como máximo un `pan_medio`, siempre entre dos secciones (tres panes en total).
 2. Cada sección tiene al menos una carne. Hay entre 1 y 4 carnes en total.
 3. El queso va siempre directamente sobre una carne.
-4. Las verduras (lechuga, tomate, pepinillos, cebolla) van después de la última carne de su sección, sin repetirse dentro de ella.
+4. Las verduras (lechuga, tomate, cebolla) van después de la última carne de su sección, sin repetirse dentro de ella.
 5. Las salsas (cátsup, mostaza, mayonesa) van al final de la sección, justo antes del siguiente pan. Puede haber como máximo dos por sección.
 6. La altura total no supera el límite del plato: 100 px lógicos como valor inicial (ver tamaños en [ASSETS.md](ASSETS.md)).
 
@@ -119,10 +151,10 @@ Las recetas aleatorias del modo infinito se construyen **a partir de la gramáti
 | --- | --- | --- |
 | Clásica | pan_base · carne · queso · lechuga · tomate · cátsup · pan_tapa | Tutorial y clientes iniciales |
 | Sencilla | pan_base · carne · cátsup · mostaza · pan_tapa | Clientes iniciales |
-| Doble | pan_base · carne · queso · carne · queso · pepinillos · cebolla · mostaza · pan_tapa | Nivel 2 |
+| Doble | pan_base · carne · queso · carne · queso · cebolla · mostaza · pan_tapa | Nivel 2 |
 | Triple | pan_base · carne · queso · carne · carne · queso · lechuga · cátsup · pan_tapa | Nivel 3 |
-| Cuádruple («la torre») | pan_base · 4 × (carne · queso) · pepinillos · mostaza · pan_tapa | Nivel 4 |
-| Tres panes | pan_base · carne · queso · lechuga · pan_medio · carne · queso · pepinillos · mayonesa · pan_tapa | Nivel 4 |
+| Cuádruple («la torre») | pan_base · 4 × (carne · queso) · cebolla · mostaza · pan_tapa | Nivel 4 |
+| Tres panes | pan_base · carne · queso · lechuga · pan_medio · carne · queso · tomate · mayonesa · pan_tapa | Nivel 4 |
 
 Además del catálogo, el generador crea variantes por nivel. Los nombres son provisionales hasta definir la marca.
 
@@ -132,32 +164,45 @@ Es un guion de pasos. Cada paso resalta un elemento con una flecha y un texto br
 
 1. Llega el cliente: «¡Una clásica, por favor!». La comanda aparece resaltada.
 2. Flecha a la charola de carne: «Pon la carne en la plancha».
-3. Flecha al pan de abajo: «Mientras se cocina, prepara el pan».
+3. Flecha a la casilla de pan: «Mientras se cocina, pon el pan en el plato».
 4. La carne llega a perfecta y se congela. Flecha: «¡Lista! Tócala y pasa al pan».
 5. Queso, lechuga, tomate y cátsup, cada uno con su flecha.
-6. Pan de arriba, entrega, cliente feliz.
+6. Otra vez la casilla de pan, que ahora pone el de arriba. Entrega y cliente feliz.
 7. Mensaje final con «Pídela de verdad» y «Seguir jugando».
 
 La carne quemada no aparece en el tutorial. En el modo infinito, **la primera vez** que ocurre algo nuevo (primera carne quemada, primera receta con pan intermedio, plancha que crece) aparece una pista contextual breve y el tiempo se pausa un momento. Cada pista se muestra una sola vez por visitante.
 
 ## Disposición del escenario
 
-El juego se dibuja en un escenario de resolución lógica fija que se escala por múltiplos enteros, para que el pixel no se deforme. Hay dos disposiciones con las mismas piezas:
+El juego se dibuja en un escenario de resolución lógica fija que se escala por múltiplos enteros, para que el pixel no se deforme.
 
-**Horizontal, 320 × 180** (escritorio y tableta)
+La disposición es una **barra de preparación** y es la misma en escritorio y en móvil. De abajo hacia arriba:
+
+1. **Plancha**, con las **carnes crudas a su derecha** y la basura del otro lado.
+2. **Riel de complementos** (pan, queso, lechuga, tomate, cebolla) justo encima.
+3. **Plato centrado**, con los **aderezos a su derecha** y la **comanda a la izquierda**.
+4. Del otro lado de la barra, el **cliente**, centrado sobre el plato.
+
+**La zona de preparación es la barra**: plancha, complementos, plato y aderezos están sobre el mismo mostrador. La barra es delgada (empieza a media altura de los aderezos) para dar cercanía con el cliente y dejar **amplia la pared del fondo**, donde irán animaciones de pixel art. El cliente está de pie justo detrás, recargado en el borde y con la parte baja del cuerpo tapada por la barra. Es alto, así que su cara queda por encima de las hamburguesas normales. La comanda cuelga a la izquierda, entre la pared y la barra. Si una hamburguesa muy alta llega a su altura, queda delante de él, como en la vida real. Todo lo que se usa en cada hamburguesa queda alrededor del plato y a pocos pasos de la plancha, así que los movimientos son cortos.
+
+**Horizontal, 320 × 200** (escritorio y tableta)
 
 ```text
-┌──────────────────────────────────────────────────────────┐
-│  [♥♥♥]   CLIENTES 12 · RÉCORD 20                [🔊]    │
-│            [CÁTSUP] [MAYONESA] [MOSTAZA]                 │
-│  CLIENTE      ┌───────┐        ┌──── PLANCHA ────┐       │
-│  + comanda    │ plato │        │ [ ] [ ] [ ] [ ] │ [🗑]  │
-│  + paciencia  └───────┘        └─────────────────┘       │
-│  [pan base][pan medio][pan tapa][queso][lechuga]…[carne] │
-└──────────────────────────────────────────────────────────┘
+┌────────────────────────────────────────────┐
+│ ♥♥♥                    CLIENTES 12 · RÉCORD │
+│                  ▬▬▬▬ paciencia             │
+│                  CLIENTE                    │
+│▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓ BARRA ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓│
+│ ┌COMANDA┐                    (tutorial)     │
+│ │       │          ↑ pila                   │
+│ │       │          │      [CÁT][MOS][MAY]   │
+│ └───────┘       (plato)                     │
+│      [pan][queso][lechuga][tomate][cebolla] │
+│  [🗑]   [ ][ ][ ][ ] PLANCHA    [carne]      │
+└────────────────────────────────────────────┘
 ```
 
-**Vertical, 180 × 320** (móvil): el cliente y la comanda arriba, después los botes, el plato y la plancha en el centro, y los ingredientes abajo, en una cuadrícula al alcance del pulgar.
+**Vertical, 180 × 280** (móvil): el mismo orden; la comanda ocupa la columna izquierda y la basura queda a la derecha, junto al cliente.
 
 Las coordenadas de cada pieza se definen en un mapa por disposición. La lógica del juego no conoce posiciones.
 
@@ -174,39 +219,33 @@ El juego tiene posiciones fijas, se controla con toques y no necesita física, c
 
 Alternativas descartadas por ahora: Phaser o PixiJS (demasiado para este alcance, y obligan a rehacer la accesibilidad dentro de un canvas) y Kaplay o LittleJS (ligeros y buenos para pixel art, pero aquí no aportan nada que el DOM no resuelva). Si el juego llegara a necesitar movimiento libre o colisiones, la lógica se conserva y solo cambia la capa de dibujo.
 
-### Arquitectura propuesta
+### Arquitectura
 
 ```text
-src/components/MiniGame.astro        Marcado de la sección, HUD y montaje
+src/components/MiniGame.astro   Sección, estilos y carga diferida del juego
 src/game/
+  main.ts            Monta juego, vista, reloj y pausas por visibilidad
   engine/
-    clock.ts       Reloj de juego sobre gsap.ticker: pausa, escala de tiempo y congelamiento
-    stage.ts       Escenario lógico, escalado entero y cambio de disposición
-    store.ts       Estado del juego y eventos (sin framework)
-    input.ts       Toques, teclado y atajos con el juego enfocado
-    sprite.ts      Elementos de sprite: imagen horneada, variante y cuadro actual
-    audio.ts       Efectos con ZzFX, silencio y desbloqueo con el primer toque
-  game/
-    grill.ts       Lugares, estados de la carne y temporizadores
-    assembly.ts    Pila del plato y aceptación del siguiente paso
-    recipes.ts     Gramática, generador por nivel, validador y catálogo
-    customers.ts   Llegada, paciencia, entrega y vidas
-    difficulty.ts  Curva por número de cliente
-    tutorial.ts    Guion de pasos, flechas y congelamiento
-    hints.ts       Pistas de primera vez
-    session.ts     Máquina de estados: inicio → tutorial → oferta → infinito → fin
-  layouts/
-    landscape.ts   Mapa de piezas 320 × 180
-    portrait.ts    Mapa de piezas 180 × 320
-  sprites/
-    palette.ts     Paleta global por rampas de material
-    define.ts      defineSprite / defineTilemap
-    ingredients.ts · utensils.ts · customers.ts · effects.ts · ui.ts · tiles.ts
-    validate.ts    Validación de las definiciones
-    bake.ts        Texto → canvas → imagen en caché, una sola vez
+    clock.ts         Reloj sobre gsap.ticker con pausas por motivo
+    stage.ts         Disposición y escala entera según el espacio
+    audio.ts         (F3) Efectos con ZzFX, silencio y desbloqueo con el primer toque
+  game/              Lógica pura, sin DOM; probada con node --test (tests/)
+    config.ts        Todos los valores ajustables
+    ingredients.ts   Ingredientes, tamaños y grupos
+    recipes.ts       Gramática, validador, generador por nivel y catálogo
+    grill.ts         Lugares, estados de la carne y congelamiento del tutorial
+    difficulty.ts    Tramos, holgura, tiempo mínimo y paciencia
+    tutorial.ts      Guion de pasos y señales
+    session.ts       Máquina de estados, armado, clientes, vidas, pistas y récord
+    storage.ts       localStorage protegido, o memoria en pruebas
+  layouts/index.ts   Mapas de piezas horizontal (320 × 200) y vertical (180 × 280)
+  view/
+    greybox.ts       Vista provisional con bloques de color
+    debug.ts         Panel de ajuste (desarrollo o ?ajustes)
+  sprites/           (F4) palette.ts · define.ts · validate.ts · bake.ts y las definiciones
 ```
 
-No hay carpeta de imágenes: los sprites viajan dentro del JavaScript del juego.
+La vista con bloques se sustituye en F5 por una vista con sprites que escucha los mismos eventos. No hay carpeta de imágenes: los sprites viajarán dentro del JavaScript del juego.
 
 Principios:
 
@@ -253,25 +292,25 @@ El audio se activa con el toque de «Jugar», un gesto del usuario que los naveg
 
 ## Fases de trabajo
 
-- [ ] **F0 · Sprites como texto**: formato `defineSprite`/`defineTilemap`, paleta, validación, horneado, página de revisión y set ancla (pan base, carne, queso y bote). Ver [ASSETS.md](ASSETS.md).
-- [ ] **F1 · Núcleo del motor**: escenario y escalado, reloj, store, input y elementos de sprite. Los sprites que aún no existan se muestran como bloques de color.
-- [ ] **F2 · Plancha jugable**: estados, temporizadores, descarte y prueba de sensación de los tiempos.
-- [ ] **F3 · Armado y recetas**: pila, comanda, gramática, generador, validador y pruebas.
-- [ ] **F4 · Clientes y modo infinito**: paciencia, vidas, dificultad, fin de partida y récord.
-- [ ] **F5 · Tutorial y pistas**: guion, flechas, congelamiento, oferta final y pistas de primera vez.
-- [ ] **F6 · Sonido**: efectos, silencio y desbloqueo de audio.
-- [ ] **F7 · Inventario completo de sprites**: el resto de ingredientes, utensilios, clientes, efectos, UI y fondos de tiles, revisados en la página de revisión. El importador de PNG se usa solo si algún sprite lo necesita.
-- [ ] **F8 · Integración y revisión**: sección 2, respaldo sin JS, disposiciones horizontal y vertical, accesibilidad, rendimiento y compilación.
+El juego se construye primero completo con bloques (`div` y botones de color con su nombre) para fijar mecánica y tiempos. Los sprites se hacen al final.
 
-F2 es la fase crítica: si la plancha no se siente bien con cuadros de color, el arte no la va a salvar. Conviene jugarla y ajustar los tiempos antes de invertir en sprites.
+- [x] **F1 · Flujo completo con bloques**: escenario y escalado, reloj, plancha, armado, recetas (gramática, generador y validador), clientes, vidas, dificultad, modo infinito, récord, tutorial y pistas. Incluye un panel de ajuste para cambiar los tiempos mientras se juega. Tutorial, modo infinito, quema, pistas y disposición vertical revisados en navegador; 37 pruebas de lógica.
+- [ ] **F2 · Ajuste de tiempos y sensación**: jugar, ajustar con el panel, fijar los valores en la configuración y cerrar los pendientes de mecánica.
+- [ ] **F3 · Sonido**: efectos, silencio y desbloqueo de audio.
+- [ ] **F4 · Sprites como texto**: formato `defineSprite`/`defineTilemap`, paleta, validación, horneado, página de revisión y set ancla (pan base, carne, queso y bote). Ver [ASSETS.md](ASSETS.md).
+- [ ] **F5 · Inventario completo de sprites**: el resto de ingredientes, utensilios, clientes, efectos, UI y fondos de tiles, sustituyendo los bloques. El importador de PNG se usa solo si algún sprite lo necesita.
+- [ ] **F6 · Integración y revisión**: sección 2, respaldo sin JS, disposiciones horizontal y vertical, accesibilidad, rendimiento y compilación.
+
+F2 es la fase crítica: si la plancha no se siente bien con bloques, el arte no la va a salvar.
 
 ## Criterios de aceptación
 
 - El tutorial no se puede perder y termina en la oferta con las dos opciones.
 - En el modo infinito, la carne pasa sola a la hamburguesa solo cuando el siguiente paso es carne. Una carne quemada bloquea su lugar hasta descartarla.
 - Todas las recetas generadas pasan el validador y caben en el plato.
-- La dificultad sube de forma perceptible y el juego termina tarde o temprano.
-- Se juega con mouse, tacto y teclado. Funciona en 320 × 180 escalado en escritorio y en la disposición vertical en móvil.
+- Cada cliente da menos tiempo hasta llegar al tope. La paciencia siempre supera el tiempo mínimo de la orden.
+- La pausa detiene todos los tiempos y se activa sola al salir de la sección o de la pestaña.
+- Se juega con mouse, tacto y teclado. Funciona en 320 × 200 escalado en escritorio y en la disposición vertical en móvil.
 - Todas las definiciones de sprites pasan la validación. Cada sprite es un solo elemento en el DOM.
 - El pixel se ve nítido en todas las escalas. No hay saltos de layout al entrar ni al salir de la sección.
 - El juego se pausa fuera de vista y no consume recursos mientras está pausado.
