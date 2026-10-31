@@ -2,7 +2,7 @@
 
 Crear un minijuego de pixel art en la segunda sección de la landing: el visitante prepara hamburguesas para clientes que llegan al mostrador. La primera partida es un tutorial guiado que termina invitando a pedir la hamburguesa real; quien decide seguir jugando entra en un modo infinito, al estilo del dinosaurio de Chrome, donde cada cliente pide una orden distinta y la dificultad sube hasta que el jugador falla.
 
-Estado: **F1 a F4 listas**. El juego completo ya se dibuja con sprites de pixel art (Endesga 32) generados desde texto y horneados en un atlas. Siguen el sonido (F5) y la integración final (F6). Este documento reúne las decisiones acordadas, la arquitectura y los valores iniciales que se afinarán jugando. El formato de los sprites (texto con paleta) y sus herramientas se describen en [ASSETS.md](ASSETS.md).
+Estado: **F1 a F4 listas**. El juego completo ya se dibuja con sprites de pixel art (Endesga 32) en vista 3/4, generados desde texto y horneados en un atlas. Siguen el sonido (F5) y la integración final (F6). Este documento reúne las decisiones acordadas, la arquitectura y los valores iniciales que se afinarán jugando. El formato de los sprites (texto con paleta) y sus herramientas se describen en [ASSETS.md](ASSETS.md).
 
 ## Decisiones acordadas
 
@@ -16,7 +16,7 @@ Estado: **F1 a F4 listas**. El juego completo ya se dibuja con sprites de pixel 
 - **Tutorial**: la primera partida es una hamburguesa clásica guiada con flechas y textos. Los tiempos se congelan, así que no se puede fallar. Al entregarla, un cliente de pixel art la recibe y aparecen dos opciones: **«Pídela de verdad»** y **«Seguir jugando»**.
 - **Modo infinito**: al seguir jugando llega el siguiente cliente con otra orden. A partir de aquí se puede fallar. La partida continúa hasta perder, y se guarda el récord.
 - Las órdenes tienen un **orden de ingredientes lógico**: los panes nunca quedan juntos abajo con los ingredientes encima. Hay variantes de doble, triple y cuádruple carne, y de pan intermedio (tres panes en total).
-- **Estética**: pixel art 16-bit con sombreado plano y contorno selectivo, sobre la paleta **Endesga 32** (ver [ASSETS.md](ASSETS.md#estilo-y-paleta-decididos)).
+- **Estética**: pixel art 16-bit en **vista frontal elevada 3/4**, con sombreado plano y contorno selectivo, sobre la paleta **Endesga 32** (ver [ASSETS.md](ASSETS.md#estilo-y-paleta-decididos)).
 - Los sprites son **definiciones de texto**: tamaño, letras asignadas a colores de una paleta global y una matriz de caracteres. La IA los escribe directamente con pocos tokens, y las variantes salen cambiando la paleta. El motor los convierte una vez en imágenes al arrancar, con **un elemento HTML por sprite, no por pixel**. Los fondos se arman con tiles. Ver [ASSETS.md](ASSETS.md).
 - Lleva **efectos de sonido** de estilo 8 bits.
 - El motor es **nativo de HTML/CSS** con la lógica en TypeScript y GSAP, sin una librería de juegos (detalle en la sección «Motor»).
@@ -57,11 +57,11 @@ Cada carne avanza por estados según su tiempo en la plancha:
 | Quemándose (aviso) | Humo gris y parpadeo | Igual que perfecta (todavía sirve) |
 | Quemada | Negra, humo denso, «puf» | Se descarta a la basura y libera el lugar |
 
-Una carne quemada **ocupa su lugar** hasta que se descarta: ese es el castigo natural. Se tira tocándola en la plancha o tocando la **basura**, que tira todas las quemadas de una vez. Cuando hay alguna, la basura se ilumina en rojo. El estado no depende solo del color (ver accesibilidad).
+Una carne quemada **ocupa su lugar** hasta que se descarta: ese es el castigo natural. Se tira tocándola en la plancha o tocando la **basura**, que tira todas las quemadas de una vez. Cuando hay alguna, la basura se ilumina en rojo con un contorno pixelado que parpadea. El estado no depende solo del color (ver accesibilidad).
 
 **Indicador de cocción.** Cada carne en la plancha lleva una barra que avanza con su cocción. La pista de fondo muestra las tres zonas, para anticipar cuánto falta: amarillo mientras se cocina, verde en la ventana perfecta (empieza a la mitad o un poco más de la barra) y rojo después. En el aviso, la barra parpadea en rojo como una señal; quemada, queda roja fija. Las zonas se calculan con los tiempos de la configuración.
 
-Valores iniciales propuestos: 4 s hasta perfecta, 3 s de ventana perfecta, 1,5 s de aviso y después quemada. Estos tiempos no cambian con la dificultad.
+Tiempos: 3 s hasta que está lista y 2 s lista (1,2 s perfecta y 0,8 s de aviso parpadeando); a los 5 s se quema. Así el verde empieza al 60 % de la barra. Estos tiempos no cambian con la dificultad.
 
 ### Armado
 
@@ -257,7 +257,7 @@ Principios:
 - **Se pausa solo** cuando la sección sale de la vista (IntersectionObserver) o la pestaña se oculta (`visibilitychange`).
 - **Pixel nítido.** `image-rendering: pixelated`, escala entera calculada según el ancho disponible, sin transformaciones fraccionarias en los sprites (se redondea a pixeles lógicos).
 - **Animación de sprites.** Los estados son variantes de la misma definición (cambio de paleta o `patch`), horneadas por adelantado: cambiar de estado es cambiar la imagen del elemento. El movimiento (caída, rebote, apretar, sacudida) se hace con GSAP. Las animaciones cuadro a cuadro (humo, chispas) son tiras horneadas que se usan con `steps()`.
-- **El HUD es HTML.** Marcador, vidas, textos del tutorial y botones finales usan una fuente pixel. Propuestas: Silkscreen, Pixelify Sans o Press Start 2P, de Google Fonts.
+- **El HUD es HTML.** Marcador, comanda, etiquetas, textos del tutorial y botones usan la fuente **Pixelify Sans** (Google Fonts) a 6 × escala, a «medio pixel» del juego para que se lea bien sin ocupar tanto; los títulos, al doble.
 
 ### Sonido
 
@@ -328,6 +328,6 @@ Cada punto tiene un valor propuesto, que se usará si no se indica otra cosa:
 3. **Ingrediente equivocado**: rechazarlo con penalización de paciencia (propuesto), o permitirlo y que la entrega salga mal.
 4. **Carne quemada**: solo bloquea el lugar (propuesto), o además quita una vida.
 5. **Saltar el tutorial** para quien ya lo terminó (propuesto: sí).
-6. **Fuente pixel** del HUD.
+6. ~~**Fuente pixel** del HUD.~~ Resuelto: Pixelify Sans a medio pixel del juego (Bytesized quedaba chica y Tiny5, enorme).
 7. **Marca y destino** de «Pídela de verdad» (nombre, URL o app de pedidos).
 8. **Ingredientes extra**: tocino, cebolla caramelizada, aguacate u otros que encajen con la marca.

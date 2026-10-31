@@ -112,8 +112,9 @@ describe('Revisión de estilo', () => {
   const flip = (source: string) => rows(source).map((row) => [...row].reverse().join('')).join('\n');
 
   it('avisa si la luz viene del lado contrario', () => {
-    const pan = SPRITES.pan_base;
-    assert.ok(lintSprite({ ...pan, pixels: flip(pan.pixels!) }).some((w) => w.includes('derecha')));
+    // La carne en 3/4 tiene costado iluminado; volteada, la luz queda a la derecha.
+    const carne = SPRITES.carne;
+    assert.ok(lintSprite({ ...carne, pixels: flip(carne.pixels!) }).some((w) => w.includes('derecha')));
   });
 
   it('avisa si se usan colores fuera de los materiales', () => {
@@ -176,7 +177,7 @@ describe('Importar desde imagen', () => {
   it('separa una tira de animación en cuadros', () => {
     const bote = SPRITES.bote;
     const resolved = resolveSprite(bote);
-    const result = imageToSprite(rasterize(resolved), resolved.width * 2, resolved.height, { id: 'bote', frameWidth: 16 });
+    const result = imageToSprite(rasterize(resolved), resolved.width * 2, resolved.height, { id: 'bote', frameWidth: resolved.width });
     assert.equal(result.frames.length, 2);
     assert.match(result.text, /frames: \[/);
   });

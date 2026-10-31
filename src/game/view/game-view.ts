@@ -7,6 +7,7 @@ import type { Target } from '../game/tutorial.ts';
 import { LAYOUTS } from '../layouts/index.ts';
 import { atlasKey } from '../sprites/atlas.ts';
 import { atlasStyle, bakeAtlas, bakeSprite, type BakedAtlas } from '../sprites/bake.ts';
+import { ANCHORS } from '../sprites/anchors.ts';
 import { SPRITES } from '../sprites/index.ts';
 import { CUSTOMERS } from '../sprites/people.ts';
 
@@ -44,12 +45,13 @@ const STACK_SPRITE: Record<IngredientId, string> = {
   mayonesa: 'salsa:mayonesa',
 };
 
+// Cada casilla es una bandeja de metal de restaurante con su ingrediente adentro.
 const BIN_SPRITE: Record<BinId, string> = {
-  pan: 'pan_tapa',
-  queso: 'queso',
-  lechuga: 'lechuga',
-  tomate: 'tomate',
-  cebolla: 'cebolla',
+  pan: 'bandeja_pan',
+  queso: 'bandeja_queso',
+  lechuga: 'bandeja_lechuga',
+  tomate: 'bandeja_tomate',
+  cebolla: 'bandeja_cebolla',
 };
 
 const FACE = { esperando: 0, feliz: 1, enojado: 2 } as const;
@@ -129,9 +131,10 @@ export class GameView {
   private grill: HTMLDivElement;
   private slots: SlotView[] = [];
   private bottles = new Map<SalsaId, { button: HTMLButtonElement; sprite: HTMLDivElement }>();
-  private bins = new Map<BinId, { button: HTMLButtonElement; pile: HTMLDivElement[] }>();
+  private bins = new Map<BinId, { button: HTMLButtonElement; sprite: HTMLDivElement; tape: HTMLSpanElement }>();
   private charola: HTMLButtonElement;
   private charolaSprite: HTMLDivElement;
+  private charolaTape: HTMLSpanElement;
   private basura: HTMLButtonElement;
   private basuraSprite: HTMLDivElement;
   private bubble: HTMLDivElement;
@@ -191,7 +194,7 @@ export class GameView {
       this.bottles.set(id, { button, sprite: el('div', 'mg-sprite', button) });
     }
 
-    this.grill = el('div', 'mg-grill', stage);
+    this.grill = el('div', 'mg-grill mg-sprite', stage);
     for (let i = 0; i < game.config.grill.maxSlots; i++) {
       const button = this.button('mg-slot', '', () => game.tapSlot(i));
       const gauge = el('div', 'mg-gauge', button);
@@ -207,14 +210,18 @@ export class GameView {
 
     this.charola = this.button('mg-charola', 'Poner carne en la plancha', () => game.tapCharola());
     this.charolaSprite = el('div', 'mg-sprite', this.charola);
+    this.charolaTape = el('span', 'mg-tape', this.charola, 'Carne');
+    this.charolaTape.setAttribute('aria-hidden', 'true');
     this.basura = this.button('mg-basura', 'Tirar las carnes quemadas', () => game.tapBasura());
     this.basuraSprite = el('div', 'mg-sprite', this.basura);
 
-    // Cada casilla muestra un montoncito del ingrediente: rebanadas apiladas, con un leve desfase.
+    // Cada casilla: bandeja de metal con su ingrediente y una etiqueta de cinta masking al frente.
     for (const id of BIN_IDS) {
       const button = this.button('mg-bin', inputLabel(id), () => game.tapIngredient(id));
-      const copies = id === 'pan' ? 1 : 4;
-      this.bins.set(id, { button, pile: Array.from({ length: copies }, () => el('div', 'mg-sprite', button)) });
+      const sprite = el('div', 'mg-sprite', button);
+      const tape = el('span', 'mg-tape', button, inputLabel(id));
+      tape.setAttribute('aria-hidden', 'true');
+      this.bins.set(id, { button, sprite, tape });
     }
 
     this.bubble = el('div', 'mg-bubble', stage);
@@ -295,6 +302,8 @@ export class GameView {
     this.place(this.counter, layout.counter);
     this.place(this.plate, layout.plate);
     this.place(this.bubble, layout.bubble);
+    this.bubble.style.height = ''; // el globo se ajusta a su texto; el alto del layout es el máximo
+    this.bubble.style.maxHeight = `${layout.bubble[3] * this.scale}px`;
     this.place(this.grill, layout.grill);
     this.place(this.charola, layout.charola);
     this.place(this.basura, layout.basura);
@@ -306,8 +315,14 @@ export class GameView {
 
     // Sprites que dependen del tamaño de su contenedor.
     this.setSprite(this.plate, 'plato');
-    this.setSprite(this.charolaSprite, 'charola', 0, layout.charola);
-    for (const [id, { pile }] of this.bins) this.layoutPile(pile, BIN_SPRITE[id], layout.bins[id]);
+    this.setSprite(this.charolaSprite, 'charola', 0, layout.charola, 'bottom');
+    this.placeTape(this.charolaTape, 'charola', layout.charola, BIN_IDS.length);
+    this.setSprite(this.grill, layout.name === 'vertical' ? 'plancha_v' : 'plancha');
+    BIN_IDS.forEach((id, i) => {
+      const { sprite, tape } = this.bins.get(id)!;
+      this.setSprite(sprite, BIN_SPRITE[id], 0, layout.bins[id], 'bottom');
+      this.placeTape(tape, BIN_SPRITE[id], layout.bins[id], i);
+    });
     for (const [id, { sprite }] of this.bottles) this.setSprite(sprite, atlasKey('bote', id), 0, layout.bottles[id]);
     for (const node of this.sprites.keys()) this.applySprite(node);
 
@@ -317,21 +332,22 @@ export class GameView {
     this.sync();
   }
 
-  /** Apila en la casilla tantas rebanadas como quepan (máximo las creadas), centradas y con desfase. */
-  private layoutPile(pile: HTMLDivElement[], key: string, [, , w, h]: Rect) {
+  /**
+   * Cinta masking sobre el frente de una bandeja apoyada abajo en su casilla: el frente liso mide 9
+   * filas y la cinta 7, con 1 de margen arriba y abajo; el texto (mayúsculas de 3.8 pixeles) queda con aire. Cada
+   * cinta tiene su propia inclinación y un pequeño desfase, alternando, para que parezcan pegadas a mano.
+   */
+  private placeTape(tape: HTMLElement, key: string, [, , w, h]: Rect, index: number) {
+    const tilt = [-2, 1.5, -1, 2.2, -1.6, 1][index % 6];
+    const shift = [0, 1, -1, 0, 1, -1][index % 6];
     const entry = this.atlas.entries[key];
-    const gap = 1;
-    const fit = Math.max(1, Math.min(pile.length, Math.floor((h - 4 + gap) / (entry.height + gap))));
-    const total = fit * entry.height + (fit - 1) * gap;
-    const top = Math.floor((h - total) / 2);
-    const offsets = [0, -1, 1, 0];
-    pile.forEach((node, i) => {
-      node.hidden = i >= fit;
-      if (i >= fit) return;
-      const y = top + (fit - 1 - i) * (entry.height + gap);
-      const x = Math.floor((w - entry.width) / 2) + offsets[i % offsets.length];
-      this.sprites.set(node, { key, frame: 0 }); // posición propia: fit() la recalcula al reescalar
-      Object.assign(node.style, atlasStyle(this.atlas, key, this.scale), { left: `${x * this.scale}px`, top: `${y * this.scale}px` });
+    const s = this.scale;
+    Object.assign(tape.style, {
+      left: `${(Math.floor((w - entry.width) / 2) + 2 + shift) * s}px`,
+      top: `${(h - 9) * s}px`,
+      width: `${(entry.width - 4) * s}px`, // «Lechuga», la más larga, mide 25 px
+      height: `${7 * s}px`,
+      transform: `rotate(${tilt}deg)`,
     });
   }
 
@@ -422,7 +438,7 @@ export class GameView {
 
     const burnt = g.grill.cooking.some((_, i) => g.grill.state(i) === 'quemada');
     this.basura.classList.toggle('is-alert', burnt);
-    this.setSprite(this.basuraSprite, burnt ? 'basura:alerta' : 'basura', 0, this.layout.basura);
+    this.setSprite(this.basuraSprite, 'basura', 0, this.layout.basura);
 
     const smokeFrame = this.reduced ? 0 : Math.floor(now / SMOKE_FRAME_MS);
     this.slots.forEach((slot, i) => {
@@ -546,19 +562,25 @@ export class GameView {
     }
   }
 
+  /**
+   * Pila en vista 3/4: cada capa se apoya por su ancla (su base) sobre el centro del plato y la
+   * siguiente sube según el grosor de la anterior; así cada capa tapa la cara de arriba de la de abajo.
+   */
   private renderStack() {
     const s = this.scale;
-    const [px, py, pw] = this.layout.plate;
+    const [px, py] = this.layout.plate;
+    const [plateX, plateY] = ANCHORS.plato;
     for (const node of this.stackLayer.children) this.sprites.delete(node as HTMLElement);
     this.stackLayer.replaceChildren();
-    let y = py;
+    let base = py + plateY;
     for (const id of this.game.stack) {
-      const info = INGREDIENTS[id];
-      y -= info.height;
+      const key = STACK_SPRITE[id];
+      const [ax, ay] = ANCHORS[key.split(':')[0]];
       const item = el('div', 'mg-stack-item mg-sprite', this.stackLayer);
-      item.title = info.label;
-      this.setSprite(item, STACK_SPRITE[id]);
-      Object.assign(item.style, { left: `${(px + Math.floor(pw / 2 - info.width / 2)) * s}px`, top: `${y * s}px` });
+      item.title = INGREDIENTS[id].label;
+      this.setSprite(item, key);
+      Object.assign(item.style, { left: `${(px + plateX - ax) * s}px`, top: `${(base - ay) * s}px` });
+      base -= INGREDIENTS[id].height;
     }
   }
 

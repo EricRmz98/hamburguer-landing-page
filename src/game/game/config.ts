@@ -10,10 +10,11 @@ export interface LevelStep {
 export const DEFAULT_CONFIG = {
   timeScale: 1,
   grill: {
-    cookTime: 4, // segundos hasta «perfecta»
+    cookTime: 3, // segundos hasta «perfecta»
     rawFraction: 0.4, // parte de cookTime que se ve cruda antes de «cocinándose»
-    perfectWindow: 3,
-    warnTime: 1.5,
+    // Lista durante 2 s en total: perfecta y, al final, el aviso parpadeando; después se quema.
+    perfectWindow: 1.2,
+    warnTime: 0.8,
     maxSlots: 4,
   },
   lives: 3,

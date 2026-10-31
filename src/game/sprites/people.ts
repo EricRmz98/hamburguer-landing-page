@@ -2,8 +2,8 @@ import { atlasKey } from './atlas.ts';
 import { defineSprite } from './define.ts';
 
 // Clientes de la cintura para arriba, detrás de la barra (48 × 80): la barra tapa la cintura y la
-// cabeza queda por encima de la hamburguesa. Se generaron trazando formas y sombreando cada material
-// con luz desde la izquierda; se editan como cualquier otro sprite.
+// cabeza queda por encima de la hamburguesa. Generados con scripts/sprites/people_gen.py (formas
+// trazadas y sombreadas con luz desde la izquierda); se editan como cualquier otro sprite.
 // Cuadros = expresiones: 0 esperando, 1 feliz, 2 enojado. Variantes = looks por paleta.
 // Letras: o = contorno y rasgos; p/q/r = piel (sombra, base, luz); h/i/j = pelo (base, sombra, luz);
 // c/d/e = ropa (base, sombra, luz); g = aretes.

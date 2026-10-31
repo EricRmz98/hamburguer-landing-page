@@ -17,6 +17,7 @@ Estado: **inventario completo en el juego (F4)**. 20 sprites en `src/game/sprite
 
 ### Estilo y paleta (decididos)
 
+- **Perspectiva**: **frontal elevada 3/4** (cámara a 32° de altura, girada 12° para que se vea el costado derecho). Se eligió tras comparar la vista lateral original (se veía plana), la 3/4 y la isométrica 2:1 (más profundidad, pero obligaba a reacomodar el escenario en diagonal). Los clientes, el humo y la interfaz se quedan de frente, como es habitual en este estilo.
 - **Estilo**: pixel art **16-bit con sombreado plano (flat shading) y contorno selectivo (sel-out)**. Cada material lleva 3 tonos (sombra, base y luz) más un brillo puntual de 1 o 2 pixeles; luz desde arriba a la izquierda; contorno del tono oscuro del propio material, nunca negro; sin dithering en los sprites. Referencia: los íconos de comida de *Stardew Valley*.
 - **Paleta**: [Endesga 32](https://lospec.com/palette-list/endesga-32), de **ENDESGA** (creada originalmente para *NYKRA*). Se usan exactamente sus 32 colores, sin agregar otros. La ficha de Lospec no indica licencia; se da crédito al autor en los créditos del sitio.
 
@@ -170,7 +171,7 @@ definiciones de texto ──► validación y estilo ──► atlas (una sola i
 Estas reglas aplican tanto a quien escribe los sprites como al agente que los genere:
 
 - **Estilo**: 16-bit con flat shading y sel-out, paleta Endesga 32 (ver «Estilo y paleta»).
-- **Vista**: frontal con una ligera elevación, la misma para todo. Los ingredientes se ven de lado, como en una pila. La carne de la plancha es el mismo sprite que en la hamburguesa, para que el paso de uno a otro sea continuo.
+- **Vista**: frontal elevada 3/4 para todo lo de cocina: cada objeto muestra su cara de arriba (luz), su frente (base) y su costado derecho (sombra). En la pila, cada capa tapa la cara de arriba de la anterior y asoma por la orilla. La carne de la plancha es el mismo sprite que en la hamburguesa.
 - **Luz** desde arriba a la izquierda: el tono claro va en los bordes superior e izquierdo y el oscuro abajo.
 - **Contorno selectivo** de 1 px, en el tono más oscuro de la rampa de cada material (no negro puro). Del lado de la luz puede aclararse un tono.
 - **Rampas**: 3 tonos por material (sombra, base y luz) más un brillo puntual, sin dithering, salvo para texturas puntuales (ajonjolí, grietas). Los brillos son uno o dos pixeles.
@@ -188,32 +189,37 @@ Estas reglas aplican tanto a quien escribe los sprites como al agente que los ge
 
 ## Inventario
 
-Tamaños en pixeles lógicos dentro del escenario de 320 × 200. Ancho y alto de los ingredientes coinciden con los de `INGREDIENTS`, que usa la pila del plato.
+Tamaños en pixeles lógicos dentro del escenario de 320 × 200 (sprite completo en 3/4; el grosor de cada capa de la pila está en `INGREDIENTS.height`).
+
+**Escala única.** Todo lo de comer mide lo mismo en el plato, en las bandejas y en la plancha: pan de radio 12 (24 de ancho), carne 12.5 (cruda 13), rodajas 10.5, hoja de lechuga 13, rebanada de queso 20 × 20, salsa 9 y plato 15. Las constantes están en `scripts/sprites/gen34.py` (`BUN_R`, `PATTY_R`…). Los grosores de la pila (`height` en `ingredients.ts`) siguen a los sprites.
 
 | Sprite | Tamaño | Variantes, cuadros y uso |
 | --- | --- | --- |
-| `pan_base` · `pan_medio` · `pan_tapa` | 32 × 8 · 32 × 6 · 32 × 14 | Pan de arriba en domo con ajonjolí; también es el ícono de la casilla de pan |
-| `carne` | 32 × 6 | `cruda`, `cocinandose`, `perfecta` y `quemada` (con grietas) |
-| `queso` · `lechuga` | 34 × 5 | Sobresalen 1 px por lado |
-| `tomate` · `cebolla` | 30 × 3 | |
-| `salsa` | 30 × 3 | `catsup`, `mostaza` y `mayonesa`, con gotas |
-| `bote` | 16 × 32 | 2 cuadros (normal y apretado al poner salsa); `catsup`, `mostaza` y `mayonesa` |
-| `plato` | 48 × 8 | En espejo |
-| `charola` | 38 × 18 | Charola con tres carnes crudas |
-| `basura` | 26 × 25 | `alerta` (tapa roja) cuando hay carne quemada |
+| `pan_base` · `pan_medio` · `pan_tapa` | 24 × 16 · 24 × 15 · 24 × 16 | Miga clara arriba en los panes cortados; domo dorado con ajonjolí en el de arriba, que también es el ícono de la casilla de pan |
+| `carne` | 27 × 17 | `cruda`, `cocinandose`, `perfecta` y `quemada`, con costra y brillos |
+| `queso` · `lechuga` | 24 × 15 · 28 × 16 | Queso cuadrado con esquinas que escurren; lechuga ondulada con venas |
+| `tomate` · `cebolla` | 22 × 13 · 22 × 12 | Tomate con semillas; cebolla con aros |
+| `salsa` | 20 × 13 | Mancha con gotas; `catsup`, `mostaza` y `mayonesa` |
+| `bote` | 14 × 35 | 2 cuadros (normal y apretado, con gota); `catsup`, `mostaza` y `mayonesa` |
+| `plato` | 31 × 18 | Plato con borde (radio 15, apenas más ancho que el pan de 24 para que asome la orilla); su ancla es el centro de la superficie donde se apoya la pila |
+| `charola` | 42 × 27 | Bandeja gastronorm más ancha y rectangular (38 × 22) con carne molida cruda, sin forma: un montón con grumos que sobresale al centro, con hebras, surcos y algo de grasa. La forma de medallón aparece hasta que la carne llega a la plancha. Lleva su etiqueta «Carne» |
+| `plancha` · `plancha_v` | 156 × 35 · 134 × 35 | Plancha de restaurante: placa de acero curtido por el uso (donde van las carnes, la grasa requemada la deja casi negra; alrededor, un halo más claro con tramado y, entre lugares y en las orillas, acero limpio con vetas de brillo), salpicadera, rieles, canal de grasa y panel frontal con una perilla bajo cada lugar. Hay una por disposición porque cambia el ancho. Un lugar apagado oscurece solo la zona de la placa (filas 6 a 24 del sprite), no la salpicadera ni el panel |
+| `bandeja_pan` · `_queso` · `_lechuga` · `_tomate` · `_cebolla` | 36 × 25–28 | Bandejas gastronorm de acero (esquinas redondeadas, orilla ancha, costados que se angostan y veta de brillo) llenas hasta arriba. Lechuga, tomate y cebolla usan **los mismos sprites del plato**: `gen34.py` genera la bandeja vacía, pega encima los sprites `lechuga`, `tomate` o `cebolla` (tabla `FILL`: sprite y desfase desde el centro de la orilla, de atrás hacia adelante) y vuelve a pintar el frente de la bandeja para que tape la parte de abajo de las piezas (tres hojas; dos rodajas). Pan y queso van en **pilas ordenadas** modeladas en 3D a la misma escala: tres bollos con el domo con ajonjolí arriba, y siete rebanadas cuadradas apenas movidas para que se vean todas las orillas. Son las casillas; el frente liso mide 9 filas para que la etiqueta de cinta masking (HTML, 7 filas) quede centrada con margen arriba y abajo. Cada cinta tiene su propia inclinación y un pequeño desfase |
+| `basura` | 32 × 14 | Hueco cuadrado en la barra, al ras, con aro de acero y bolsa negra doblada sobre la orilla (un bote parado sobre la barra se veía raro). Con carne quemada el bote no cambia de color: por CSS se le pone un contorno pixelado alrededor de todo el hueco, sin degradados: `drop-shadow` sin desenfoque desplazados exactamente 1 pixel del juego, que alterna a saltos entre contorno rojo y contorno doble con rojo oscuro (fijo con movimiento reducido) |
 | `cliente` · `clienta` | 48 × 80 | Hombre y mujer de la cintura para arriba (pelo largo, pestañas y aretes en la mujer), con proporciones reales. 3 cuadros (esperando, feliz, enojado) y 4 looks cada uno (`azul`, `rojo`, `verde`, `morado`; `roja`, `amarilla`, `verde`, `morada`). La cabeza queda por encima de la hamburguesa y la barra tapa la cintura. `CUSTOMERS` alterna los 8 aspectos |
 | `humo` | 8 × 8 | 4 cuadros; `blanco` (carne por quemarse) y `negro` (quemada) |
 | `flecha` | 9 × 8 | Flecha del tutorial |
 | `corazon` | 7 × 6 | `lleno` y `vacio` (vidas) |
 | `azulejo` · `madera` | 20 × 20 | Tiles que se repiten en la pared y en la barra |
 
-Los clientes, por su tamaño y detalle, se generaron con un script que traza las formas (cabeza, cuello, torso, pelo), les pone contorno y sombrea cada material con luz desde la izquierda; el resultado es texto en el formato de siempre y se edita igual. Una primera versión de 32 px de ancho con el torso alargado se veía como un poste: lo que da proporciones naturales es el ancho (cabeza de unos 22 px y hombros de 44).
+Los sprites de cocina se generaron con `scripts/sprites/` (ver su README): cada objeto se modela con vóxeles y se proyecta con la cámara 3/4; el sombreado sale de las caras (arriba = luz, frente = base, derecha y contacto = sombra), con contorno selectivo, texturas por material (costra de la carne, venas de la lechuga, semillas del tomate, ajonjolí con sombra) y limpieza de escalones. Cada sprite trae un **ancla** (`anchors.ts`): la posición de su base, con la que la vista apila los ingredientes sobre el centro del plato; `INGREDIENTS.height` es el grosor en pantalla de cada capa. 
 
-Las casillas de ingredientes muestran un montoncito de 2 a 4 rebanadas apiladas, y la comanda, el globo de texto y los indicadores se hacen con HTML y CSS en colores de Endesga 32.
+Los clientes, por su tamaño y detalle, se generaron con `people_gen.py`, que traza las formas (cabeza, cuello, torso, pelo), les pone contorno y sombrea cada material con luz desde la izquierda; el resultado es texto en el formato de siempre y se edita igual. Una primera versión de 32 px de ancho con el torso alargado se veía como un poste: lo que da proporciones naturales es el ancho (cabeza de unos 22 px y hombros de 44).
+
+Las casillas son bandejas de metal con su ingrediente y una etiqueta de cinta masking. **Todo el texto del juego usa [Pixelify Sans](https://fonts.google.com/specimen/Pixelify+Sans)** (Google Fonts, pesos 400–700). Es pixelada pero sin cuadrícula estricta, así que se escala libre y el texto va a «medio pixel» del juego: tamaño 6 × escala (trazo de 0.6 pixeles del juego, mayúsculas de 3.8, interlineado de 6.5) y títulos al doble en negrita. El texto normal va en 500 y las cintas en 600. Se descartaron Bytesized (demasiado chica) y Tiny5: las fuentes de cuadrícula estricta tienen que ir a 1 pixel de la fuente = 1 del juego y quedan enormes y anchas. La comanda, el globo de texto y los indicadores se hacen con HTML y CSS en colores de Endesga 32. Las piezas rectangulares (plancha y bandejas) se generan sin el giro de cámara de 12° para que queden alineadas con la cuadrícula del juego.
 
 ## Pendientes
 
-- En la disposición vertical la basura queda sobre la pared, junto al cliente, porque la barra no tiene espacio libre; buscarle un lugar en la barra si molesta.
 - Los fondos usan tiles repetidos por CSS (azulejo y madera); los mapas de tiles (`defineTilemap`) quedan para cuando el fondo tenga elementos y animaciones.
 - Confirmar con los primeros clientes si su calidad como texto es suficiente o si conviene el importador.
 - Ajustar el tamaño de tile si 20 px no encaja bien con las piezas del escenario.

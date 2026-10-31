@@ -28,6 +28,11 @@ export interface SpriteDef {
   frames?: readonly string[];
   /** Se escribe solo la mitad izquierda y se completa en espejo. */
   mirror?: 'x';
+  /**
+   * Excepciones de la revisión de estilo, con su motivo. `light: false` desactiva la revisión de la
+   * dirección de la luz para objetos casi planos vistos desde arriba, donde casi todo es cara superior.
+   */
+  lint?: { light?: false; reason: string };
   variants?: Record<string, SpriteVariant>;
 }
 

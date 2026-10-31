@@ -131,6 +131,7 @@ export function lintSprite(def: SpriteDef): string[] {
     const shared = new Set<string>(
       declared.flatMap((m) => RAMPS[m]).filter((c, i, all) => all.indexOf(c) !== i),
     );
+    if (def.lint?.light === false) continue; // excepción declarada en el sprite, con su motivo
     const groups = declared.length
       ? declared.map((m) => ({ name: m, colors: new Set<string>(RAMPS[m].filter((c) => !shared.has(c))) }))
       : [{ name: 'sprite', colors: new Set<string>(Object.values(sprite.colors)) }];

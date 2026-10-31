@@ -62,8 +62,15 @@
     border-radius: calc(var(--s) * 2px);
     background: #262b44;
     color: #fff;
-    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-    line-height: 1.1;
+    /* Pixelify Sans: pixelada pero sin cuadrícula estricta, así que se escala libre. El texto va a
+       «medio pixel»: su trazo (1/10 del tamaño) mide 0.6 pixeles del juego y las mayúsculas, 3.8. */
+    --texto: calc(var(--s) * 6px);
+    --titulo: calc(var(--s) * 12px);
+    font-family: 'Pixelify Sans', ui-monospace, monospace;
+    font-size: var(--texto);
+    font-weight: 500;
+    font-synthesis: none;
+    line-height: calc(var(--s) * 6.5px); /* deja aire a los acentos (0.85 del tamaño) */
     user-select: none;
     -webkit-user-select: none;
     touch-action: manipulation;
@@ -89,12 +96,14 @@
     background-repeat: repeat;
     image-rendering: pixelated;
   }
+  /* Barra en 3/4: borde trasero claro, superficie de tablones y el frente oscuro abajo. */
   .mg-counter {
     border-top: calc(var(--s) * 2px) solid #c28569;
+    border-bottom: calc(var(--s) * 5px) solid #733e39;
     background-color: #b86f50;
     background-repeat: repeat;
     image-rendering: pixelated;
-    box-shadow: inset 0 calc(var(--s) * 2px) 0 rgb(24 20 37 / 0.35);
+    box-shadow: inset 0 calc(var(--s) * 2px) 0 rgb(24 20 37 / 0.35), inset 0 calc(var(--s) * -1px) 0 #3e2731;
   }
 
   .mg-btn {
@@ -120,19 +129,25 @@
     opacity: 0.3;
     filter: grayscale(0.7);
   }
-  .mg-bin {
-    overflow: hidden;
-    border: calc(var(--s) * 1px) solid #181425;
-    border-radius: calc(var(--s) * 1px);
-    background: #3a4466;
-    box-shadow: inset calc(var(--s) * 1px) calc(var(--s) * 1px) 0 #5a6988;
+  /* Etiqueta de cinta masking sobre el frente de la bandeja. */
+  .mg-tape {
+    position: absolute;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgb(234 212 170 / 0.95);
+    color: #3e2731;
+    font: 600 var(--texto) / 1 'Pixelify Sans', ui-monospace, monospace;
+    white-space: nowrap;
+    clip-path: polygon(0 0, 100% 0, 97% 25%, 100% 50%, 97% 75%, 100% 100%, 0 100%, 3% 75%, 0 50%, 3% 25%);
+    pointer-events: none; /* la inclinación de cada cinta la pone la vista */
   }
 
   .mg-hud {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    font-size: calc(var(--s) * 5px);
+    font-size: var(--texto);
     text-shadow: 0 calc(var(--s) * 0.5px) 0 #181425;
   }
   .mg-lives {
@@ -170,8 +185,7 @@
   }
   .mg-ticket-name {
     height: calc(var(--s) * 7px);
-    font-size: calc(var(--s) * 4px);
-    font-weight: 700;
+    font-size: var(--texto);
     text-align: center;
   }
   .mg-ticket-rows {
@@ -188,7 +202,7 @@
     align-items: center;
     gap: calc(var(--s) * 1px);
     padding: 0 calc(var(--s) * 1px);
-    font-size: calc(var(--s) * 3.2px);
+    font-size: var(--texto);
     white-space: nowrap;
   }
   .mg-ticket-row.is-done {
@@ -198,7 +212,6 @@
   .mg-ticket-row.is-next {
     background: #fee761;
     outline: calc(var(--s) * 0.5px) solid #e43b44;
-    font-weight: 700;
   }
   .mg-swatch {
     flex: none;
@@ -227,20 +240,47 @@
     pointer-events: none;
   }
 
-  .mg-grill {
-    border: calc(var(--s) * 1px) solid #181425;
-    border-radius: calc(var(--s) * 1px);
-    background: #3a4466;
+  /* Basura con carne quemada: un contorno pixelado rojo alrededor de todo el hueco, sin recolorearlo.
+     Cada drop-shadow sin desenfoque copia la silueta un pixel del juego hacia un lado; encadenados,
+     dibujan un contorno de 1 pixel. Parpadea a saltos, sin degradados: contorno y contorno doble. */
+  .mg-basura.is-alert .mg-sprite {
+    --px: calc(var(--s) * 1px);
+    --aro: drop-shadow(var(--px) 0 0 #ff0044) drop-shadow(calc(var(--px) * -1) 0 0 #ff0044)
+      drop-shadow(0 var(--px) 0 #ff0044) drop-shadow(0 calc(var(--px) * -1) 0 #ff0044);
+    --aro-2: drop-shadow(var(--px) 0 0 #a22633) drop-shadow(calc(var(--px) * -1) 0 0 #a22633)
+      drop-shadow(0 var(--px) 0 #a22633) drop-shadow(0 calc(var(--px) * -1) 0 #a22633);
+    filter: var(--aro);
+    animation: mg-glow 0.8s steps(1) infinite;
   }
+  @keyframes mg-glow {
+    50% {
+      filter: var(--aro) var(--aro-2);
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .mg-basura.is-alert .mg-sprite {
+      animation: none;
+    }
+  }
+
+  /* La plancha es un sprite; cada lugar es una zona transparente sobre la placa. */
   .mg-slot {
     position: absolute;
     border-radius: calc(var(--s) * 1px);
-    background: #262b44;
-    box-shadow: inset 0 calc(var(--s) * 1px) 0 #181425;
   }
+  /* Lugar apagado: solo se oscurece la zona de la placa que se calienta (filas 6 a 24 del sprite de
+     la plancha; el lugar empieza 2 filas más abajo), no la salpicadera ni el panel con la perilla. */
   .mg-slot.is-off {
-    opacity: 0.25;
     pointer-events: none;
+  }
+  .mg-slot.is-off::before {
+    position: absolute;
+    top: calc(var(--s) * 4px);
+    right: 0;
+    left: 0;
+    height: calc(var(--s) * 19px);
+    background: rgb(24 20 37 / 0.6);
+    content: '';
   }
 
   /* Indicador de cocción: la pista muestra las zonas y el relleno avanza con el color de la zona actual. */
@@ -289,7 +329,7 @@
     border-radius: calc(var(--s) * 2px);
     background: #ead4aa;
     color: #181425;
-    font-size: calc(var(--s) * 4px);
+    font-size: var(--texto);
     box-shadow: 0 calc(var(--s) * 1px) 0 rgb(24 20 37 / 0.5);
   }
   .mg-bubble-text {
@@ -302,7 +342,6 @@
     background: #e43b44;
     color: #fff;
     font: inherit;
-    font-weight: 700;
     cursor: pointer;
   }
   .mg-arrow {
@@ -315,7 +354,7 @@
     padding: calc(var(--s) * 1.5px) calc(var(--s) * 3px);
     border-radius: calc(var(--s) * 1px);
     background: rgb(24 20 37 / 0.85);
-    font-size: calc(var(--s) * 4px);
+    font-size: var(--texto);
     white-space: nowrap;
     opacity: 0;
     transform: translateX(-50%);
@@ -340,20 +379,19 @@
   }
   .mg-overlay-title {
     margin: 0;
-    font-size: calc(var(--s) * 9px);
+    font-size: var(--titulo);
     font-weight: 700;
+    line-height: calc(var(--s) * 11px);
   }
   .mg-overlay-text {
     max-width: calc(var(--s) * 160px);
     margin: 0;
-    font-size: calc(var(--s) * 4.5px);
+    font-size: var(--texto);
   }
   .mg-overlay-btn {
     padding: calc(var(--s) * 2px) calc(var(--s) * 6px);
     border: 0;
     font: inherit;
-    font-size: calc(var(--s) * 5px);
-    font-weight: 700;
     cursor: pointer;
   }
   .mg-overlay-btn.is-secondary {

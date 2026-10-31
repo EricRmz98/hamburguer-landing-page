@@ -1,153 +1,232 @@
 import { defineSprite } from './define.ts';
 
-// Set ancla de ingredientes (vista lateral). Estilo: 16-bit, sombreado plano y contorno selectivo;
-// luz desde arriba a la izquierda. Letras: o = contorno, s = sombra, b = base, l = luz, h = brillo.
+// Ingredientes en vista frontal elevada 3/4 (cámara a 32° de altura, girada 12°).
+// Se generaron modelando cada objeto con vóxeles y proyectándolo: cara de arriba = luz, frente e
+// izquierda = base, derecha y contacto = sombra, contorno selectivo y textura por material.
+// Son texto como cualquier otro sprite: se pueden retocar a mano. Las anclas (base de cada objeto
+// dentro del sprite) están en anchors.ts.
 
 export const panBase = defineSprite({
   id: 'pan_base',
-  size: [32, 8],
+  size: [24, 16],
   materials: ['pan'],
   colors: { o: 'cafe', s: 'canela', b: 'durazno', l: 'crema' },
   pixels: `
-    ..ssssssssssssssssssssoooooooo..
-    .sllllllllllllllllllllllllllllo.
-    slllllllblllllllllbllllllbllllso
-    sllbbbbbbbbbbbbbbbbbbbbbbbbbbbso
-    sbbbbbbbbbbbbbbbbbbbbbbbbbbbbsso
-    obbbbbbbbbbbbbbbbbbbbbbbbbbsssso
-    .osssssssssssssssssssssssssssso.
-    ..oooooooooooooooooooooooooooo..
-  `,
-});
-
-export const carne = defineSprite({
-  id: 'carne',
-  size: [32, 6],
-  materials: ['carne'],
-  colors: { o: 'negro', s: 'cafe-oscuro', b: 'cafe', l: 'canela', h: 'piel' },
-  pixels: `
-    ...ooooo.ooooooooooo.oooooooo...
-    .ollhlllbbbbbbllbbbbbbbbbbbbsso.
-    ollbbbbbbbbsbbbbbbbbbsbbbbbbssso
-    obbbsbbbbbbssbbbbbbbsbbbbbssssso
-    ossbbbssssssssssssssssssssssssso
-    ..oooooooooooooooooooooooooooo..
-  `,
-  variants: {
-    perfecta: {},
-    cruda: { materials: ['carne-cruda'], colors: { o: 'ciruela', s: 'magenta', b: 'rosa', l: 'piel-clara', h: 'blanco' } },
-    cocinandose: { materials: ['carne-cocinandose'], colors: { o: 'cafe-oscuro', s: 'cafe', b: 'canela', l: 'piel', h: 'piel-clara' } },
-    quemada: {
-      materials: ['carne-quemada'],
-      colors: { o: 'negro', s: 'negro', b: 'noche', l: 'pizarra', h: 'gris-azul' },
-      patch: { 2: 'ollbbbbobbbbbboobbbbbbbbobbbssso' },
-    },
-  },
-});
-
-export const queso = defineSprite({
-  id: 'queso',
-  size: [34, 5],
-  materials: ['queso'],
-  colors: { o: 'oxido', s: 'naranja', b: 'ambar', l: 'amarillo' },
-  pixels: `
-    .oooooooooooooooooooooooooooooooo.
-    ollllllbbbbbbbbbbbbbbbbbbbbbbbbbso
-    oblbbbbbbbbbbbbbbbbbbbbbbbbbbbbbso
-    obbooooooooooobsooooooooooooooosso
-    .oo...........oo...............oo.
+    ........bo.bbbo.........
+    ......bbllbllllbbbo.....
+    ..bbbbllllllllllbllbo...
+    ..bblllllllllllllllllo..
+    .bllllllllllllllllllllo.
+    blllllllllllllllllbblllo
+    bllllllllllllllllllllllo
+    bllllllllllllllllllllllo
+    bllllbbllllllblllllllllo
+    sblbllllllllllllllllllbo
+    obbllllllllllllllllllbbo
+    .obbllllbllllllllllbsbo.
+    ..obbbbblllllllllbbbso..
+    ...obbbbbsbbsbbbbbooo...
+    ....oooobsbbsbbboo......
+    ........oooooooo........
   `,
 });
 
 export const panMedio = defineSprite({
   id: 'pan_medio',
-  size: [32, 6],
+  size: [24, 15],
   materials: ['pan'],
   colors: { o: 'cafe', s: 'canela', b: 'durazno', l: 'crema' },
   pixels: `
-    ..oooooooooooooooooooooooooooo..
-    .sllllllllllllllllllllllllllllo.
-    sllbbbbbbbbbbbbbbbbbbbbbbbbbbbso
-    sbbbbbbbbbbbbbbbbbbbbbbbbbbbssso
-    osssssssssssssssssssssssssssssso
-    .oooooooooooooooooooooooooooooo.
+    .........bbo............
+    .....bbbblllbbbbbbo.....
+    ...bblbllllllllllllo....
+    ..blllblllllllllllllbo..
+    ..bllllllllllllllbllllo.
+    bbbllllllllllllllllllllo
+    blllbllllllllllllllllllo
+    blllbllllllllllllllllllo
+    sllllllllllllllllllllllo
+    ollllllllllllllllllllllo
+    .obsllllllllllllllllllo.
+    ..slbllllllllllllllslo..
+    ..oobbsbbbslllllbbbooo..
+    ....oooobslllbllooo.....
+    ........oooooooo........
   `,
 });
 
 export const panTapa = defineSprite({
   id: 'pan_tapa',
-  size: [32, 14],
+  size: [24, 16],
   materials: ['pan'],
-  colors: { o: 'cafe', s: 'canela', b: 'durazno', l: 'crema', e: 'crema' },
+  colors: { o: 'cafe', s: 'canela', b: 'canela', l: 'durazno', e: 'crema' },
   pixels: `
-    ..........oooooooooooo..........
-    .......olllllbbbbbbbbbsso.......
-    .....ollllbbbbbebbbbbbebsso.....
-    ...olllbbebbbbbbbbebbbbbbssso...
-    ..ollbbbbbbbbbbebbbbbebbbsssso..
-    .ollbbbbebbbbbbbbbebbbbbbssssso.
-    .olbbbbbbbbebbbbbbbbbbbbsssssso.
-    obbbbbbbbbbbbbbbbbbbbbbbbsssssso
-    obbbbbbbbbbbbbbbbbbbbbbbssssssso
-    obbbbbbbbbbbbbbbbbbbbbbsssssssso
-    obbbbbbbbbbbbbbbbbbbbsssssssssso
-    obbbbbbbbbbbbbbbbsssssssssssssso
-    osssssssssssssssssssssssssssssso
-    .oooooooooooooooooooooooooooooo.
+    .......bbbbbbbbbo.......
+    ....bbblllellllllbbo....
+    ...belllllllllllllllo...
+    ..bllllllllllllllllleo..
+    .bllllllllllllllllllllo.
+    bllllllellllllllllellllo
+    slllllllllllllllllsslllo
+    bllsellbllllllllesllsslo
+    slllsllbsllllllsellslsso
+    sblllbssllllllllssblslbo
+    sbblbsllbbslsbblllsslsbo
+    obbbsllbsslllssbsblbslbo
+    .obblbbbllllsllslblbsbo.
+    ..oobbsbbbsslbblbbbboo..
+    ....ooobbssbsbbsbooo....
+    .......oooooooooo.......
+  `,
+});
+
+export const carne = defineSprite({
+  id: 'carne',
+  size: [27, 17],
+  materials: ['carne'],
+  colors: { k: 'negro', m: 'cafe-oscuro', n: 'cafe', p: 'canela', h: 'piel' },
+  pixels: `
+    .......nnnnnnnnnk..........
+    ......nppppppmpppnnnnk.....
+    ....nnppmmmpmmmpppppppnnk..
+    ....nppppppppppmppppppppk..
+    ...nppppmppmpppmpppmppppk..
+    .nnpmmpppppppppmppmpppmppk.
+    .nppppppmmppppmpppppmppppk.
+    mhppppppmhpppppppmpppppppk.
+    mnphppppppmpmpppppppppmmppk
+    mnnpmpphpmpppppppmppmppppmk
+    knnnnppppppppppppppppppppnk
+    .kknnnhpppppmpmmmppmppnmmnk
+    ...mnnnnppmppppmpppnnmnmmk.
+    ...kkknnmnnnmpnnmnnnnmnkk..
+    ......kmnnnnnnmnmmnknkk....
+    .......kkkmnnnmnkkk.k......
+    ..........kkkkkk...........
+  `,
+  variants: {
+    perfecta: {  },
+    cruda: { materials: ['carne-cruda'], colors: { k: 'ciruela', m: 'magenta', n: 'rosa', p: 'piel-clara', h: 'blanco' } },
+    cocinandose: { materials: ['carne-cocinandose'], colors: { k: 'cafe-oscuro', m: 'cafe', n: 'canela', p: 'piel', h: 'piel-clara' } },
+    quemada: { materials: ['carne-quemada'], colors: { k: 'negro', m: 'negro', n: 'noche', p: 'pizarra', h: 'gris-azul' } },
+  },
+});
+
+export const queso = defineSprite({
+  id: 'queso',
+  size: [24, 15],
+  materials: ['queso'],
+  colors: { q: 'oxido', r: 'naranja', t: 'ambar', u: 'amarillo' },
+  pixels: `
+    ....tttttq..............
+    ....tuuuuuttttttttq.....
+    ...tuuuuuuuuuuuuuuuttttq
+    ...tuuuuuuuuuuuuuuuuuuuq
+    ..tuuuuuuuuuuuuuuuuuuuuq
+    ..tuuuuuuuuuuuuuuuuuuuq.
+    ..tuuuuuuuuuuuuuuuuuuq..
+    .tuuuuuuuuuuuuuuuuuuuq..
+    .tuuuuuuuuuuuuuuuuuuuq..
+    tuuuuuuuuuuuuuuuuuuuq...
+    rtqquuuuuuuuuuuuuuuuq...
+    rq..qqqqqqqqquuuuuuq....
+    qq...........qqqqqtq....
+    ..................rq....
+    ..................qq....
   `,
 });
 
 export const lechuga = defineSprite({
   id: 'lechuga',
-  size: [34, 5],
+  size: [28, 16],
   materials: ['lechuga'],
-  colors: { o: 'verde-noche', s: 'verde-oscuro', b: 'verde', l: 'verde-claro' },
+  colors: { v: 'verde-noche', w: 'verde-oscuro', x: 'verde', y: 'verde-claro' },
   pixels: `
-    .ooo..oooo.ooooo..oooo.ooooo..ooo.
-    ollllbbbbbblllbbbbbbbbllbbbbbbbsso
-    obblbbbbbbbbbbbbbbbbbbbbbbbbssssso
-    obbbbbbbbssbbbbbbsssssssssssssssso
-    .oooo.oooooo.oooooo.oooooo.ooooo..
+    ................xxxv........
+    .......xv......xyyyv........
+    .....xxyyxxxxxxyyyyyv.......
+    .....xyyyyyyyxyxyyyyyv...xv.
+    ....xyyxyyxyyyyyyyyyyywxxyyv
+    ....xyyyyxxxxyyyxyyyyxyyxyyv
+    .xxxyyxyyyyyyyyyxyxxyyyyywxv
+    .xyyyyyyyyyyyyyyyyyxyyyyyywv
+    vxyyxxyyyyyyxyyxyxxyyyyyxyv.
+    .vyxyyxyyyxyyyyyyyyyyyxyyyyv
+    ..vvyyyyyyyxxyyyyyyyyyyxyyyv
+    ....xyyyyxyyyyyyyyxxxxyyxwxv
+    ....vyyyyxyyyyyyyyxxyyxvvvvv
+    .....wxyxwyyxyyyyyxyxyv.....
+    .....vvvvvvvvvwxyyyxwv......
+    ..............vvvvvvv.......
   `,
 });
 
 export const tomate = defineSprite({
   id: 'tomate',
-  size: [30, 3],
+  size: [22, 13],
   materials: ['tomate'],
-  colors: { o: 'rojo-oscuro', s: 'rojo-oscuro', b: 'rojo', l: 'rosa' },
+  colors: { A: 'rojo-oscuro', C: 'rojo', D: 'rosa' },
   pixels: `
-    .oooooooooooooooooooooooooooo.
-    ollllbbbbbbbbbbbbbbbbbbbbbbsso
-    .oooooooooooooooooooooooooooo.
+    ......CCCCCCCCCA......
+    ...CCCDDCCCDDDDDCCA...
+    ..CDDDDCCCDDDCCDDDA...
+    ..CDDCDCDDDDDDDDDDDCA.
+    .CDDCCCDCCCCCDDDDCDDDA
+    .CDDDDDDCCCCCCDDDDDDDA
+    ADDDCDDDCCCCCCDCCDDDA.
+    ADDDDDCDDCCDDCCCCDDDA.
+    .ACDDDCCCCDDCCCCDDDCA.
+    ..ACCDDDDDDDDDDDDACA..
+    ...AACCCCDDDDCDCAAA...
+    .....AAAAAAACAAA......
+    ............A.........
   `,
 });
 
 export const cebolla = defineSprite({
   id: 'cebolla',
-  size: [30, 3],
+  size: [22, 12],
   materials: ['cebolla'],
-  colors: { o: 'ciruela', s: 'magenta', b: 'piel-clara', l: 'blanco' },
+  colors: { E: 'ciruela', F: 'magenta', G: 'piel-clara', H: 'blanco' },
   pixels: `
-    .oooooooooooooooooooooooooooo.
-    ollbbbbbsbbbbbbsbbbbbbsbbbbsso
-    .oooooooooooooooooooooooooooo.
+    ......GGGGGGGGGGE.....
+    ...GGGFFFHHHFFFFHGE...
+    ..GHHFHHHHHHHHHHFHHE..
+    .GHFFHHHFHHHHFFHHHFHE.
+    .GHFHHFHHHHHHHFHHHFHHE
+    .GHFHHHFHHHHHHHFHHFHE.
+    EHHFHHHFHHHHHHFHHHFHE.
+    .EHHFHHHHFFHFHHHFFHHE.
+    ..EHHHHHHHHHHHHFFHHE..
+    ...EEHHHHHHFHHHHEEE...
+    .....EEEEEEEHEEE......
+    ............E.........
   `,
 });
 
 export const salsa = defineSprite({
   id: 'salsa',
-  size: [30, 3],
+  size: [20, 13],
   materials: ['catsup'],
-  colors: { o: 'cafe-oscuro', s: 'rojo-oscuro', b: 'rojo', l: 'rosa' },
+  colors: { I: 'cafe-oscuro', J: 'rojo-oscuro', K: 'rojo', L: 'rosa' },
   pixels: `
-    ..oooooooooooooooooooooooooo..
-    olllbbbbbbbbbbbbbbbbbbbbbbssso
-    .oo...oo......ooo.....oo....oo
+    .....KI.......KI....
+    ...KKLLKKKKKKKLLI...
+    ...KLLLLLLLLLLLLLI..
+    ...KLLLLLLLLLLLLI...
+    ..KLLLLLLLLLLLLLLI..
+    .KLLLLLLLLLLLLLLLLI.
+    KLLLLLLLLLLLLLLLLLLI
+    IILLLLLLLLLLLLLLLLLI
+    ..JIIILLLLLLLLIIIII.
+    ..I...ILLLLLLI......
+    ..I....IIILII..JI...
+    ..I.......I....II...
+    ..........I.........
   `,
   variants: {
     catsup: {  },
-    mostaza: { materials: ['mostaza'], colors: { o: 'oxido', s: 'tostado', b: 'ambar', l: 'amarillo' } },
-    mayonesa: { materials: ['mayonesa'], colors: { o: 'canela', s: 'durazno', b: 'crema', l: 'blanco' } },
+    mostaza: { materials: ['mostaza'], colors: { I: 'oxido', J: 'tostado', K: 'ambar', L: 'amarillo' } },
+    mayonesa: { materials: ['mayonesa'], colors: { I: 'canela', J: 'durazno', K: 'crema', L: 'blanco' } },
   },
 });

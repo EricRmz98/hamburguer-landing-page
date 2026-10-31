@@ -62,7 +62,7 @@ export const RAMPS = {
   'carne-quemada': ['negro', 'noche', 'pizarra', 'gris-azul'],
   queso: ['oxido', 'naranja', 'ambar', 'amarillo'],
   lechuga: ['verde-noche', 'verde-oscuro', 'verde', 'verde-claro'],
-  tomate: ['rojo-oscuro', 'rojo', 'rosa'],
+  tomate: ['rojo-oscuro', 'rojo', 'rosa', 'piel-clara'],
   cebolla: ['ciruela', 'magenta', 'piel-clara', 'blanco'],
   catsup: ['cafe-oscuro', 'rojo-oscuro', 'rojo', 'rosa'],
   mostaza: ['oxido', 'tostado', 'ambar', 'amarillo'],
