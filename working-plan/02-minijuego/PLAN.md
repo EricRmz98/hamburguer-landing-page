@@ -106,21 +106,21 @@ Valores iniciales propuestos (ajustables en el panel):
 | --- | --- |
 | Tiempo por toque | 0,4 s |
 | Holgura inicial | ×4,5 |
-| Clientes con holgura completa | 3 |
-| Baja por cliente (después) | 0,1 |
-| Holgura mínima (tope) | ×1,5, alrededor del cliente 33 |
+| Clientes con holgura completa | 2 |
+| Baja por cliente (después) | 0,2 |
+| Holgura mínima (tope) | ×1,5, desde el cliente 17 |
 
-Con estos valores, la clásica del primer cliente da unos 32 s, y una torre de cuatro carnes en el tope, unos 16 s. El arranque se suavizó tras la primera partida de prueba: con ×3 desde el primer cliente, el ritmo inicial resultaba apretado.
+Con estos valores, la clásica da unos 32 s en los primeros clientes, 21 s en el cliente 10 y 11 s en el tope; una torre de cuatro carnes en el tope, unos 16 s. Ajustes tras las partidas de prueba: con ×3 desde el primer cliente el arranque resultaba apretado, y con la baja de 0,1 (tope en el cliente 33) la dificultad tardaba demasiado en subir.
 
 Las recetas y la plancha crecen por tramos:
 
 | Clientes | Recetas | Lugares en plancha |
 | --- | --- | --- |
-| 1–3 | Sencilla o con queso | 2 |
-| 4–7 | Doble carne, más verduras y salsas | 2 |
-| 8–12 | Triple carne | 3 |
-| 13–20 | Cuádruple o pan intermedio | 4 |
-| 21+ | Cualquiera | 4 |
+| 1–2 | Sencilla o con queso | 2 |
+| 3–5 | Doble carne, más verduras y salsas | 2 |
+| 6–9 | Triple carne | 3 |
+| 10–14 | Cuádruple o pan intermedio | 4 |
+| 15+ | Cualquiera | 4 |
 
 ## Recetas
 

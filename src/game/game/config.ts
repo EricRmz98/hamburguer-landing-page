@@ -25,16 +25,16 @@ export const DEFAULT_CONFIG = {
   patience: {
     tapTime: 0.4, // segundos por toque al calcular el tiempo mínimo
     slackStart: 4.5,
-    slackGrace: 3, // clientes del inicio con la holgura inicial completa
-    slackStep: 0.1,
+    slackGrace: 2, // clientes del inicio con la holgura inicial completa
+    slackStep: 0.2,
     slackMin: 1.5,
     scale: 1, // multiplicador global para pruebas
   },
   levels: [
-    { upTo: 3, tier: 1, slots: 2 },
-    { upTo: 7, tier: 2, slots: 2 },
-    { upTo: 12, tier: 3, slots: 3 },
-    { upTo: 20, tier: 4, slots: 4 },
+    { upTo: 2, tier: 1, slots: 2 },
+    { upTo: 5, tier: 2, slots: 2 },
+    { upTo: 9, tier: 3, slots: 3 },
+    { upTo: 14, tier: 4, slots: 4 },
   ] as LevelStep[],
   endless: { tier: 5, slots: 4 },
 };
