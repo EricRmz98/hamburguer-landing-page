@@ -2,7 +2,7 @@
 
 Crear un minijuego de pixel art en la segunda sección de la landing: el visitante prepara hamburguesas para clientes que llegan al mostrador. La primera partida es un tutorial guiado que termina invitando a pedir la hamburguesa real; quien decide seguir jugando entra en un modo infinito, al estilo del dinosaurio de Chrome, donde cada cliente pide una orden distinta y la dificultad sube hasta que el jugador falla.
 
-Estado: **F1 implementada**. El flujo completo se juega con bloques de color y un panel de ajuste de tiempos. Faltan el ajuste fino de tiempos (F2), el sonido y los sprites. Este documento reúne las decisiones acordadas, la arquitectura y los valores iniciales que se afinarán jugando. El formato de los sprites (texto con paleta) y sus herramientas se describen en [ASSETS.md](ASSETS.md).
+Estado: **F1 y F2 listas; F3 en revisión**. El flujo completo se juega con bloques de color y la mecánica y la dificultad se ajustaron jugando. El formato de sprites y el set ancla están listos para revisar en `/sprites`; siguen el inventario completo y después el sonido. Este documento reúne las decisiones acordadas, la arquitectura y los valores iniciales que se afinarán jugando. El formato de los sprites (texto con paleta) y sus herramientas se describen en [ASSETS.md](ASSETS.md).
 
 ## Decisiones acordadas
 
@@ -16,6 +16,7 @@ Estado: **F1 implementada**. El flujo completo se juega con bloques de color y u
 - **Tutorial**: la primera partida es una hamburguesa clásica guiada con flechas y textos. Los tiempos se congelan, así que no se puede fallar. Al entregarla, un cliente de pixel art la recibe y aparecen dos opciones: **«Pídela de verdad»** y **«Seguir jugando»**.
 - **Modo infinito**: al seguir jugando llega el siguiente cliente con otra orden. A partir de aquí se puede fallar. La partida continúa hasta perder, y se guarda el récord.
 - Las órdenes tienen un **orden de ingredientes lógico**: los panes nunca quedan juntos abajo con los ingredientes encima. Hay variantes de doble, triple y cuádruple carne, y de pan intermedio (tres panes en total).
+- **Estética**: pixel art 16-bit con sombreado plano y contorno selectivo, sobre la paleta **Endesga 32** (ver [ASSETS.md](ASSETS.md#estilo-y-paleta-decididos)).
 - Los sprites son **definiciones de texto**: tamaño, letras asignadas a colores de una paleta global y una matriz de caracteres. La IA los escribe directamente con pocos tokens, y las variantes salen cambiando la paleta. El motor los convierte una vez en imágenes al arrancar, con **un elemento HTML por sprite, no por pixel**. Los fondos se arman con tiles. Ver [ASSETS.md](ASSETS.md).
 - Lleva **efectos de sonido** de estilo 8 bits.
 - El motor es **nativo de HTML/CSS** con la lógica en TypeScript y GSAP, sin una librería de juegos (detalle en la sección «Motor»).
@@ -228,7 +229,7 @@ src/game/
   engine/
     clock.ts         Reloj sobre gsap.ticker con pausas por motivo
     stage.ts         Disposición y escala entera según el espacio
-    audio.ts         (F3) Efectos con ZzFX, silencio y desbloqueo con el primer toque
+    audio.ts         (F5) Efectos con ZzFX, silencio y desbloqueo con el primer toque
   game/              Lógica pura, sin DOM; probada con node --test (tests/)
     config.ts        Todos los valores ajustables
     ingredients.ts   Ingredientes, tamaños y grupos
@@ -242,10 +243,12 @@ src/game/
   view/
     greybox.ts       Vista provisional con bloques de color
     debug.ts         Panel de ajuste (desarrollo o ?ajustes)
-  sprites/           (F4) palette.ts · define.ts · validate.ts · bake.ts y las definiciones
+  sprites/           palette.ts (Endesga 32 y rampas) · define.ts · validate.ts (errores y estilo) ·
+                     atlas.ts · bake.ts · convert.ts (PNG → texto) · index.ts (registro) y las definiciones
+src/dev/sprites.astro   Página de revisión (solo con pnpm dev)
 ```
 
-La vista con bloques se sustituye en F5 por una vista con sprites que escucha los mismos eventos. No hay carpeta de imágenes: los sprites viajarán dentro del JavaScript del juego.
+La vista con bloques se sustituye en F4 por una vista con sprites que escucha los mismos eventos. No hay carpeta de imágenes: los sprites viajarán dentro del JavaScript del juego.
 
 Principios:
 
@@ -295,10 +298,10 @@ El audio se activa con el toque de «Jugar», un gesto del usuario que los naveg
 El juego se construye primero completo con bloques (`div` y botones de color con su nombre) para fijar mecánica y tiempos. Los sprites se hacen al final.
 
 - [x] **F1 · Flujo completo con bloques**: escenario y escalado, reloj, plancha, armado, recetas (gramática, generador y validador), clientes, vidas, dificultad, modo infinito, récord, tutorial y pistas. Incluye un panel de ajuste para cambiar los tiempos mientras se juega. Tutorial, modo infinito, quema, pistas y disposición vertical revisados en navegador; 37 pruebas de lógica.
-- [ ] **F2 · Ajuste de tiempos y sensación**: jugar, ajustar con el panel, fijar los valores en la configuración y cerrar los pendientes de mecánica.
-- [ ] **F3 · Sonido**: efectos, silencio y desbloqueo de audio.
-- [ ] **F4 · Sprites como texto**: formato `defineSprite`/`defineTilemap`, paleta, validación, horneado, página de revisión y set ancla (pan base, carne, queso y bote). Ver [ASSETS.md](ASSETS.md).
-- [ ] **F5 · Inventario completo de sprites**: el resto de ingredientes, utensilios, clientes, efectos, UI y fondos de tiles, sustituyendo los bloques. El importador de PNG se usa solo si algún sprite lo necesita.
+- [x] **F2 · Ajuste de tiempos y sensación**: casilla única de pan, sin pepinillos, indicador de cocción, barra de preparación, pausa, basura funcional y curva de dificultad ajustada tras partidas de prueba. Los valores pueden seguir afinándose con el panel.
+- [ ] **F3 · Sprites como texto**: formato `defineSprite`/`defineTilemap`, paleta, validación, horneado, página de revisión y set ancla (pan base, carne, queso y bote). Ver [ASSETS.md](ASSETS.md). Implementado, con atlas único, revisión de estilo e ida y vuelta con Aseprite; 34 pruebas de sprites. **Pendiente la aprobación del set ancla**.
+- [ ] **F4 · Inventario completo de sprites**: el resto de ingredientes, utensilios, clientes, efectos, UI y fondos de tiles, sustituyendo los bloques. El importador de PNG se usa solo si algún sprite lo necesita.
+- [ ] **F5 · Sonido**: efectos sincronizados con las animaciones de los sprites (apretar el bote, chisporroteo, destello de «lista»), silencio y desbloqueo de audio. Va después de los sprites porque su duración y carácter dependen de ellas.
 - [ ] **F6 · Integración y revisión**: sección 2, respaldo sin JS, disposiciones horizontal y vertical, accesibilidad, rendimiento y compilación.
 
 F2 es la fase crítica: si la plancha no se siente bien con bloques, el arte no la va a salvar.

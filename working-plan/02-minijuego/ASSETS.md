@@ -2,7 +2,7 @@
 
 Los sprites del [minijuego](PLAN.md) no son imágenes: son **definiciones de texto**. Cada una declara su tamaño en pixeles, qué color representa cada letra y una matriz de caracteres con el dibujo. La IA (el agente que trabaja en el proyecto) los escribe directamente en el código. Al arrancar, el motor los convierte una sola vez en imágenes y los muestra con un solo elemento HTML por sprite.
 
-Estado: **planeación**. Las rutas, el formato y las herramientas descritas aquí son la propuesta de implementación de la fase F4, que llega después de fijar la mecánica con bloques. Este enfoque sustituye al flujo anterior basado en generar imágenes con IA y normalizarlas, que queda solo como importación opcional.
+Estado: **F3 en revisión**. El formato (`src/game/sprites/`), la validación, el horneado, la página de revisión y el set ancla (pan, carne, queso y bote) están implementados; falta aprobar el set ancla antes de dibujar el resto del inventario (F4). Este enfoque sustituye al flujo anterior basado en generar imágenes con IA y normalizarlas, que queda solo como importación opcional.
 
 ## Por qué texto
 
@@ -15,28 +15,76 @@ Estado: **planeación**. Las rutas, el formato y las herramientas descritas aqu�
 
 ## Formato
 
+### Estilo y paleta (decididos)
+
+- **Estilo**: pixel art **16-bit con sombreado plano (flat shading) y contorno selectivo (sel-out)**. Cada material lleva 3 tonos (sombra, base y luz) más un brillo puntual de 1 o 2 pixeles; luz desde arriba a la izquierda; contorno del tono oscuro del propio material, nunca negro; sin dithering en los sprites. Referencia: los íconos de comida de *Stardew Valley*.
+- **Paleta**: [Endesga 32](https://lospec.com/palette-list/endesga-32), de **ENDESGA** (creada originalmente para *NYKRA*). Se usan exactamente sus 32 colores, sin agregar otros. La ficha de Lospec no indica licencia; se da crédito al autor en los créditos del sitio.
+
 ### Paleta global
 
+Los 32 colores tienen nombre propio en español. Las letras de los sprites apuntan a esos nombres; el hex vive solo en `palette.ts`.
+
 ```ts
-// src/game/sprites/palette.ts
+// src/game/sprites/palette.ts — Endesga 32 (ENDESGA), en el orden de Lospec
 export const PALETTE = {
-  'pan-900': '#5b2c12',
-  'pan-600': '#c97a2b',
-  'pan-300': '#f2b15a',
-  'carne-900': '#2a160e',
-  'carne-600': '#7a3b22',
-  'carne-400': '#b5643a',
-  'cruda-800': '#6e2a2a',
-  'cruda-500': '#c4585a',
-  'cruda-300': '#e8908a',
-  'quemada-900': '#141010',
-  'quemada-700': '#302824',
-  'quemada-500': '#4e423b',
-  // …
+  oxido: '#be4a2f',
+  tostado: '#d77643',
+  crema: '#ead4aa',
+  durazno: '#e4a672',
+  canela: '#b86f50',
+  cafe: '#733e39',
+  'cafe-oscuro': '#3e2731',
+  'rojo-oscuro': '#a22633',
+  rojo: '#e43b44',
+  naranja: '#f77622',
+  ambar: '#feae34',
+  amarillo: '#fee761',
+  'verde-claro': '#63c74d',
+  verde: '#3e8948',
+  'verde-oscuro': '#265c42',
+  'verde-noche': '#193c3e',
+  'azul-oscuro': '#124e89',
+  azul: '#0099db',
+  cian: '#2ce8f5',
+  blanco: '#ffffff',
+  'gris-claro': '#c0cbdc',
+  gris: '#8b9bb4',
+  'gris-azul': '#5a6988',
+  pizarra: '#3a4466',
+  noche: '#262b44',
+  negro: '#181425',
+  alerta: '#ff0044',
+  ciruela: '#68386c',
+  magenta: '#b55088',
+  rosa: '#f6757a',
+  'piel-clara': '#e8b796',
+  piel: '#c28569',
 } as const;
 ```
 
-Los colores se organizan en **rampas por material** (pan, carne, queso, lechuga, metal, madera, piel…) de 3 o 4 tonos, oscuro a claro. El hex vive solo aquí. El total ronda entre 32 y 48 colores (valor inicial), que se fijan antes de dibujar el set ancla.
+Rampas por material (contorno → sombra → base → luz). Viven en código como `RAMPS` (`palette.ts`): cada sprite declara sus `materials` y la revisión de estilo avisa si usa colores de fuera.
+
+| Material | Contorno | Sombra | Base | Luz / brillo |
+| --- | --- | --- | --- | --- |
+| Pan | `cafe` | `canela` | `durazno` | `crema` |
+| Carne perfecta | `negro` | `cafe-oscuro` | `cafe` | `canela` / `piel` |
+| Carne cocinándose | `cafe-oscuro` | `cafe` | `canela` | `piel` / `piel-clara` |
+| Carne cruda | `ciruela` | `magenta` | `rosa` | `piel-clara` / `blanco` |
+| Carne quemada | `negro` | `noche` | `pizarra` | `gris-azul` |
+| Queso | `oxido` | `naranja` | `ambar` | `amarillo` |
+| Lechuga | `verde-noche` | `verde-oscuro` | `verde` | `verde-claro` |
+| Tomate | `rojo-oscuro` | `rojo-oscuro` | `rojo` | `rosa` |
+| Cebolla | `ciruela` | `magenta` | `piel-clara` | `blanco` |
+| Cátsup | `cafe-oscuro` | `rojo-oscuro` | `rojo` | `rosa` |
+| Mostaza | `oxido` | `tostado` | `ambar` | `amarillo` |
+| Mayonesa | `canela` | `durazno` | `crema` | `blanco` |
+| Metal (plancha, tapas) | `negro` | `noche` | `pizarra` | `gris-azul` → `gris` |
+| Madera (barra) | `cafe-oscuro` | `cafe` | `canela` | `piel` |
+| Pared y fondo | `negro` | `noche` | `pizarra` | `azul-oscuro` |
+| Piel (clientes) | `cafe` | `canela` / `piel` | `piel` / `piel-clara` | `crema` |
+| Avisos (UI) | — | — | `alerta`, `cian`, `azul` | — |
+
+Algunas rampas comparten colores (pan y madera, tomate y cátsup). Se distinguen por forma, textura y posición, y la base de cada una es distinta.
 
 ### Definición de un sprite
 
@@ -45,7 +93,7 @@ Los colores se organizan en **rampas por material** (pan, carne, queso, lechuga,
 export const carne = defineSprite({
   id: 'carne',
   size: [32, 6],
-  colors: { o: 'carne-900', b: 'carne-600', h: 'carne-400' },
+  colors: { o: 'cafe-oscuro', b: 'cafe', h: 'canela' },
   pixels: `
     ....oooooooooooooooooooooooo....
     ..oobbbbbhhbbbbbbbbbbbbbbhbboo..
@@ -56,9 +104,9 @@ export const carne = defineSprite({
   `,
   variants: {
     perfecta: {},
-    cruda: { o: 'cruda-800', b: 'cruda-500', h: 'cruda-300' },
+    cruda: { o: 'ciruela', b: 'magenta', h: 'rosa' },
     quemada: {
-      colors: { o: 'quemada-900', b: 'quemada-700', h: 'quemada-500' },
+      colors: { o: 'negro', b: 'noche', h: 'pizarra' },
       patch: { 2: '.obbbbbbobbbbbbbhbbbbbobbbbbbbo.' },
     },
   },
@@ -97,41 +145,44 @@ Cada tile es un sprite normal de 20 × 20 (pared, azulejo, madera, mostrador, ve
 ## Del texto a la pantalla
 
 ```text
-definición de texto ──► validación ──► horneado (una vez) ──► caché de URLs ──► <img>/<button> en el DOM
+definiciones de texto ──► validación y estilo ──► atlas (una sola imagen, una vez) ──► un elemento por sprite en el DOM
 ```
 
-- **Horneado**: al arrancar el juego, `bake.ts` dibuja cada sprite, variante y cuadro a escala 1 en un canvas invisible con `putImageData`. Lo convierte en imagen (`toBlob` y una URL de objeto) y la guarda en caché con la clave `id:variante`. Las animaciones se hornean como una tira horizontal para usarla con `steps()`. Los fondos de tiles se hornean como una sola imagen de 320 × 200 o 180 × 280.
-- **Un elemento por sprite, no por pixel**: en el DOM, cada pieza es un `<button>` o `<img>` con su imagen, escalada por CSS a un múltiplo entero con `image-rendering: pixelated`. Un elemento por pixel produciría decenas de miles de nodos y haría lento el layout y la animación, sobre todo en móvil. Por la misma razón se descarta el truco de `box-shadow` por pixel.
-- **Coste**: hornear sprites tan pequeños es prácticamente instantáneo y ocurre una sola vez, antes de mostrar el juego. Si cambia la paleta de una variante durante la partida, ese resultado también se guarda en caché.
+- **Atlas**: al arrancar el juego, `bakeAtlas` (`atlas.ts` + `bake.ts`) dibuja todos los sprites, variantes y cuadros a escala 1 en **un solo canvas**, acomodados en filas, y lo exporta como **PNG** en memoria (`toDataURL`). No hay archivos de imagen en el servidor ni descargas. Las variantes idénticas (por ejemplo, `carne:perfecta` y `carne`) comparten el mismo lugar. Cada sprite queda como una entrada `{ x, y, ancho, alto, cuadros }`.
+- **Un elemento por sprite, no por pixel**: en el DOM, cada pieza es un `<button>` o un `<div>` cuyo fondo es el atlas, recortado con `background-position` (`atlasStyle`) y escalado a un múltiplo entero con `image-rendering: pixelated`. Las animaciones mueven el recorte de un cuadro a otro.
+- **Por qué PNG y no SVG**: el navegador escala una imagen rasterizada casi gratis y GSAP la mueve en la tarjeta de video. Un SVG serían cientos de rectángulos por sprite, puede dejar líneas finas entre pixeles a escalas no enteras y cuesta más animarlo. El SVG solo se usa en el respaldo sin JavaScript.
+- **Coste medido con el set ancla**: las definiciones pesan unos 1 KB comprimidas (frente a unos 4,5 KB que pesarían las imágenes ya hechas) y el atlas de 230 × 39 px, con 11 entradas en 9 lugares, pesa unos 2,3 KB y se genera en unos pocos milisegundos, una sola vez.
 - **Respaldo sin JavaScript**: la imagen fija de la sección se genera durante la compilación de Astro con los mismos datos, como SVG con un rectángulo por cada tramo horizontal del mismo color. No hay un asset aparte que mantener.
 
 ## Herramientas
 
 | Herramienta | Uso |
 | --- | --- |
-| `validate.ts` | Comprueba el ancho de las filas, el tamaño declarado, las letras sin definir, los nombres de color que no existen en la paleta, los cuadros de distinto tamaño, los parches fuera de rango y los tiles faltantes. Corre en las pruebas y en la página de revisión. |
-| Página de revisión | Solo para desarrollo, excluida de la compilación. Muestra cada sprite y sus variantes a ×1, ×3 y ×6 sobre el fondo del juego, con las animaciones en bucle, los errores de validación, los fondos de tiles y una pila de prueba de cada receta del catálogo. Con el servidor de desarrollo, editar el texto actualiza la vista. |
-| Importador PNG → texto (opcional) | `scripts/sprites/import.mjs` convierte una imagen al formato de texto: reduce a la cuadrícula del tamaño indicado, asigna cada color al más cercano de la paleta y asigna letras. Sirve si algún sprite (por ejemplo, un cliente) sale mejor dibujado en Aseprite o generado con IA. Después de importarlo se edita como cualquier otro. Necesita un lector de PNG como dependencia de desarrollo. |
+| `validate.ts` · `validateSprite` | **Errores**: ancho de filas, tamaño declarado, letras sin color, colores o materiales que no existen, cuadros de distinto tamaño, parches fuera de rango y tiles faltantes. |
+| `validate.ts` · `lintSprite` | **Guía de estilo**: colores fuera de las rampas de los materiales declarados (`materials`), letras declaradas sin usar y dirección de la luz (dentro de cada material, los tonos claros deben quedar arriba a la izquierda de los oscuros; los colores que comparten dos materiales del sprite se excluyen de esta comparación). Las pruebas fallan si un sprite registrado no la cumple. |
+| Página de revisión | `/sprites` en el servidor de `pnpm dev` (`src/dev/sprites.astro`, inyectada solo en desarrollo desde `astro.config.mjs`; no entra en la compilación). Muestra cada sprite y variante a ×1, ×3 y ×6 sobre la pared y la barra, desde el atlas, con animaciones en bucle, errores y avisos de estilo, una pila de prueba, el atlas completo y la paleta. Al editar el texto se recarga. |
+| Ida y vuelta con Aseprite | Cada variante tiene un botón **PNG** que descarga la tira a escala 1. En la sección **Importar PNG** de `/sprites` se suelta un PNG y `convert.ts` lo pasa a texto: ajusta cada color al más cercano de Endesga 32 (y avisa cuántos pixeles cambió), separa los cuadros según el ancho indicado y, si el id ya existe, conserva sus letras. Sin dependencias: el navegador lee el PNG. La definición resultante se copia a `src/game/sprites/`. |
 
 ## Guía de estilo
 
 Estas reglas aplican tanto a quien escribe los sprites como al agente que los genere:
 
+- **Estilo**: 16-bit con flat shading y sel-out, paleta Endesga 32 (ver «Estilo y paleta»).
 - **Vista**: frontal con una ligera elevación, la misma para todo. Los ingredientes se ven de lado, como en una pila. La carne de la plancha es el mismo sprite que en la hamburguesa, para que el paso de uno a otro sea continuo.
 - **Luz** desde arriba a la izquierda: el tono claro va en los bordes superior e izquierdo y el oscuro abajo.
-- **Contorno** de 1 px, en el tono más oscuro de la rampa de cada material (no negro puro).
-- **Rampas**: de 3 a 4 tonos por material y sin dithering, salvo para texturas puntuales (ajonjolí, grietas). Los brillos son uno o dos pixeles.
+- **Contorno selectivo** de 1 px, en el tono más oscuro de la rampa de cada material (no negro puro). Del lado de la luz puede aclararse un tono.
+- **Rampas**: 3 tonos por material (sombra, base y luz) más un brillo puntual, sin dithering, salvo para texturas puntuales (ajonjolí, grietas). Los brillos son uno o dos pixeles.
 - **Proporciones**: los ingredientes se alinean a 32 px de ancho para que la pila quede limpia. El queso y la lechuga pueden sobresalir 1 px por lado.
 - **Legibilidad**: cada estado importante se distingue por forma además de color (carne quemada agrietada, cliente enojado con cejas y boca distintas).
 - **Personalidad**: apetitosa y algo caricaturesca, con colores saturados pero no neón.
 
 ### Instrucciones para el agente que genera sprites
 
-1. Leer esta guía y `palette.ts`. Usar solo nombres de color existentes. Si falta una rampa, proponerla primero en la paleta.
+1. Leer esta guía y `palette.ts`. Usar solo nombres de color existentes y declarar `materials` con las rampas de `RAMPS`. Si falta una rampa, proponerla primero ahí.
 2. Partir del set ancla aprobado (pan base, carne, queso y un bote) como referencia de proporciones y sombreado.
 3. Escribir primero la variante base. Las demás se crean con `colors` o `patch`, no con matrices nuevas, salvo que la forma cambie mucho.
 4. Usar `mirror` en sprites simétricos y módulos en piezas grandes.
-5. Ejecutar la validación y revisar el resultado en la página de revisión antes de darlo por terminado.
+5. Registrar el sprite en `index.ts`, ejecutar `pnpm test` (valida y revisa el estilo de todos los sprites registrados) y revisar el resultado en `/sprites` antes de darlo por terminado.
 
 ## Inventario inicial
 
@@ -188,6 +239,6 @@ La barra de paciencia y el marcador se hacen con HTML y CSS, sin sprites.
 
 ## Pendientes
 
-- Fijar la paleta y dibujar el set ancla antes del resto del inventario.
+- Aprobar el set ancla. Primer ajuste ya hecho: la carne perfecta pasó a café oscuro (`cafe` con contorno `negro`) y la rampa anterior quedó para «cocinándose»; el queso escurre más.
 - Confirmar con los primeros clientes si su calidad como texto es suficiente o si conviene el importador.
 - Ajustar el tamaño de tile si 20 px no encaja bien con las piezas del escenario.

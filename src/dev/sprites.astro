@@ -1,0 +1,339 @@
+---
+// Página de revisión de sprites. Solo existe con `pnpm dev` (ver astro.config.mjs): no entra en la compilación.
+---
+
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
+    <title>Revisión de sprites</title>
+    <!-- Global: el contenido se genera con JavaScript y no recibe el alcance de Astro. -->
+    <style is:global>
+      :root {
+        color-scheme: dark;
+        --pared: #262b44;
+        --barra: #4f3a2a;
+      }
+      body {
+        margin: 0;
+        padding: 24px;
+        background: #181425;
+        color: #c0cbdc;
+        font: 14px/1.4 ui-monospace, SFMono-Regular, Menlo, monospace;
+      }
+      h1,
+      h2 {
+        margin: 0 0 8px;
+        color: #fff;
+      }
+      section {
+        margin: 0 0 28px;
+        padding: 16px;
+        border: 1px solid #3a4466;
+        border-radius: 8px;
+      }
+      button,
+      .button {
+        padding: 3px 10px;
+        border: 1px solid #5a6988;
+        border-radius: 4px;
+        background: #262b44;
+        color: #fff;
+        font: inherit;
+        text-decoration: none;
+        cursor: pointer;
+      }
+      input,
+      textarea {
+        border: 1px solid #5a6988;
+        border-radius: 4px;
+        background: #181425;
+        color: #fff;
+        font: inherit;
+      }
+      .meta {
+        color: #8b9bb4;
+      }
+      .ok {
+        color: #63c74d;
+      }
+      .errors {
+        color: #ff0044;
+      }
+      .warnings {
+        color: #feae34;
+      }
+      .variant {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 16px;
+        align-items: flex-end;
+        margin-top: 12px;
+      }
+      .variant > b {
+        width: 110px;
+      }
+      .bg {
+        display: flex;
+        gap: 12px;
+        align-items: flex-end;
+        padding: 10px;
+        border-radius: 4px;
+        background: var(--pared);
+      }
+      .bg.barra {
+        background: var(--barra);
+      }
+      .sprite {
+        image-rendering: pixelated;
+        background-repeat: no-repeat;
+      }
+      .atlas {
+        max-width: 100%;
+        image-rendering: pixelated;
+        background: repeating-conic-gradient(#262b44 0 25%, #3a4466 0 50%) 0 0 / 12px 12px;
+      }
+      .drop {
+        padding: 18px;
+        border: 2px dashed #5a6988;
+        border-radius: 8px;
+        text-align: center;
+      }
+      .drop.over {
+        border-color: #2ce8f5;
+      }
+      .row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        align-items: center;
+        margin: 10px 0;
+      }
+      textarea {
+        width: 100%;
+        min-height: 220px;
+        box-sizing: border-box;
+      }
+      .palette {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+        gap: 6px;
+      }
+      .swatch {
+        display: flex;
+        gap: 6px;
+        align-items: center;
+      }
+      .swatch i {
+        width: 18px;
+        height: 18px;
+        border-radius: 3px;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Revisión de sprites</h1>
+    <p class="meta">
+      Solo en desarrollo. Edita las definiciones en <code>src/game/sprites/</code> y la página se recarga. Escalas ×1, ×3 y ×6 sobre la pared y la barra; todo sale de un solo atlas.
+    </p>
+    <div id="app"></div>
+
+    <script>
+      import { atlasKey } from '../game/sprites/atlas.ts';
+      import { atlasStyle, bakeAtlas, bakeSprite, type BakedAtlas } from '../game/sprites/bake.ts';
+      import { imageToSprite } from '../game/sprites/convert.ts';
+      import type { SpriteDef } from '../game/sprites/define.ts';
+      import { SPRITES } from '../game/sprites/index.ts';
+      import { PALETTE, type ColorName } from '../game/sprites/palette.ts';
+      import { lintSprite, validateSprite } from '../game/sprites/validate.ts';
+
+      const app = document.getElementById('app')!;
+      const animated: { node: HTMLElement; key: string; scale: number }[] = [];
+
+      const h = <K extends keyof HTMLElementTagNameMap>(tag: K, props: Partial<HTMLElementTagNameMap[K]> = {}, ...children: (Node | string)[]) => {
+        const node = Object.assign(document.createElement(tag), props);
+        node.append(...children);
+        return node;
+      };
+
+      const defs = Object.values(SPRITES);
+      const valid = defs.filter((def) => validateSprite(def).length === 0);
+      const atlas: BakedAtlas = bakeAtlas(valid);
+
+      function spriteNode(key: string, scale: number) {
+        const node = h('div', { className: 'sprite' });
+        Object.assign(node.style, atlasStyle(atlas, key, scale));
+        if (atlas.entries[key].frames > 1) animated.push({ node, key, scale });
+        return node;
+      }
+
+      function scales(key: string, className = 'bg') {
+        return h('div', { className }, ...[1, 3, 6].map((scale) => spriteNode(key, scale)));
+      }
+
+      function downloadLink(def: SpriteDef, variant?: string) {
+        // PNG a escala 1 (tira horizontal si hay cuadros) para editarlo en Aseprite y volver a importarlo.
+        const name = `${def.id}${variant ? `-${variant}` : ''}.png`;
+        return h('a', { className: 'button', href: bakeSprite(def, variant).url, download: name, title: `Descargar ${name}` }, 'PNG');
+      }
+
+      function section(def: SpriteDef) {
+        const errors = validateSprite(def);
+        const warnings = errors.length ? [] : lintSprite(def);
+        const frames = def.frames?.length ?? 1;
+        const box = h(
+          'section',
+          {},
+          h('h2', {}, def.id),
+          h('div', { className: 'meta' }, `${def.size.join(' × ')} px · ${frames} ${frames === 1 ? 'cuadro' : 'cuadros'} · materiales: ${def.materials?.join(', ') ?? '—'}`),
+          errors.length
+            ? h('ul', { className: 'errors' }, ...errors.map((e) => h('li', {}, e)))
+            : h('div', { className: 'ok' }, '✓ Válido'),
+          warnings.length
+            ? h('ul', { className: 'warnings' }, ...warnings.map((w) => h('li', {}, `Estilo: ${w}`)))
+            : errors.length
+              ? ''
+              : h('div', { className: 'ok' }, '✓ Cumple la guía de estilo'),
+        );
+        if (errors.length) return box;
+        for (const variant of [undefined, ...Object.keys(def.variants ?? {})]) {
+          const key = atlasKey(def.id, variant);
+          box.append(h('div', { className: 'variant' }, h('b', {}, variant ?? 'base'), scales(key), scales(key, 'bg barra'), downloadLink(def, variant)));
+        }
+        return box;
+      }
+
+      function stack() {
+        // Pila de prueba con el set ancla: pan, carne, queso, carne, queso.
+        const keys = ['pan_base', 'carne:perfecta', 'queso', 'carne:perfecta', 'queso'];
+        if (!keys.every((k) => atlas.entries[k])) return '';
+        const column = h('div', {});
+        Object.assign(column.style, { display: 'flex', flexDirection: 'column-reverse', alignItems: 'center' });
+        column.append(...keys.map((k) => spriteNode(k, 6)));
+        const bottles = ['catsup', 'mostaza', 'mayonesa'].map((v) => spriteNode(atlasKey('bote', v), 4));
+        return h('section', {}, h('h2', {}, 'Pila de prueba'), h('div', { className: 'bg barra' }, column, ...bottles));
+      }
+
+      function atlasSection() {
+        const bytes = Math.round((atlas.url.length - 'data:image/png;base64,'.length) * 0.75);
+        const img = h('img', { className: 'atlas', src: atlas.url, alt: 'Atlas de sprites' });
+        img.style.width = `${atlas.width * 3}px`;
+        const unique = new Set(Object.values(atlas.entries).map((e) => `${e.x},${e.y}`)).size;
+        return h(
+          'section',
+          {},
+          h('h2', {}, 'Atlas'),
+          h('div', { className: 'meta' }, `${atlas.width} × ${atlas.height} px · ${Object.keys(atlas.entries).length} entradas en ${unique} lugares (las variantes idénticas se comparten) · PNG de ~${bytes} bytes`),
+          h('div', { className: 'row' }, img),
+          h('a', { className: 'button', href: atlas.url, download: 'atlas.png' }, 'Descargar atlas'),
+        );
+      }
+
+      function importSection() {
+        const output = h('textarea', { readOnly: true, placeholder: 'Aquí aparece la definición para pegar en src/game/sprites/' });
+        const messages = h('ul', { className: 'warnings' });
+        const preview = h('div', { className: 'bg' });
+        const idInput = h('input', { placeholder: 'id del sprite', size: 16 });
+        const frameInput = h('input', { type: 'number', min: '1', placeholder: 'ancho de cuadro', size: 8 });
+        const copy = h('button', { type: 'button' }, 'Copiar');
+        copy.addEventListener('click', () => navigator.clipboard?.writeText(output.value));
+        const drop = h('label', { className: 'drop' }, 'Suelta aquí un PNG (por ejemplo, editado en Aseprite) o haz clic para elegirlo');
+        const file = h('input', { type: 'file', accept: 'image/png' });
+        file.hidden = true;
+        drop.append(file);
+
+        async function load(blob: File) {
+          // «pan_base-cruda.png» → id «pan_base»; si existe, se conservan sus letras y su ancho de cuadro.
+          const id = idInput.value || blob.name.replace(/\.png$/i, '').replace(/-.*$/, '');
+          idInput.value = id;
+          const existing = SPRITES[id];
+          if (existing && !frameInput.value) frameInput.value = String(existing.size[0]);
+          const bitmap = await createImageBitmap(blob);
+          const canvas = h('canvas', { width: bitmap.width, height: bitmap.height });
+          const ctx = canvas.getContext('2d')!;
+          ctx.drawImage(bitmap, 0, 0);
+          const { data } = ctx.getImageData(0, 0, bitmap.width, bitmap.height);
+          const letters = existing
+            ? (Object.fromEntries(Object.entries(existing.colors).map(([letter, name]) => [name, letter])) as Partial<Record<ColorName, string>>)
+            : undefined;
+          const result = imageToSprite(data, bitmap.width, bitmap.height, {
+            id,
+            frameWidth: Number(frameInput.value) || undefined,
+            letters,
+          });
+          output.value = result.text;
+          messages.replaceChildren(...result.warnings.map((w) => h('li', {}, w)));
+          const imported = { id, size: [result.frames[0][0].length, result.frames[0].length] as const, colors: result.colors, frames: result.frames.map((f) => f.join('\n')) };
+          const errors = validateSprite(imported);
+          if (errors.length) messages.append(...errors.map((e) => h('li', { className: 'errors' }, e)));
+          const baked = bakeSprite({ ...imported, id: `importado-${Date.now()}` });
+          preview.replaceChildren(
+            ...[1, 3, 6].map((scale) => {
+              const node = h('div', { className: 'sprite' });
+              Object.assign(node.style, {
+                width: `${baked.width * scale}px`,
+                height: `${baked.height * scale}px`,
+                backgroundImage: `url(${baked.url})`,
+                backgroundSize: `${baked.width * baked.frames * scale}px ${baked.height * scale}px`,
+              });
+              return node;
+            }),
+          );
+        }
+
+        file.addEventListener('change', () => file.files?.[0] && load(file.files[0]));
+        drop.addEventListener('dragover', (e) => {
+          e.preventDefault();
+          drop.classList.add('over');
+        });
+        drop.addEventListener('dragleave', () => drop.classList.remove('over'));
+        drop.addEventListener('drop', (e) => {
+          e.preventDefault();
+          drop.classList.remove('over');
+          const blob = e.dataTransfer?.files[0];
+          if (blob) load(blob);
+        });
+
+        return h(
+          'section',
+          {},
+          h('h2', {}, 'Importar PNG'),
+          h('div', { className: 'meta' }, 'Los colores se ajustan a Endesga 32. Si el id ya existe, se conservan sus letras. Para animaciones, indica el ancho de cada cuadro.'),
+          h('div', { className: 'row' }, idInput, frameInput),
+          drop,
+          messages,
+          h('div', { className: 'row' }, preview),
+          output,
+          h('div', { className: 'row' }, copy),
+        );
+      }
+
+      function palette() {
+        return h(
+          'section',
+          {},
+          h('h2', {}, 'Paleta: Endesga 32'),
+          h(
+            'div',
+            { className: 'palette' },
+            ...Object.entries(PALETTE).map(([name, hex]) => {
+              const chip = h('i');
+              chip.style.background = hex;
+              return h('div', { className: 'swatch' }, chip, name);
+            }),
+          ),
+        );
+      }
+
+      app.append(...defs.map(section), stack(), atlasSection(), importSection(), palette());
+
+      // Animaciones en bucle (bote: normal ↔ apretado).
+      let tick = 0;
+      setInterval(() => {
+        tick++;
+        for (const { node, key, scale } of animated) node.style.backgroundPosition = atlasStyle(atlas, key, scale, tick).backgroundPosition;
+      }, 450);
+    </script>
+  </body>
+</html>
