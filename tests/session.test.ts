@@ -120,7 +120,7 @@ describe('Modo infinito', () => {
 
   it('la basura tira de una vez todas las carnes quemadas y deja las demás', () => {
     const { game, events } = setup();
-    game.debugJumpTo(13); // plancha de 4 lugares
+    game.debugJumpTo(13); // plancha de tres lugares
     while (game.hint) game.dismissHint();
     game.tapCharola();
     game.tapCharola();
@@ -206,12 +206,19 @@ describe('Modo infinito', () => {
     assert.equal(game.paused, false);
   });
 
-  it('la plancha crece con la dificultad', () => {
+  it('permite cocinar en los tres lugares desde el primer cliente y conserva esa capacidad', () => {
     const { game } = setup();
     game.startInfinite();
+    assert.equal(game.grill.active, 3);
+    assert.equal(game.grill.cooking.length, 3);
+    while (game.hint) game.dismissHint();
+    for (let i = 0; i < 4; i++) game.tapCharola();
+    assert.deepEqual(game.grill.cooking, [0, 0, 0]);
     game.debugJumpTo(8);
     assert.equal(game.grill.active, 3);
     game.debugJumpTo(13);
-    assert.equal(game.grill.active, 4);
+    assert.equal(game.grill.active, 3);
+    game.debugJumpTo(30);
+    assert.equal(game.grill.active, 3);
   });
 });

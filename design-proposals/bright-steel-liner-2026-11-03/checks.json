@@ -1,0 +1,41 @@
+{
+  "tests_passed": 161,
+  "build": "passed",
+  "palette": "Endesga 64",
+  "unchanged_layouts_sizes_and_alpha": true,
+  "only_changed_sprites": [
+    "barra_roja",
+    "barra_roja_v",
+    "basura"
+  ],
+  "browser_checks": [
+    {
+      "burners": 3,
+      "clip": {
+        "height": 424,
+        "width": 640,
+        "x": 82.5,
+        "y": 175.0703125
+      },
+      "groupCentered": true,
+      "layout": "horizontal",
+      "locked": 0,
+      "sameHeight": true,
+      "scale": 2
+    },
+    {
+      "burners": 3,
+      "clip": {
+        "height": 600,
+        "width": 360,
+        "x": 222.5,
+        "y": 175.0703125
+      },
+      "groupCentered": true,
+      "layout": "vertical",
+      "locked": 0,
+      "sameHeight": true,
+      "scale": 2
+    }
+  ]
+}

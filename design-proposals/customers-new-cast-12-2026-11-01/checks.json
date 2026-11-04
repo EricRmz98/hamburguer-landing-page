@@ -1,0 +1,163 @@
+{
+  "count": 12,
+  "mode": "reference_designs",
+  "game_files_changed": false,
+  "images": [
+    {
+      "id": "01-lia",
+      "size": [
+        1070,
+        1470
+      ],
+      "mode": "RGBA",
+      "alpha_range": [
+        0,
+        255
+      ],
+      "file": "individuales/01-lia.png"
+    },
+    {
+      "id": "02-bruno",
+      "size": [
+        1070,
+        1470
+      ],
+      "mode": "RGBA",
+      "alpha_range": [
+        0,
+        255
+      ],
+      "file": "individuales/02-bruno.png"
+    },
+    {
+      "id": "03-zoe",
+      "size": [
+        1072,
+        1467
+      ],
+      "mode": "RGBA",
+      "alpha_range": [
+        0,
+        255
+      ],
+      "file": "individuales/03-zoe.png"
+    },
+    {
+      "id": "04-ciro",
+      "size": [
+        1080,
+        1457
+      ],
+      "mode": "RGBA",
+      "alpha_range": [
+        0,
+        255
+      ],
+      "file": "individuales/04-ciro.png"
+    },
+    {
+      "id": "05-mika",
+      "size": [
+        1131,
+        1391
+      ],
+      "mode": "RGBA",
+      "alpha_range": [
+        0,
+        255
+      ],
+      "file": "individuales/05-mika.png"
+    },
+    {
+      "id": "06-alma",
+      "size": [
+        1073,
+        1465
+      ],
+      "mode": "RGBA",
+      "alpha_range": [
+        0,
+        255
+      ],
+      "file": "individuales/06-alma.png"
+    },
+    {
+      "id": "07-rafa",
+      "size": [
+        1133,
+        1388
+      ],
+      "mode": "RGBA",
+      "alpha_range": [
+        0,
+        255
+      ],
+      "file": "individuales/07-rafa.png"
+    },
+    {
+      "id": "08-dante",
+      "size": [
+        1079,
+        1458
+      ],
+      "mode": "RGBA",
+      "alpha_range": [
+        0,
+        255
+      ],
+      "file": "individuales/08-dante.png"
+    },
+    {
+      "id": "09-vega",
+      "size": [
+        1024,
+        1536
+      ],
+      "mode": "RGBA",
+      "alpha_range": [
+        0,
+        254
+      ],
+      "file": "individuales/09-vega.png"
+    },
+    {
+      "id": "10-ines",
+      "size": [
+        1070,
+        1470
+      ],
+      "mode": "RGBA",
+      "alpha_range": [
+        0,
+        255
+      ],
+      "file": "individuales/10-ines.png"
+    },
+    {
+      "id": "11-gael",
+      "size": [
+        1070,
+        1470
+      ],
+      "mode": "RGBA",
+      "alpha_range": [
+        0,
+        255
+      ],
+      "file": "individuales/11-gael.png"
+    },
+    {
+      "id": "12-sasha",
+      "size": [
+        1074,
+        1465
+      ],
+      "mode": "RGBA",
+      "alpha_range": [
+        0,
+        255
+      ],
+      "file": "individuales/12-sasha.png"
+    }
+  ]
+}

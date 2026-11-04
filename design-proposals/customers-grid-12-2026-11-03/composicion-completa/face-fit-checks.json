@@ -1,0 +1,290 @@
+[
+  {
+    "name": "Lía",
+    "layout": "horizontal",
+    "face_bounds": [
+      137.70265780730898,
+      44.37707641196013,
+      170.6594684385382,
+      80.42358803986711
+    ],
+    "ticket_overlap": false,
+    "patience_overlap": false
+  },
+  {
+    "name": "Lía",
+    "layout": "vertical",
+    "face_bounds": [
+      67.70265780730898,
+      122.37707641196013,
+      100.6594684385382,
+      158.42358803986713
+    ],
+    "ticket_overlap": false,
+    "patience_overlap": false
+  },
+  {
+    "name": "Bruno",
+    "layout": "horizontal",
+    "face_bounds": [
+      143.97035175879398,
+      35.87587939698493,
+      172.01055276381908,
+      69.52412060301508
+    ],
+    "ticket_overlap": false,
+    "patience_overlap": false
+  },
+  {
+    "name": "Bruno",
+    "layout": "vertical",
+    "face_bounds": [
+      73.97035175879397,
+      113.87587939698493,
+      102.01055276381909,
+      147.5241206030151
+    ],
+    "ticket_overlap": false,
+    "patience_overlap": false
+  },
+  {
+    "name": "Zoe",
+    "layout": "horizontal",
+    "face_bounds": [
+      142.373826903024,
+      34.267987486965595,
+      169.5818561001043,
+      76.46819603753912
+    ],
+    "ticket_overlap": false,
+    "patience_overlap": false
+  },
+  {
+    "name": "Zoe",
+    "layout": "vertical",
+    "face_bounds": [
+      72.373826903024,
+      112.2679874869656,
+      99.58185610010428,
+      154.46819603753912
+    ],
+    "ticket_overlap": false,
+    "patience_overlap": false
+  },
+  {
+    "name": "Ciro",
+    "layout": "horizontal",
+    "face_bounds": [
+      145.6421052631579,
+      32.315789473684205,
+      169.46447368421053,
+      67.8157894736842
+    ],
+    "ticket_overlap": false,
+    "patience_overlap": false
+  },
+  {
+    "name": "Ciro",
+    "layout": "vertical",
+    "face_bounds": [
+      75.6421052631579,
+      110.3157894736842,
+      99.46447368421053,
+      145.81578947368422
+    ],
+    "ticket_overlap": false,
+    "patience_overlap": false
+  },
+  {
+    "name": "Mika",
+    "layout": "horizontal",
+    "face_bounds": [
+      139.74203069657614,
+      32.59149940968122,
+      171.58382526564344,
+      72.11924439197165
+    ],
+    "ticket_overlap": false,
+    "patience_overlap": false
+  },
+  {
+    "name": "Mika",
+    "layout": "vertical",
+    "face_bounds": [
+      69.74203069657615,
+      110.59149940968122,
+      101.58382526564344,
+      150.11924439197165
+    ],
+    "ticket_overlap": false,
+    "patience_overlap": false
+  },
+  {
+    "name": "Alma",
+    "layout": "horizontal",
+    "face_bounds": [
+      142.73073122529644,
+      38.862648221343875,
+      172.19713438735178,
+      82.0098814229249
+    ],
+    "ticket_overlap": false,
+    "patience_overlap": false
+  },
+  {
+    "name": "Alma",
+    "layout": "vertical",
+    "face_bounds": [
+      72.73073122529644,
+      116.86264822134387,
+      102.19713438735178,
+      160.0098814229249
+    ],
+    "ticket_overlap": false,
+    "patience_overlap": false
+  },
+  {
+    "name": "Rafa",
+    "layout": "horizontal",
+    "face_bounds": [
+      141.20646221248631,
+      40.26067907995619,
+      169.7278203723987,
+      78.45892661555312
+    ],
+    "ticket_overlap": false,
+    "patience_overlap": false
+  },
+  {
+    "name": "Rafa",
+    "layout": "vertical",
+    "face_bounds": [
+      71.20646221248631,
+      118.26067907995619,
+      99.7278203723987,
+      156.45892661555314
+    ],
+    "ticket_overlap": false,
+    "patience_overlap": false
+  },
+  {
+    "name": "Dante",
+    "layout": "horizontal",
+    "face_bounds": [
+      145.45492839090144,
+      31.38079191238416,
+      169.6798652064027,
+      67.26958719460825
+    ],
+    "ticket_overlap": false,
+    "patience_overlap": false
+  },
+  {
+    "name": "Dante",
+    "layout": "vertical",
+    "face_bounds": [
+      75.45492839090143,
+      109.38079191238415,
+      99.6798652064027,
+      145.26958719460825
+    ],
+    "ticket_overlap": false,
+    "patience_overlap": false
+  },
+  {
+    "name": "Vega",
+    "layout": "horizontal",
+    "face_bounds": [
+      145.7672955974843,
+      46.0377358490566,
+      171.1132075471698,
+      86.0062893081761
+    ],
+    "ticket_overlap": false,
+    "patience_overlap": false
+  },
+  {
+    "name": "Vega",
+    "layout": "vertical",
+    "face_bounds": [
+      75.76729559748428,
+      124.0377358490566,
+      101.11320754716981,
+      164.0062893081761
+    ],
+    "ticket_overlap": false,
+    "patience_overlap": false
+  },
+  {
+    "name": "Inés",
+    "layout": "horizontal",
+    "face_bounds": [
+      145.46104589114194,
+      39.027748132337244,
+      175.0128068303095,
+      84.49199573105656
+    ],
+    "ticket_overlap": false,
+    "patience_overlap": false
+  },
+  {
+    "name": "Inés",
+    "layout": "vertical",
+    "face_bounds": [
+      75.46104589114194,
+      117.02774813233725,
+      105.0128068303095,
+      162.49199573105656
+    ],
+    "ticket_overlap": false,
+    "patience_overlap": false
+  },
+  {
+    "name": "Gael",
+    "layout": "horizontal",
+    "face_bounds": [
+      146.41360601001668,
+      29.54590984974958,
+      170.86060100166947,
+      65.10517529215359
+    ],
+    "ticket_overlap": false,
+    "patience_overlap": false
+  },
+  {
+    "name": "Gael",
+    "layout": "vertical",
+    "face_bounds": [
+      76.4136060100167,
+      107.54590984974958,
+      100.86060100166945,
+      143.1051752921536
+    ],
+    "ticket_overlap": false,
+    "patience_overlap": false
+  },
+  {
+    "name": "Sasha",
+    "layout": "horizontal",
+    "face_bounds": [
+      146.9172813487882,
+      46.179662802950475,
+      173.3767123287671,
+      83.41886195995784
+    ],
+    "ticket_overlap": false,
+    "patience_overlap": false
+  },
+  {
+    "name": "Sasha",
+    "layout": "vertical",
+    "face_bounds": [
+      76.9172813487882,
+      124.17966280295047,
+      103.37671232876711,
+      161.41886195995784
+    ],
+    "ticket_overlap": false,
+    "patience_overlap": false
+  }
+]

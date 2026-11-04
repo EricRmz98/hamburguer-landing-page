@@ -1,0 +1,26 @@
+[
+  {
+    "clip": {
+      "height": 424,
+      "width": 640,
+      "x": 82.5,
+      "y": 175.0703125
+    },
+    "groupCentered": true,
+    "layout": "horizontal",
+    "sameHeight": true,
+    "scale": 2
+  },
+  {
+    "clip": {
+      "height": 600,
+      "width": 360,
+      "x": 222.5,
+      "y": 175.0703125
+    },
+    "groupCentered": true,
+    "layout": "vertical",
+    "sameHeight": true,
+    "scale": 2
+  }
+]

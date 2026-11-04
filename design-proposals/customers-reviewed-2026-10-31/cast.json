@@ -1,0 +1,386 @@
+[
+  {
+    "id": 1,
+    "name": "Nico",
+    "style": "Hipster",
+    "pronouns": "él",
+    "pose": "Mano en la barbilla",
+    "anatomy": [
+      11,
+      34,
+      27,
+      22,
+      -2,
+      "chin"
+    ],
+    "face_shape": "alargada"
+  },
+  {
+    "id": 2,
+    "name": "Ren",
+    "style": "Gótica",
+    "pronouns": "ella",
+    "pose": "Mano en cintura",
+    "anatomy": [
+      14,
+      31,
+      24,
+      21,
+      2,
+      "hip"
+    ],
+    "face_shape": "corazon"
+  },
+  {
+    "id": 3,
+    "name": "Alex",
+    "style": "Techwear",
+    "pronouns": "elle",
+    "pose": "Consultando el móvil",
+    "anatomy": [
+      9,
+      35,
+      27,
+      21,
+      -2,
+      "phone"
+    ],
+    "face_shape": "cuadrada"
+  },
+  {
+    "id": 4,
+    "name": "Dani",
+    "style": "Fútbol",
+    "pronouns": "ella",
+    "pose": "Ambas manos en cintura",
+    "anatomy": [
+      17,
+      34,
+      29,
+      22,
+      2,
+      "hips"
+    ],
+    "face_shape": "ancha"
+  },
+  {
+    "id": 5,
+    "name": "Beto",
+    "style": "Skater",
+    "pronouns": "él",
+    "pose": "Mano en bolsillo",
+    "anatomy": [
+      20,
+      38,
+      32,
+      23,
+      -3,
+      "pocket"
+    ],
+    "face_shape": "redonda"
+  },
+  {
+    "id": 6,
+    "name": "Vale",
+    "style": "Punk",
+    "pronouns": "elle",
+    "pose": "Saludo abierto",
+    "anatomy": [
+      13,
+      30,
+      23,
+      20,
+      3,
+      "wave"
+    ],
+    "face_shape": "triangular"
+  },
+  {
+    "id": 7,
+    "name": "Mar",
+    "style": "Grunge",
+    "pronouns": "él",
+    "pose": "Brazos cruzados",
+    "anatomy": [
+      8,
+      35,
+      28,
+      22,
+      -2,
+      "cross"
+    ],
+    "face_shape": "estrecha"
+  },
+  {
+    "id": 8,
+    "name": "Sol",
+    "style": "Indie",
+    "pronouns": "ella",
+    "pose": "Sujetando la correa",
+    "anatomy": [
+      21,
+      31,
+      26,
+      21,
+      2,
+      "strap"
+    ],
+    "face_shape": "mandibula_ancha"
+  },
+  {
+    "id": 9,
+    "name": "Sam",
+    "style": "Streetwear",
+    "pronouns": "elle",
+    "pose": "Mano en cintura",
+    "anatomy": [
+      10,
+      39,
+      33,
+      23,
+      2,
+      "hip"
+    ],
+    "face_shape": "rombo"
+  },
+  {
+    "id": 10,
+    "name": "Ivo",
+    "style": "Metal",
+    "pronouns": "él",
+    "pose": "Brazos cruzados",
+    "anatomy": [
+      6,
+      40,
+      33,
+      24,
+      -2,
+      "cross"
+    ],
+    "face_shape": "cuadrada"
+  },
+  {
+    "id": 11,
+    "name": "Luz",
+    "style": "Kawaii",
+    "pronouns": "ella",
+    "pose": "Saludo abierto",
+    "anatomy": [
+      23,
+      30,
+      25,
+      22,
+      -2,
+      "wave"
+    ],
+    "face_shape": "redonda"
+  },
+  {
+    "id": 12,
+    "name": "Noa",
+    "style": "Rave",
+    "pronouns": "elle",
+    "pose": "Ajustando los goggles",
+    "anatomy": [
+      12,
+      32,
+      25,
+      21,
+      3,
+      "goggles"
+    ],
+    "face_shape": "estrecha"
+  },
+  {
+    "id": 13,
+    "name": "Teo",
+    "style": "Normcore",
+    "pronouns": "él",
+    "pose": "Sujetando la correa",
+    "anatomy": [
+      15,
+      36,
+      31,
+      22,
+      -1,
+      "strap"
+    ],
+    "face_shape": "mandibula_ancha"
+  },
+  {
+    "id": 14,
+    "name": "Mai",
+    "style": "Coquette",
+    "pronouns": "ella",
+    "pose": "Manos entrelazadas",
+    "anatomy": [
+      18,
+      31,
+      24,
+      21,
+      2,
+      "clasp"
+    ],
+    "face_shape": "triangular"
+  },
+  {
+    "id": 15,
+    "name": "Jules",
+    "style": "Art school",
+    "pronouns": "elle",
+    "pose": "Mano en la barbilla",
+    "anatomy": [
+      22,
+      39,
+      34,
+      23,
+      -2,
+      "chin"
+    ],
+    "face_shape": "ancha"
+  },
+  {
+    "id": 16,
+    "name": "Moren",
+    "style": "Athleisure",
+    "pronouns": "ella",
+    "pose": "Ajustando audífonos",
+    "anatomy": [
+      9,
+      33,
+      26,
+      21,
+      2,
+      "listen"
+    ],
+    "face_shape": "alargada"
+  },
+  {
+    "id": 17,
+    "name": "Chema",
+    "style": "Fútbol retro",
+    "pronouns": "él",
+    "pose": "Ambas manos en cintura",
+    "anatomy": [
+      13,
+      40,
+      35,
+      24,
+      2,
+      "hips"
+    ],
+    "face_shape": "mandibula_ancha"
+  },
+  {
+    "id": 18,
+    "name": "Ari",
+    "style": "Cyber",
+    "pronouns": "elle",
+    "pose": "Consultando el móvil",
+    "anatomy": [
+      11,
+      30,
+      23,
+      20,
+      -2,
+      "phone"
+    ],
+    "face_shape": "rombo"
+  },
+  {
+    "id": 19,
+    "name": "Ros",
+    "style": "Workwear",
+    "pronouns": "él",
+    "pose": "Brazos cruzados",
+    "anatomy": [
+      7,
+      42,
+      35,
+      23,
+      -1,
+      "cross"
+    ],
+    "face_shape": "cuadrada"
+  },
+  {
+    "id": 20,
+    "name": "Andy",
+    "style": "Rockabilly",
+    "pronouns": "ella",
+    "pose": "Mano en cintura",
+    "anatomy": [
+      15,
+      34,
+      27,
+      22,
+      3,
+      "hip"
+    ],
+    "face_shape": "corazon"
+  },
+  {
+    "id": 21,
+    "name": "Fer",
+    "style": "Dark academia",
+    "pronouns": "elle",
+    "pose": "Mano en la barbilla",
+    "anatomy": [
+      18,
+      32,
+      25,
+      21,
+      -2,
+      "chin"
+    ],
+    "face_shape": "estrecha"
+  },
+  {
+    "id": 22,
+    "name": "Leo",
+    "style": "Surf",
+    "pronouns": "él",
+    "pose": "Sujetando la correa",
+    "anatomy": [
+      8,
+      37,
+      28,
+      22,
+      3,
+      "strap"
+    ],
+    "face_shape": "alargada"
+  },
+  {
+    "id": 23,
+    "name": "Pao",
+    "style": "Sneakerhead",
+    "pronouns": "ella",
+    "pose": "Mano en bolsillo",
+    "anatomy": [
+      20,
+      36,
+      30,
+      22,
+      -2,
+      "pocket"
+    ],
+    "face_shape": "rombo"
+  },
+  {
+    "id": 24,
+    "name": "Cris",
+    "style": "Vintage",
+    "pronouns": "elle",
+    "pose": "Manos entrelazadas",
+    "anatomy": [
+      23,
+      39,
+      34,
+      24,
+      2,
+      "clasp"
+    ],
+    "face_shape": "redonda"
+  }
+]

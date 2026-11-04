@@ -1,0 +1,386 @@
+[
+  {
+    "id": 1,
+    "name": "Nico",
+    "arms": [
+      {
+        "side": "left",
+        "old_internal_outline_pixels": 9,
+        "new_internal_outline_pixels": 0
+      },
+      {
+        "side": "right",
+        "old_internal_outline_pixels": 17,
+        "new_internal_outline_pixels": 0
+      }
+    ]
+  },
+  {
+    "id": 2,
+    "name": "Ren",
+    "arms": [
+      {
+        "side": "left",
+        "old_internal_outline_pixels": 8,
+        "new_internal_outline_pixels": 0
+      },
+      {
+        "side": "right",
+        "old_internal_outline_pixels": 10,
+        "new_internal_outline_pixels": 0
+      }
+    ]
+  },
+  {
+    "id": 3,
+    "name": "Alex",
+    "arms": [
+      {
+        "side": "left",
+        "old_internal_outline_pixels": 9,
+        "new_internal_outline_pixels": 0
+      },
+      {
+        "side": "right",
+        "old_internal_outline_pixels": 15,
+        "new_internal_outline_pixels": 0
+      }
+    ]
+  },
+  {
+    "id": 4,
+    "name": "Dani",
+    "arms": [
+      {
+        "side": "left",
+        "old_internal_outline_pixels": 10,
+        "new_internal_outline_pixels": 0
+      },
+      {
+        "side": "right",
+        "old_internal_outline_pixels": 12,
+        "new_internal_outline_pixels": 0
+      }
+    ]
+  },
+  {
+    "id": 5,
+    "name": "Beto",
+    "arms": [
+      {
+        "side": "left",
+        "old_internal_outline_pixels": 7,
+        "new_internal_outline_pixels": 0
+      },
+      {
+        "side": "right",
+        "old_internal_outline_pixels": 11,
+        "new_internal_outline_pixels": 0
+      }
+    ]
+  },
+  {
+    "id": 6,
+    "name": "Vale",
+    "arms": [
+      {
+        "side": "left",
+        "old_internal_outline_pixels": 8,
+        "new_internal_outline_pixels": 0
+      },
+      {
+        "side": "right",
+        "old_internal_outline_pixels": 6,
+        "new_internal_outline_pixels": 0
+      }
+    ]
+  },
+  {
+    "id": 7,
+    "name": "Mar",
+    "arms": [
+      {
+        "side": "left",
+        "old_internal_outline_pixels": 10,
+        "new_internal_outline_pixels": 0
+      },
+      {
+        "side": "right",
+        "old_internal_outline_pixels": 9,
+        "new_internal_outline_pixels": 0
+      }
+    ]
+  },
+  {
+    "id": 8,
+    "name": "Sol",
+    "arms": [
+      {
+        "side": "left",
+        "old_internal_outline_pixels": 12,
+        "new_internal_outline_pixels": 0
+      },
+      {
+        "side": "right",
+        "old_internal_outline_pixels": 8,
+        "new_internal_outline_pixels": 0
+      }
+    ]
+  },
+  {
+    "id": 9,
+    "name": "Sam",
+    "arms": [
+      {
+        "side": "left",
+        "old_internal_outline_pixels": 10,
+        "new_internal_outline_pixels": 0
+      },
+      {
+        "side": "right",
+        "old_internal_outline_pixels": 10,
+        "new_internal_outline_pixels": 0
+      }
+    ]
+  },
+  {
+    "id": 10,
+    "name": "Ivo",
+    "arms": [
+      {
+        "side": "left",
+        "old_internal_outline_pixels": 10,
+        "new_internal_outline_pixels": 0
+      },
+      {
+        "side": "right",
+        "old_internal_outline_pixels": 9,
+        "new_internal_outline_pixels": 0
+      }
+    ]
+  },
+  {
+    "id": 11,
+    "name": "Luz",
+    "arms": [
+      {
+        "side": "left",
+        "old_internal_outline_pixels": 9,
+        "new_internal_outline_pixels": 0
+      },
+      {
+        "side": "right",
+        "old_internal_outline_pixels": 6,
+        "new_internal_outline_pixels": 0
+      }
+    ]
+  },
+  {
+    "id": 12,
+    "name": "Noa",
+    "arms": [
+      {
+        "side": "left",
+        "old_internal_outline_pixels": 10,
+        "new_internal_outline_pixels": 0
+      },
+      {
+        "side": "right",
+        "old_internal_outline_pixels": 7,
+        "new_internal_outline_pixels": 0
+      }
+    ]
+  },
+  {
+    "id": 13,
+    "name": "Teo",
+    "arms": [
+      {
+        "side": "left",
+        "old_internal_outline_pixels": 14,
+        "new_internal_outline_pixels": 0
+      },
+      {
+        "side": "right",
+        "old_internal_outline_pixels": 8,
+        "new_internal_outline_pixels": 0
+      }
+    ]
+  },
+  {
+    "id": 14,
+    "name": "Mai",
+    "arms": [
+      {
+        "side": "left",
+        "old_internal_outline_pixels": 10,
+        "new_internal_outline_pixels": 0
+      },
+      {
+        "side": "right",
+        "old_internal_outline_pixels": 10,
+        "new_internal_outline_pixels": 0
+      }
+    ]
+  },
+  {
+    "id": 15,
+    "name": "Jules",
+    "arms": [
+      {
+        "side": "left",
+        "old_internal_outline_pixels": 11,
+        "new_internal_outline_pixels": 0
+      },
+      {
+        "side": "right",
+        "old_internal_outline_pixels": 12,
+        "new_internal_outline_pixels": 0
+      }
+    ]
+  },
+  {
+    "id": 16,
+    "name": "Moren",
+    "arms": [
+      {
+        "side": "left",
+        "old_internal_outline_pixels": 9,
+        "new_internal_outline_pixels": 0
+      },
+      {
+        "side": "right",
+        "old_internal_outline_pixels": 9,
+        "new_internal_outline_pixels": 0
+      }
+    ]
+  },
+  {
+    "id": 17,
+    "name": "Chema",
+    "arms": [
+      {
+        "side": "left",
+        "old_internal_outline_pixels": 9,
+        "new_internal_outline_pixels": 0
+      },
+      {
+        "side": "right",
+        "old_internal_outline_pixels": 10,
+        "new_internal_outline_pixels": 0
+      }
+    ]
+  },
+  {
+    "id": 18,
+    "name": "Ari",
+    "arms": [
+      {
+        "side": "left",
+        "old_internal_outline_pixels": 9,
+        "new_internal_outline_pixels": 0
+      },
+      {
+        "side": "right",
+        "old_internal_outline_pixels": 16,
+        "new_internal_outline_pixels": 0
+      }
+    ]
+  },
+  {
+    "id": 19,
+    "name": "Ros",
+    "arms": [
+      {
+        "side": "left",
+        "old_internal_outline_pixels": 9,
+        "new_internal_outline_pixels": 0
+      },
+      {
+        "side": "right",
+        "old_internal_outline_pixels": 8,
+        "new_internal_outline_pixels": 0
+      }
+    ]
+  },
+  {
+    "id": 20,
+    "name": "Andy",
+    "arms": [
+      {
+        "side": "left",
+        "old_internal_outline_pixels": 10,
+        "new_internal_outline_pixels": 0
+      },
+      {
+        "side": "right",
+        "old_internal_outline_pixels": 12,
+        "new_internal_outline_pixels": 0
+      }
+    ]
+  },
+  {
+    "id": 21,
+    "name": "Fer",
+    "arms": [
+      {
+        "side": "left",
+        "old_internal_outline_pixels": 8,
+        "new_internal_outline_pixels": 0
+      },
+      {
+        "side": "right",
+        "old_internal_outline_pixels": 17,
+        "new_internal_outline_pixels": 0
+      }
+    ]
+  },
+  {
+    "id": 22,
+    "name": "Leo",
+    "arms": [
+      {
+        "side": "left",
+        "old_internal_outline_pixels": 14,
+        "new_internal_outline_pixels": 0
+      },
+      {
+        "side": "right",
+        "old_internal_outline_pixels": 8,
+        "new_internal_outline_pixels": 0
+      }
+    ]
+  },
+  {
+    "id": 23,
+    "name": "Pao",
+    "arms": [
+      {
+        "side": "left",
+        "old_internal_outline_pixels": 11,
+        "new_internal_outline_pixels": 0
+      },
+      {
+        "side": "right",
+        "old_internal_outline_pixels": 10,
+        "new_internal_outline_pixels": 0
+      }
+    ]
+  },
+  {
+    "id": 24,
+    "name": "Cris",
+    "arms": [
+      {
+        "side": "left",
+        "old_internal_outline_pixels": 10,
+        "new_internal_outline_pixels": 0
+      },
+      {
+        "side": "right",
+        "old_internal_outline_pixels": 7,
+        "new_internal_outline_pixels": 0
+      }
+    ]
+  }
+]

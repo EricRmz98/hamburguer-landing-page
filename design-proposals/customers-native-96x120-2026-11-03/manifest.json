@@ -1,0 +1,687 @@
+{
+  "native_size": [
+    96,
+    120
+  ],
+  "game_size": [
+    96,
+    120
+  ],
+  "game_scale": 1,
+  "waist_row": 114,
+  "status": "adapted_for_review",
+  "characters": [
+    {
+      "id": "01-lia",
+      "name": "Lía",
+      "style": "Skater",
+      "file": "individuales/01-lia-96x120.png",
+      "source": "/Users/eric/Documents/Proyectos/hamburguer-landing-page/design-proposals/customers-new-cast-12-2026-11-01/individuales/01-lia.png",
+      "source_bounds": [
+        105,
+        62,
+        1008,
+        1470
+      ],
+      "source_crop": [
+        105,
+        62,
+        1008,
+        1073
+      ],
+      "source_face": [
+        340,
+        255,
+        660,
+        605
+      ],
+      "source_waist": 1015,
+      "uniform_scale": 0.10409745293466224,
+      "proportion_scale": 1,
+      "source_placement": [
+        1,
+        15
+      ],
+      "placement": [
+        1,
+        15
+      ],
+      "mirrored": false,
+      "facing": "right",
+      "native_face_bounds": [
+        25.462901439645627,
+        35.09080841638981,
+        58.77408637873754,
+        71.52491694352159
+      ],
+      "native_bounds": [
+        1,
+        15,
+        95,
+        120
+      ],
+      "native_waist": 114,
+      "size": [
+        96,
+        120
+      ],
+      "colors_used": 16
+    },
+    {
+      "id": "02-bruno",
+      "name": "Bruno",
+      "style": "Indie",
+      "file": "individuales/02-bruno-96x120.png",
+      "source": "/Users/eric/Documents/Proyectos/hamburguer-landing-page/design-proposals/customers-new-cast-12-2026-11-01/individuales/02-bruno.png",
+      "source_bounds": [
+        44,
+        32,
+        1039,
+        1470
+      ],
+      "source_crop": [
+        44,
+        32,
+        1039,
+        1235
+      ],
+      "source_face": [
+        370,
+        250,
+        670,
+        610
+      ],
+      "source_waist": 1170,
+      "uniform_scale": 0.09314586994727592,
+      "proportion_scale": 1,
+      "source_placement": [
+        1,
+        8
+      ],
+      "placement": [
+        2,
+        8
+      ],
+      "mirrored": true,
+      "facing": "left",
+      "native_face_bounds": [
+        36.690685413005276,
+        28.30579964850615,
+        64.63444639718804,
+        61.83831282952548
+      ],
+      "native_bounds": [
+        2,
+        8,
+        95,
+        120
+      ],
+      "native_waist": 114,
+      "size": [
+        96,
+        120
+      ],
+      "colors_used": 16
+    },
+    {
+      "id": "03-zoe",
+      "name": "Zoe",
+      "style": "Gótica",
+      "file": "individuales/03-zoe-96x120.png",
+      "source": "/Users/eric/Documents/Proyectos/hamburguer-landing-page/design-proposals/customers-new-cast-12-2026-11-01/individuales/03-zoe.png",
+      "source_bounds": [
+        127,
+        61,
+        979,
+        1467
+      ],
+      "source_crop": [
+        145,
+        61,
+        979,
+        1075
+      ],
+      "source_face": [
+        405,
+        230,
+        650,
+        610
+      ],
+      "source_waist": 1020,
+      "uniform_scale": 0.1105318039624609,
+      "proportion_scale": 1,
+      "source_placement": [
+        2,
+        8
+      ],
+      "placement": [
+        2,
+        8
+      ],
+      "mirrored": false,
+      "facing": "right",
+      "native_face_bounds": [
+        30.738269030239834,
+        26.679874869655894,
+        57.81856100104275,
+        68.68196037539104
+      ],
+      "native_bounds": [
+        2,
+        8,
+        94,
+        120
+      ],
+      "native_waist": 114,
+      "size": [
+        96,
+        120
+      ],
+      "colors_used": 16
+    },
+    {
+      "id": "04-ciro",
+      "name": "Ciro",
+      "style": "Fútbol",
+      "file": "individuales/04-ciro-96x120.png",
+      "source": "/Users/eric/Documents/Proyectos/hamburguer-landing-page/design-proposals/customers-new-cast-12-2026-11-01/individuales/04-ciro.png",
+      "source_bounds": [
+        77,
+        40,
+        1035,
+        1457
+      ],
+      "source_crop": [
+        77,
+        40,
+        1035,
+        1245
+      ],
+      "source_face": [
+        405,
+        220,
+        660,
+        600
+      ],
+      "source_waist": 1180,
+      "uniform_scale": 0.09298245614035087,
+      "proportion_scale": 1,
+      "source_placement": [
+        3,
+        8
+      ],
+      "placement": [
+        4,
+        8
+      ],
+      "mirrored": true,
+      "facing": "left",
+      "native_face_bounds": [
+        38.79122807017544,
+        24.736842105263158,
+        62.501754385964915,
+        60.07017543859649
+      ],
+      "native_bounds": [
+        4,
+        8,
+        93,
+        120
+      ],
+      "native_waist": 114,
+      "size": [
+        96,
+        120
+      ],
+      "colors_used": 16
+    },
+    {
+      "id": "05-mika",
+      "name": "Mika",
+      "style": "Techwear",
+      "file": "individuales/05-mika-96x120.png",
+      "source": "/Users/eric/Documents/Proyectos/hamburguer-landing-page/design-proposals/customers-new-cast-12-2026-11-01/individuales/05-mika.png",
+      "source_bounds": [
+        156,
+        28,
+        1008,
+        1391
+      ],
+      "source_crop": [
+        161,
+        28,
+        1008,
+        1045
+      ],
+      "source_face": [
+        400,
+        170,
+        690,
+        530
+      ],
+      "source_waist": 990,
+      "uniform_scale": 0.1101871101871102,
+      "proportion_scale": 1,
+      "source_placement": [
+        1,
+        8
+      ],
+      "placement": [
+        1,
+        8
+      ],
+      "mirrored": false,
+      "facing": "right",
+      "native_face_bounds": [
+        27.334719334719335,
+        23.646569646569645,
+        59.28898128898129,
+        63.313929313929314
+      ],
+      "native_bounds": [
+        1,
+        8,
+        94,
+        120
+      ],
+      "native_waist": 114,
+      "size": [
+        96,
+        120
+      ],
+      "colors_used": 16
+    },
+    {
+      "id": "06-alma",
+      "name": "Alma",
+      "style": "Arte",
+      "file": "individuales/06-alma-96x120.png",
+      "source": "/Users/eric/Documents/Proyectos/hamburguer-landing-page/design-proposals/customers-new-cast-12-2026-11-01/individuales/06-alma.png",
+      "source_bounds": [
+        165,
+        28,
+        942,
+        1465
+      ],
+      "source_crop": [
+        165,
+        28,
+        942,
+        1098
+      ],
+      "source_face": [
+        400,
+        250,
+        680,
+        660
+      ],
+      "source_waist": 1040,
+      "uniform_scale": 0.10474308300395258,
+      "proportion_scale": 1,
+      "source_placement": [
+        7,
+        8
+      ],
+      "placement": [
+        8,
+        8
+      ],
+      "mirrored": true,
+      "facing": "left",
+      "native_face_bounds": [
+        35.05731225296442,
+        31.252964426877472,
+        64.38537549407114,
+        74.19762845849803
+      ],
+      "native_bounds": [
+        8,
+        8,
+        89,
+        120
+      ],
+      "native_waist": 114,
+      "size": [
+        96,
+        120
+      ],
+      "colors_used": 16
+    },
+    {
+      "id": "07-rafa",
+      "name": "Rafa",
+      "style": "Rockabilly",
+      "file": "individuales/07-rafa-96x120.png",
+      "source": "/Users/eric/Documents/Proyectos/hamburguer-landing-page/design-proposals/customers-new-cast-12-2026-11-01/individuales/07-rafa.png",
+      "source_bounds": [
+        128,
+        35,
+        1041,
+        1388
+      ],
+      "source_crop": [
+        128,
+        35,
+        1041,
+        1039
+      ],
+      "source_face": [
+        400,
+        175,
+        680,
+        550
+      ],
+      "source_waist": 980,
+      "uniform_scale": 0.10295728368017525,
+      "proportion_scale": 1,
+      "source_placement": [
+        1,
+        17
+      ],
+      "placement": [
+        1,
+        17
+      ],
+      "mirrored": false,
+      "facing": "right",
+      "native_face_bounds": [
+        29.004381161007668,
+        31.414019715224534,
+        57.83242059145674,
+        70.02300109529025
+      ],
+      "native_bounds": [
+        1,
+        17,
+        95,
+        120
+      ],
+      "native_waist": 114,
+      "size": [
+        96,
+        120
+      ],
+      "colors_used": 16
+    },
+    {
+      "id": "08-dante",
+      "name": "Dante",
+      "style": "Metal",
+      "file": "individuales/08-dante-96x120.png",
+      "source": "/Users/eric/Documents/Proyectos/hamburguer-landing-page/design-proposals/customers-new-cast-12-2026-11-01/individuales/08-dante.png",
+      "source_bounds": [
+        74,
+        23,
+        1014,
+        1458
+      ],
+      "source_crop": [
+        74,
+        23,
+        1014,
+        1278
+      ],
+      "source_face": [
+        380,
+        200,
+        650,
+        600
+      ],
+      "source_waist": 1210,
+      "uniform_scale": 0.08930075821398484,
+      "proportion_scale": 1,
+      "source_placement": [
+        6,
+        8
+      ],
+      "placement": [
+        6,
+        8
+      ],
+      "mirrored": true,
+      "facing": "left",
+      "native_face_bounds": [
+        38.56276326874473,
+        23.806234203875317,
+        62.67396798652064,
+        59.52653748946925
+      ],
+      "native_bounds": [
+        6,
+        8,
+        90,
+        120
+      ],
+      "native_waist": 114,
+      "size": [
+        96,
+        120
+      ],
+      "colors_used": 16
+    },
+    {
+      "id": "09-vega",
+      "name": "Vega",
+      "style": "Rave",
+      "file": "individuales/09-vega-96x120.png",
+      "source": "/Users/eric/Documents/Proyectos/hamburguer-landing-page/design-proposals/customers-new-cast-12-2026-11-01/individuales/09-vega.png",
+      "source_bounds": [
+        56,
+        96,
+        1013,
+        1536
+      ],
+      "source_crop": [
+        59,
+        96,
+        1013,
+        1081
+      ],
+      "source_face": [
+        390,
+        240,
+        650,
+        650
+      ],
+      "source_waist": 1020,
+      "uniform_scale": 0.09853249475890985,
+      "proportion_scale": 1,
+      "source_placement": [
+        1,
+        23
+      ],
+      "placement": [
+        1,
+        23
+      ],
+      "mirrored": false,
+      "facing": "right",
+      "native_face_bounds": [
+        33.61425576519916,
+        37.18867924528302,
+        59.23270440251572,
+        77.58700209643607
+      ],
+      "native_bounds": [
+        1,
+        23,
+        95,
+        120
+      ],
+      "native_waist": 114,
+      "size": [
+        96,
+        120
+      ],
+      "colors_used": 16
+    },
+    {
+      "id": "10-ines",
+      "name": "Inés",
+      "style": "Kawaii",
+      "file": "individuales/10-ines-96x120.png",
+      "source": "/Users/eric/Documents/Proyectos/hamburguer-landing-page/design-proposals/customers-new-cast-12-2026-11-01/individuales/10-ines.png",
+      "source_bounds": [
+        152,
+        73,
+        937,
+        1470
+      ],
+      "source_crop": [
+        152,
+        73,
+        931,
+        1073
+      ],
+      "source_face": [
+        420,
+        280,
+        680,
+        680
+      ],
+      "source_waist": 1010,
+      "uniform_scale": 0.09615795090715049,
+      "proportion_scale": 0.85,
+      "source_placement": [
+        10,
+        24
+      ],
+      "placement": [
+        11,
+        24
+      ],
+      "mirrored": true,
+      "facing": "left",
+      "native_face_bounds": [
+        35.22860192102454,
+        43.90469583778015,
+        60.22966915688367,
+        82.36787620064035
+      ],
+      "native_bounds": [
+        11,
+        24,
+        86,
+        120
+      ],
+      "native_waist": 114,
+      "size": [
+        96,
+        120
+      ],
+      "colors_used": 16
+    },
+    {
+      "id": "11-gael",
+      "name": "Gael",
+      "style": "Surf",
+      "file": "individuales/11-gael-96x120.png",
+      "source": "/Users/eric/Documents/Proyectos/hamburguer-landing-page/design-proposals/customers-new-cast-12-2026-11-01/individuales/11-gael.png",
+      "source_bounds": [
+        131,
+        62,
+        961,
+        1470
+      ],
+      "source_crop": [
+        131,
+        62,
+        961,
+        1328
+      ],
+      "source_face": [
+        400,
+        220,
+        675,
+        620
+      ],
+      "source_waist": 1260,
+      "uniform_scale": 0.08848080133555926,
+      "proportion_scale": 1,
+      "source_placement": [
+        11,
+        8
+      ],
+      "placement": [
+        11,
+        8
+      ],
+      "mirrored": false,
+      "facing": "right",
+      "native_face_bounds": [
+        34.80133555926544,
+        21.979966611018362,
+        59.13355592654424,
+        57.37228714524207
+      ],
+      "native_bounds": [
+        11,
+        8,
+        84,
+        120
+      ],
+      "native_waist": 114,
+      "size": [
+        96,
+        120
+      ],
+      "colors_used": 16
+    },
+    {
+      "id": "12-sasha",
+      "name": "Sasha",
+      "style": "Streetwear",
+      "file": "individuales/12-sasha-96x120.png",
+      "source": "/Users/eric/Documents/Proyectos/hamburguer-landing-page/design-proposals/customers-new-cast-12-2026-11-01/individuales/12-sasha.png",
+      "source_bounds": [
+        72,
+        70,
+        1028,
+        1465
+      ],
+      "source_crop": [
+        79,
+        70,
+        1028,
+        1071
+      ],
+      "source_face": [
+        420,
+        230,
+        690,
+        610
+      ],
+      "source_waist": 1010,
+      "uniform_scale": 0.09905163329820864,
+      "proportion_scale": 1,
+      "source_placement": [
+        1,
+        21
+      ],
+      "placement": [
+        1,
+        21
+      ],
+      "mirrored": true,
+      "facing": "left",
+      "native_face_bounds": [
+        34.47945205479452,
+        36.84826132771338,
+        61.22339304531086,
+        74.48788198103267
+      ],
+      "native_bounds": [
+        1,
+        21,
+        95,
+        120
+      ],
+      "native_waist": 114,
+      "size": [
+        96,
+        120
+      ],
+      "colors_used": 16
+    }
+  ]
+}

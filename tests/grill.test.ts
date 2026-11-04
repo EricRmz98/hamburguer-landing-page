@@ -46,10 +46,10 @@ describe('Grill', () => {
 describe('Dificultad', () => {
   const p = DEFAULT_CONFIG.patience;
 
-  it('la plancha crece y las recetas cambian según la tabla', () => {
+  it('mantiene tres lugares desde el inicio mientras las recetas suben de nivel', () => {
     assert.deepEqual(
       [1, 8, 13, 21].map((n) => [levelFor(n, DEFAULT_CONFIG).tier, levelFor(n, DEFAULT_CONFIG).slots]),
-      [[1, 2], [3, 3], [4, 4], [5, 4]],
+      [[1, 3], [3, 3], [4, 3], [5, 3]],
     );
   });
 

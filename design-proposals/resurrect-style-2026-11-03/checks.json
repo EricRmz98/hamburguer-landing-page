@@ -1,0 +1,21 @@
+{
+  "palette": "Resurrect 64",
+  "author": "Kerrie Lake",
+  "unique_colors": 64,
+  "definitions": 30,
+  "customers": 12,
+  "native_customer_size": [
+    96,
+    120
+  ],
+  "shared_integer_scale": true,
+  "kitchen_anchors_unchanged": true,
+  "tests": {
+    "passed": 161,
+    "failed": 0
+  },
+  "build": "passed",
+  "browser_layout_checks": 24,
+  "physical_phone_tested": false,
+  "customer_expressions": "one approved waiting portrait per character"
+}

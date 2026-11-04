@@ -1,0 +1,22 @@
+{
+  "native_size": [
+    80,
+    96
+  ],
+  "palette_colors": 3,
+  "binary_alpha": true,
+  "connected_silhouette": true,
+  "body_width_including_arms": 70,
+  "plate_width": 31,
+  "body_plate_ratio": 2.26,
+  "waist_row": 92,
+  "horizontal_position": [
+    120,
+    30
+  ],
+  "vertical_position": [
+    50,
+    108
+  ],
+  "integration": "reference_only"
+}

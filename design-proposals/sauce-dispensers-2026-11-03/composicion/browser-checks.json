@@ -1,0 +1,62 @@
+[
+  {
+    "bottles": [
+      {
+        "height": "84px",
+        "left": "388px",
+        "top": "208px",
+        "width": "32px"
+      },
+      {
+        "height": "84px",
+        "left": "424px",
+        "top": "208px",
+        "width": "32px"
+      },
+      {
+        "height": "84px",
+        "left": "460px",
+        "top": "208px",
+        "width": "32px"
+      }
+    ],
+    "clip": {
+      "height": 424,
+      "width": 640,
+      "x": 82.5,
+      "y": 175.0703125
+    },
+    "layout": "horizontal",
+    "scale": 2
+  },
+  {
+    "bottles": [
+      {
+        "height": "84px",
+        "left": "236px",
+        "top": "374px",
+        "width": "32px"
+      },
+      {
+        "height": "84px",
+        "left": "272px",
+        "top": "374px",
+        "width": "32px"
+      },
+      {
+        "height": "84px",
+        "left": "308px",
+        "top": "374px",
+        "width": "32px"
+      }
+    ],
+    "clip": {
+      "height": 600,
+      "width": 360,
+      "x": 222.5,
+      "y": 175.0703125
+    },
+    "layout": "vertical",
+    "scale": 2
+  }
+]

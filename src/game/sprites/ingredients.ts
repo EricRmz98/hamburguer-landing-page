@@ -10,23 +10,23 @@ export const panBase = defineSprite({
   id: 'pan_base',
   size: [24, 16],
   materials: ['pan'],
-  colors: { o: 'cafe', s: 'canela', b: 'durazno', l: 'crema' },
+  colors: { o: 'oxido', s: 'canela', b: 'piel', l: 'crema', a: 'piel-clara' },
   pixels: `
     ........bo.bbbo.........
-    ......bbllbllllbbbo.....
-    ..bbbbllllllllllbllbo...
-    ..bblllllllllllllllllo..
-    .bllllllllllllllllllllo.
-    blllllllllllllllllbblllo
-    bllllllllllllllllllllllo
-    bllllllllllllllllllllllo
-    bllllbbllllllblllllllllo
-    sblbllllllllllllllllllbo
-    obbllllllllllllllllllbbo
-    .obbllllbllllllllllbsbo.
-    ..obbbbblllllllllbbbso..
-    ...obbbbbsbbsbbbbbooo...
-    ....oooobsbbsbbboo......
+    ......bbbbbbbbbbbbo.....
+    ..bbbbbbaallllllllbbo...
+    ..bbbllllllaaaallaabbo..
+    .bbballlllllallllaallbo.
+    bbbabbllllllaalllaaaaabo
+    bbblllllaallllbbaabbaabo
+    bbllllbbaallllaaaaaaaabo
+    bbbllaaaabbaaaaaaaaaabbo
+    ssbblllaaaaaaaaaaaabbbbo
+    osbbbaaaaaaaaaaaaaaabbbo
+    .obbbbbaaaaaaaaabbbbbso.
+    ..obbbbbbbbbbbbbbbbbbo..
+    ...obbbbbbbbbbssbbooo...
+    ....oooosbbbbbssoo......
     ........oooooooo........
   `,
 });
@@ -35,22 +35,22 @@ export const panMedio = defineSprite({
   id: 'pan_medio',
   size: [24, 15],
   materials: ['pan'],
-  colors: { o: 'cafe', s: 'canela', b: 'durazno', l: 'crema' },
+  colors: { o: 'oxido', s: 'canela', b: 'piel', l: 'crema', a: 'piel-clara' },
   pixels: `
     .........bbo............
-    .....bbbblllbbbbbbo.....
-    ...bblbllllllllllllo....
-    ..blllblllllllllllllbo..
-    ..bllllllllllllllbllllo.
-    bbbllllllllllllllllllllo
-    blllbllllllllllllllllllo
-    blllbllllllllllllllllllo
-    sllllllllllllllllllllllo
-    ollllllllllllllllllllllo
-    .obsllllllllllllllllllo.
-    ..slbllllllllllllllslo..
-    ..oobbsbbbslllllbbbooo..
-    ....oooobslllbllooo.....
+    .....bbbbbbbbbbbbbo.....
+    ...bbbbaaallllalllbo....
+    ..bbbllllllaalallaabbo..
+    ..bballllllllllllaallbo.
+    bbbabblllllllallaaaaaabo
+    bbblllllaallllbbaabbaabo
+    bblllbbbaablllaaaaaaaabo
+    sbbllaaaalaaaaaaaaababbo
+    obbbbllaaaaaaaaaaaaabbbo
+    .obbbaaaaaaaaaaaaaaabbo.
+    ..sbbbbbbaaaaaaabbbbbo..
+    ..oobbbbbbbbbbbbbbsooo..
+    ....oooossbbbbbbooo.....
     ........oooooooo........
   `,
 });
@@ -59,23 +59,23 @@ export const panTapa = defineSprite({
   id: 'pan_tapa',
   size: [24, 16],
   materials: ['pan'],
-  colors: { o: 'cafe', s: 'canela', b: 'canela', l: 'durazno', e: 'crema' },
+  colors: { o: 'oxido', s: 'canela', b: 'piel', l: 'tostado', e: 'crema', p: 'tostado', a: 'piel-clara' },
   pixels: `
     .......bbbbbbbbbo.......
-    ....bbblllellllllbbo....
-    ...belllllllllllllllo...
-    ..bllllllllllllllllleo..
-    .bllllllllllllllllllllo.
-    bllllllellllllllllellllo
-    slllllllllllllllllsslllo
-    bllsellbllllllllesllsslo
-    slllsllbsllllllsellslsso
-    sblllbssllllllllssblslbo
-    sbblbsllbbslsbblllsslsbo
-    obbbsllbsslllssbsblbslbo
-    .obblbbbllllsllslblbsbo.
-    ..oobbsbbbsslbblbbbboo..
-    ....ooobbssbsbbsbooo....
+    ....bbbllaappppbpbbo....
+    ...bllllaapppppbbpbbo...
+    ..blllllllbbppppppppeo..
+    .bllllllppppppppppbbbbo.
+    blllpppepbbbbpppppepbbpo
+    sppppppppbbbbppbbpssbbbo
+    bppbeppbpppppppbesppssbo
+    spppbppbbppppppsebbspsso
+    sbpbpbbbppppbbpbssspsbso
+    ssbpbbppbbbpsssbbbssbsoo
+    oosbbbbbbbppbssssspsssso
+    .oosbbbbppbbsbpsbsbssso.
+    ..ooosssbbbbsssbssssoo..
+    ....oooossossosssooo....
     .......oooooooooo.......
   `,
 });
@@ -87,26 +87,26 @@ export const carne = defineSprite({
   colors: { k: 'negro', m: 'cafe-oscuro', n: 'cafe', p: 'canela', h: 'piel' },
   pixels: `
     .......nnnnnnnnnk..........
-    ......nppppppmpppnnnnk.....
-    ....nnppmmmpmmmpppppppnnk..
-    ....nppppppppppmppppppppk..
-    ...nppppmppmpppmpppmppppk..
-    .nnpmmpppppppppmppmpppmppk.
-    .nppppppmmppppmpppppmppppk.
-    mhppppppmhpppppppmpppppppk.
-    mnphppppppmpmpppppppppmmppk
-    mnnpmpphpmpppppppmppmppppmk
-    knnnnppppppppppppppppppppnk
-    .kknnnhpppppmpmmmppmppnmmnk
-    ...mnnnnppmppppmpppnnmnmmk.
-    ...kkknnmnnnmpnnmnnnnmnkk..
-    ......kmnnnnnnmnmmnknkk....
-    .......kkkmnnnmnkkk.k......
+    ......nphhppnnpppnnnnk.....
+    ....nnmpppppppppnnppppnnk..
+    ....nppnnmnmmppppppppppmk..
+    ...nhmmppnnppnphhmmnnpppk..
+    .nnhppppmpmmpppphhppppppnk.
+    .nmhmmpphhhhhpppmmmmnnnnnk.
+    mpppppppppmmnnppnnnnnnnnnk.
+    mmpmmpphhpppppnmnmmnnnnnnnk
+    mmnpphhhhnnnnnnnnnnnnnnmmmk
+    knnmnmppnnnnnnnnnmmmmnnnnnk
+    .kkmnnnnhnnnnnnnnnnnnnmmnnk
+    ...mmnnnhhnnhhnnnnnnmmmmnk.
+    ...kkkmnmnnnnnnmmmnnmnnkk..
+    ......kmmnnnnnnmmmnknkk....
+    .......kkknmmmmmkkk.k......
     ..........kkkkkk...........
   `,
   variants: {
     perfecta: {  },
-    cruda: { materials: ['carne-cruda'], colors: { k: 'ciruela', m: 'magenta', n: 'rosa', p: 'piel-clara', h: 'blanco' } },
+    cruda: { materials: ['carne-cruda'], colors: { k: 'rojo-oscuro', m: 'rosa-viejo', n: 'rosa', p: 'piel-clara', h: 'blanco' } },
     cocinandose: { materials: ['carne-cocinandose'], colors: { k: 'cafe-oscuro', m: 'cafe', n: 'canela', p: 'piel', h: 'piel-clara' } },
     quemada: { materials: ['carne-quemada'], colors: { k: 'negro', m: 'negro', n: 'noche', p: 'pizarra', h: 'gris-azul' } },
   },
@@ -116,21 +116,21 @@ export const queso = defineSprite({
   id: 'queso',
   size: [24, 15],
   materials: ['queso'],
-  colors: { q: 'oxido', r: 'naranja', t: 'ambar', u: 'amarillo' },
+  colors: { q: 'canela', r: 'ambar', t: 'amarillo', u: 'vainilla', j: 'tostado' },
   pixels: `
     ....tttttq..............
     ....tuuuuuttttttttq.....
-    ...tuuuuuuuuuuuuuuuttttq
-    ...tuuuuuuuuuuuuuuuuuuuq
-    ..tuuuuuuuuuuuuuuuuuuuuq
-    ..tuuuuuuuuuuuuuuuuuuuq.
-    ..tuuuuuuuuuuuuuuuuuuq..
-    .tuuuuuuuuuuuuuuuuuuuq..
-    .tuuuuuuuuuuuuuuuuuuuq..
-    tuuuuuuuuuuuuuuuuuuuq...
-    rtqquuuuuuuuuuuuuuuuq...
-    rq..qqqqqqqqquuuuuuq....
-    qq...........qqqqqtq....
+    ...tuuutjttttuuuuuuttttq
+    ...tuuutttttttttttttttuq
+    ..tuuuuttttjjttttttttttq
+    ..tuuuttjjttttttttttttq.
+    ..tuuuttttttjjtttttttq..
+    .tuuutttttttttttttrttq..
+    .tuuuttttttttttjjrrrrq..
+    tuuuuttttttttjjttrrrq...
+    rrqqttttttttttttrrrrq...
+    rq..qqqqqqqqqtttrrrq....
+    qq...........qqqqqqq....
     ..................rq....
     ..................qq....
   `,
@@ -140,23 +140,23 @@ export const lechuga = defineSprite({
   id: 'lechuga',
   size: [28, 16],
   materials: ['lechuga'],
-  colors: { v: 'verde-noche', w: 'verde-oscuro', x: 'verde', y: 'verde-claro' },
+  colors: { v: 'verde-noche', w: 'verde-oscuro', x: 'verde-claro', y: 'lima' },
   pixels: `
     ................xxxv........
-    .......xv......xyyyv........
-    .....xxyyxxxxxxyyyyyv.......
-    .....xyyyyyyyxyxyyyyyv...xv.
-    ....xyyxyyxyyyyyyyyyyywxxyyv
-    ....xyyyyxxxxyyyxyyyyxyyxyyv
-    .xxxyyxyyyyyyyyyxyxxyyyyywxv
-    .xyyyyyyyyyyyyyyyyyxyyyyyywv
-    vxyyxxyyyyyyxyyxyxxyyyyyxyv.
-    .vyxyyxyyyxyyyyyyyyyyyxyyyyv
-    ..vvyyyyyyyxxyyyyyyyyyyxyyyv
-    ....xyyyyxyyyyyyyyxxxxyyxwxv
-    ....vyyyyxyyyyyyyyxxyyxvvvvv
-    .....wxyxwyyxyyyyyxyxyv.....
-    .....vvvvvvvvvwxyyyxwv......
+    .......xv......xxxxv........
+    .....xxxxxxxxxxyyxxxv.......
+    .....xyyyyxyxyyyyxxxxv...xv.
+    ....xyyyyyyyyxyxxxxxxxwxxxxv
+    ....xxyxxxyyxxxxxxxxxxxxxwwv
+    .xxxxyxxxxxxyyyyyxxxxxwwwwwv
+    .xyyyxyyyyyyxxxyxxxxxxxxxxwv
+    vxxxxxxxyxxxxxyyxxxxxxxxwwv.
+    .vxxxxxxxxxxxxxxxxxxwwwxxxxv
+    ..vvxxxxxxxxxxxxxxwxxxxxxxxv
+    ....xxxxxxxxxxxxxxxxxxxxwwwv
+    ....vxxxxxxxxxxxxxwwwwwvvvvv
+    .....wxxxxxxxxxxxxxxxxv.....
+    .....vvvvvvvvvwwxxwwwv......
     ..............vvvvvvv.......
   `,
 });
@@ -165,19 +165,19 @@ export const tomate = defineSprite({
   id: 'tomate',
   size: [22, 13],
   materials: ['tomate'],
-  colors: { A: 'rojo-oscuro', C: 'rojo', D: 'rosa' },
+  colors: { A: 'rojo-oscuro', C: 'rojo', D: 'coral', B: 'tostado', a: 'rojo-ladrillo', P: 'piel-clara' },
   pixels: `
     ......CCCCCCCCCA......
-    ...CCCDDCCCDDDDDCCA...
-    ..CDDDDCCCDDDCCDDDA...
-    ..CDDCDCDDDDDDDDDDDCA.
-    .CDDCCCDCCCCCDDDDCDDDA
-    .CDDDDDDCCCCCCDDDDDDDA
-    ADDDCDDDCCCCCCDCCDDDA.
-    ADDDDDCDDCCDDCCCCDDDA.
-    .ACDDDCCCCDDCCCCDDDCA.
-    ..ACCDDDDDDDDDDDDACA..
-    ...AACCCCDDDDCDCAAA...
+    ...CCCDDDDDDDDDDCCA...
+    ..CCDDDDDDDaBBPaDDA...
+    ..CDDaBaDDDDBBaDDCCCA.
+    .CDDBBBBDDDDDDCCCCCCaA
+    .CDDDDDDDDPPCCCaaCCCaA
+    ACDDDDDDCCCCCCPBBPCCA.
+    ACCDDCCaBBaCCCCaaCCaA.
+    .ACCCCaaPBaCCCCCCCaCA.
+    ..ACCCCCCCCCCCCaaACA..
+    ...AACCCCaaaaCaCAAA...
     .....AAAAAAACAAA......
     ............A.........
   `,
@@ -187,19 +187,19 @@ export const cebolla = defineSprite({
   id: 'cebolla',
   size: [22, 12],
   materials: ['cebolla'],
-  colors: { E: 'ciruela', F: 'magenta', G: 'piel-clara', H: 'blanco' },
+  colors: { E: 'ciruela', F: 'magenta', G: 'gris-claro', H: 'blanco', i: 'rosa-palido', j: 'gris-claro' },
   pixels: `
     ......GGGGGGGGGGE.....
-    ...GGGFFFHHHFFFFHGE...
-    ..GHHFHHHHHHHHHHFHHE..
-    .GHFFHHHFHHHHFFHHHFHE.
-    .GHFHHFHHHHHHHFHHHFHHE
-    .GHFHHHFHHHHHHHFHHFHE.
-    EHHFHHHFHHHHHHFHHHFHE.
-    .EHHFHHHHFFHFHHHFFHHE.
-    ..EHHHHHHHHHHHHFFHHE..
-    ...EEHHHHHHFHHHHEEE...
-    .....EEEEEEEHEEE......
+    ...GGGFHFFHHFFFjjGE...
+    ..GiHFFHHiiHHHjjjjiE..
+    .GiFFjHiFFHFFFEjjEjiE.
+    .GjFjjiFjjjjjjEijEjiiE
+    .GijjjiFjjjjjjEijjEiE.
+    EiijjjiFjjjjjjEijjEjE.
+    .EijFFjiiiiiEijjEjiiE.
+    ..EiiijFjjjjjjEEjiiE..
+    ...EEiiijjijjiiiEEE...
+    .....EEEEEEEiEEE......
     ............E.........
   `,
 });
@@ -208,25 +208,25 @@ export const salsa = defineSprite({
   id: 'salsa',
   size: [20, 13],
   materials: ['catsup'],
-  colors: { I: 'cafe-oscuro', J: 'rojo-oscuro', K: 'rojo', L: 'rosa' },
+  colors: { I: 'cafe-oscuro', J: 'rojo-oscuro', K: 'rojo-ladrillo', L: 'rojo', O: 'coral' },
   pixels: `
     .....KI.......KI....
-    ...KKLLKKKKKKKLLI...
-    ...KLLLLLLLLLLLLLI..
-    ...KLLLLLLLLLLLLI...
-    ..KLLLLLLLLLLLLLLI..
-    .KLLLLLLLLLLLLLLLLI.
-    KLLLLLLLLLLLLLLLLLLI
-    IILLLLLLLLLLLLLLLLLI
-    ..JIIILLLLLLLLIIIII.
-    ..I...ILLLLLLI......
-    ..I....IIILII..JI...
+    ...KKLKKKKKKKKJJI...
+    ...KLLLLLLKKKKKJJI..
+    ...KLLLOOLKKKKKKI...
+    ..KLLLOOOOKKKKKKJI..
+    .KKLLLLLLKKKKKKKKJI.
+    KKKKKKKLKKKKKKKKJJJI
+    IIKKKKKKKKKKKKJJJJJI
+    ..JIIIKKKKJKJJIIIII.
+    ..I...IKJJJJJI......
+    ..I....IIIJII..JI...
     ..I.......I....II...
     ..........I.........
   `,
   variants: {
     catsup: {  },
-    mostaza: { materials: ['mostaza'], colors: { I: 'oxido', J: 'tostado', K: 'ambar', L: 'amarillo' } },
-    mayonesa: { materials: ['mayonesa'], colors: { I: 'canela', J: 'durazno', K: 'crema', L: 'blanco' } },
+    mostaza: { materials: ['mostaza'], colors: { I: 'oxido', J: 'ambar', K: 'amarillo', L: 'vainilla', O: 'crema' } },
+    mayonesa: { materials: ['mayonesa'], colors: { I: 'plata', J: 'piel-clara', K: 'crema', L: 'blanco', O: 'blanco' } },
   },
 });

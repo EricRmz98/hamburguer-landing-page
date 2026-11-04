@@ -1,0 +1,119 @@
+{
+  "unchanged_dimensions_and_alpha": true,
+  "unchanged_anchors": true,
+  "approved_background_unchanged": true,
+  "palette": "Endesga 64",
+  "changed": [
+    {
+      "sprite": "pan_base",
+      "changed_cells": 144
+    },
+    {
+      "sprite": "pan_medio",
+      "changed_cells": 133
+    },
+    {
+      "sprite": "pan_tapa",
+      "changed_cells": 77
+    },
+    {
+      "sprite": "carne",
+      "changed_cells": 171
+    },
+    {
+      "sprite": "carne:perfecta",
+      "changed_cells": 171
+    },
+    {
+      "sprite": "carne:cruda",
+      "changed_cells": 171
+    },
+    {
+      "sprite": "carne:cocinandose",
+      "changed_cells": 171
+    },
+    {
+      "sprite": "carne:quemada",
+      "changed_cells": 171
+    },
+    {
+      "sprite": "queso",
+      "changed_cells": 139
+    },
+    {
+      "sprite": "lechuga",
+      "changed_cells": 163
+    },
+    {
+      "sprite": "tomate",
+      "changed_cells": 102
+    },
+    {
+      "sprite": "cebolla",
+      "changed_cells": 141
+    },
+    {
+      "sprite": "salsa",
+      "changed_cells": 88
+    },
+    {
+      "sprite": "salsa:catsup",
+      "changed_cells": 88
+    },
+    {
+      "sprite": "salsa:mostaza",
+      "changed_cells": 88
+    },
+    {
+      "sprite": "salsa:mayonesa",
+      "changed_cells": 82
+    },
+    {
+      "sprite": "charola",
+      "changed_cells": 211
+    },
+    {
+      "sprite": "plancha",
+      "changed_cells": 848
+    },
+    {
+      "sprite": "plancha_v",
+      "changed_cells": 713
+    },
+    {
+      "sprite": "bandeja_pan",
+      "changed_cells": 330
+    },
+    {
+      "sprite": "bandeja_queso",
+      "changed_cells": 381
+    },
+    {
+      "sprite": "bandeja_lechuga",
+      "changed_cells": 389
+    },
+    {
+      "sprite": "bandeja_tomate",
+      "changed_cells": 315
+    },
+    {
+      "sprite": "bandeja_cebolla",
+      "changed_cells": 374
+    },
+    {
+      "sprite": "barra_roja",
+      "changed_cells": 12550
+    },
+    {
+      "sprite": "barra_roja_v",
+      "changed_cells": 7420
+    }
+  ],
+  "tests_passed": 161,
+  "build": "passed",
+  "browser_layouts": [
+    "horizontal",
+    "vertical"
+  ],
+  "console_errors": []
+}

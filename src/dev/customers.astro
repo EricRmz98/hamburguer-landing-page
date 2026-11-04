@@ -1,0 +1,83 @@
+---
+// Prueba aislada: usa la vista y los estilos reales, sin cambiar el reparto de la partida.
+import miniGameSource from '../components/MiniGame.astro?raw';
+const gameStyles = miniGameSource.match(/<style is:global>([\s\S]*?)<\/style>/)?.[1] ?? '';
+---
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
+    <title>Clientes nuevos · Prueba de composición</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@400..700&display=swap" />
+    <style is:inline set:html={gameStyles} />
+    <style is:global>
+      body { margin: 0; background: #0a0a0a; color: white; font: 16px/1.4 system-ui, sans-serif; }
+      main { padding: 24px 0; }
+      h1 { margin: 0 16px 8px; text-align: center; font-size: clamp(24px, 4vw, 42px); }
+      .preview-note { margin: 0 16px 18px; text-align: center; color: #c7cfdd; font-size: 14px; }
+      .preview-controls { display: flex; justify-content: center; gap: 12px; flex-wrap: wrap; margin: 0 12px 20px; align-items: center; }
+      .preview-controls select, .preview-controls button { border: 1px solid #657392; border-radius: 6px; background: #2a2f4e; color: white; font: inherit; padding: 8px 10px; }
+      .preview-controls button[aria-pressed="true"] { border-color: #ffa214; }
+      .preview-host { width: 100%; max-width: 1280px; margin: auto; }
+      .preview-host.is-vertical { max-width: 360px; }
+      .preview-host .mg-root { width: 100%; }
+      .preview-caption { text-align: center; color: #c7cfdd; margin: 12px; font-size: 14px; }
+      @media(max-width: 420px) { main { padding-top: 14px; } .preview-controls { gap: 6px; } .preview-controls select, .preview-controls button { padding: 6px; font-size: 14px; } }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1>Arma la hamburguesa</h1>
+      <p class="preview-note">12 clientes · misma cuadrícula y paleta que el minijuego.</p>
+      <div class="preview-controls">
+        <label>Cliente <select id="preview-customer" aria-label="Cliente"></select></label>
+        <button id="preview-wide" aria-pressed="true">Adaptable</button>
+        <button id="preview-tall" aria-pressed="false">Vista móvil</button>
+        <label><input type="checkbox" id="preview-burger" checked /> Hamburguesa</label>
+      </div>
+      <div class="preview-host"><div class="mg-root" id="preview-root"></div></div>
+      <p class="preview-caption" aria-live="polite"></p>
+    </main>
+    <script>
+      import { Game } from '../game/game/session.ts';
+      import { createConfig } from '../game/game/config.ts';
+      import { memoryStore } from '../game/game/storage.ts';
+      import { CATALOG } from '../game/game/recipes.ts';
+      import { GameView } from '../game/view/game-view.ts';
+      import { CUSTOMER_PROFILES } from '../game/sprites/people.ts';
+      const game = new Game(createConfig(), memoryStore());
+      game.mode = 'infinito';
+      game.order = { recipe: CATALOG.clasica, patience: 48, patienceMax: 60, look: 0 };
+      game.stack = [...CATALOG.clasica.stack];
+      game.grill.setActive(game.config.grill.maxSlots);
+      const view = new GameView(document.querySelector<HTMLElement>('#preview-root')!, game);
+      const select = document.querySelector<HTMLSelectElement>('#preview-customer')!;
+      CUSTOMER_PROFILES.forEach((person, i) => select.add(new Option(`${String(i + 1).padStart(2, '0')} · ${person.name} · ${person.style}`, String(i))));
+      const caption = document.querySelector<HTMLElement>('.preview-caption')!;
+      const sync = () => {
+        const index = Number(select.value);
+        game.order!.look = index;
+        view.sync();
+        caption.textContent = `${CUSTOMER_PROFILES[index].name} · 96 × 120 píxeles nativos · Endesga 64`;
+      };
+      select.addEventListener('change', sync);
+      document.querySelector<HTMLInputElement>('#preview-burger')!.addEventListener('change', (event) => {
+        game.stack = (event.target as HTMLInputElement).checked ? [...CATALOG.clasica.stack] : [];
+        sync();
+      });
+      for (const [id, vertical] of [['preview-wide', false], ['preview-tall', true]] as const) {
+        document.getElementById(id)!.addEventListener('click', () => {
+          document.querySelector('.preview-host')!.classList.toggle('is-vertical', vertical);
+          document.getElementById('preview-wide')!.setAttribute('aria-pressed', String(!vertical));
+          document.getElementById('preview-tall')!.setAttribute('aria-pressed', String(vertical));
+          window.dispatchEvent(new Event('resize'));
+          sync();
+        });
+      }
+      const initial = Number(new URLSearchParams(location.search).get('cliente') ?? 1) - 1;
+      select.value = String(Math.max(0, Math.min(11, initial)));
+      sync();
+    </script>
+  </body>
+</html>

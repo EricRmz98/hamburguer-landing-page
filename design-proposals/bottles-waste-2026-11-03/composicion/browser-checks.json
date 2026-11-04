@@ -1,0 +1,28 @@
+[
+  {
+    "clearOfBread": true,
+    "clip": {
+      "height": 400,
+      "width": 640,
+      "x": 82.5,
+      "y": 175.0703125
+    },
+    "layout": "horizontal",
+    "scale": 2,
+    "wasteHeight": 18,
+    "wasteWidth": 44
+  },
+  {
+    "clearOfBread": true,
+    "clip": {
+      "height": 560,
+      "width": 360,
+      "x": 222.5,
+      "y": 175.0703125
+    },
+    "layout": "vertical",
+    "scale": 2,
+    "wasteHeight": 13,
+    "wasteWidth": 44
+  }
+]

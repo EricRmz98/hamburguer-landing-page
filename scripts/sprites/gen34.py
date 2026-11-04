@@ -3,44 +3,107 @@ import r34
 from r34 import Model, render, shade, crop, anchor, hashp, project, dot
 
 PAN = ('o', 's', 'b', 'l')
+
+def local_texture(texture, origin):
+    return lambda cell,n,L: texture(tuple(v-o for v,o in zip(cell,origin)),n,L)
+
 def wav(r, amp, k, ph=0):
     return lambda y, a: r + amp * math.sin(k * a + ph)
 
 def tex_pan(cell, n, L):
     o, s, b, l = L
-    return b if n[1] == 1 and hashp(*cell, 1) < 70 else None
+    x,y,z=cell
+    # Open crumb, with pores clustered around small islands rather than uniform stippling.
+    h=hashp(x//2,y//2,z//2,1)
+    if n[1] == 1:
+        if x*x+z*z>95:return b
+        if h<120:return b
+        if h<300:return 'a'
+        return l if x+z<3 else 'a'
+    return s if h<240 or y==0 else b
 
 def tex_tapa(cell, n, L):
     o, s, b, l = L
     x, y, z = cell
-    if n[1] == 1 and x < -2 and z < -1 and hashp(*cell, 2) < 300:
-        return 'e'  # brillo de la costra, del lado de la luz
-    return None
+    h=hashp(x//2,y//2,z//2,2)
+    if n[1] == 1:
+        # Broad warm light on the dome, caramel shoulders and a darker baked skirt.
+        if y<3:return s if h<420 else b
+        if x>4 or z>7:return b if h<600 else 'p'
+        if x<-2 and z<3:return 'a' if h<230 else l
+        if h<190:return b
+        return 'p'
+    if y<=2:return o if h<180 else s
+    return b if x<2 else s
 
 def tex_carne(cell, n, L):
     o, s, b, l = L
-    h = hashp(*cell, 3)
+    x,y,z=cell
+    h = hashp(x//2,y//2,z//2,3)
     if n[1] == 1:
-        return s if h < 180 else 'h' if h < 230 and cell[0] < 1 else None  # brillos del lado de la luz
-    return s if h < 120 else None
+        # Broken sear lines follow one direction; the fat glints stay on the lit half.
+        if (x+2*z)%8 in (0,1) and abs(z)<9:return s if h<750 else b
+        if h<200:return b
+        if h>790 and x<3:return 'h'
+        return l if x+z<4 else b
+    return s if h<450 or y==0 else b
+
+def tex_queso(cell,n,L):
+    o,s,b,l=L;x,y,z=cell
+    if n[1]==1:
+        # Supple slice: soft folds, pinprick pores and a thin translucent lit edge.
+        if x<-6 or z<-7:return l
+        if x>5 and z>0:return s
+        if hashp(x//2,0,z//2,71)<110:return 'j'
+        return b
+    return s if x<0 else o
 
 def tex_lechuga(cell, n, L):
     o, s, b, l = L
-    return b if n[1] == 1 and hashp(*cell, 4) < 160 else None
+    x,y,z=cell
+    if n[1]==1:
+        # Main rib and branching veins, separated by broad folded leaf surfaces.
+        rib=x+z//3
+        if abs(rib)<=1:return 'V' if x<-1 and z<1 else l if x<1 and z<2 else b
+        if (z-abs(rib))%6==0 and abs(rib)<10:return l if x<1 and z<2 else b
+        fold=math.sin((x+2*z)*.55)
+        if fold<-.6:return s if x>3 else b
+        return l if fold>.35 and x<0 and z<3 else b
+    return s if x>0 else b
 
 def tex_tomate(cell, n, L):
     o, s, b, l = L
     x, y, z = cell
     d = math.hypot(x + .5, z + .5) * 14 / SLICE_R  # el dibujo se pensó para radio 14
-    if n[1] == 1 and (d < 4 or (6 < d < 10 and hashp(*cell, 5) < 450)):
-        return b
+    if n[1] == 1:
+        angle=math.atan2(z+.5,x+.5)
+        chamber=math.sin(angle*4+.6)
+        if d>12:return b if x<0 else 'a'
+        if d<2:return 'P'
+        if 4<d<9 and chamber>.73:return 'B' if hashp(x,0,z,7)<650 else 'P'
+        if 4<d<10 and chamber>.1:return 'a'
+        return l if x+z<0 else b
     return None
 
 def tex_cebolla(cell, n, L):
     o, s, b, l = L
     x, y, z = cell
     d = math.hypot(x + .5, z + .5) * 14 / SLICE_R
-    return s if n[1] == 1 and (5 <= d < 6.3 or 9.5 <= d < 10.8) else None
+    if n[1]==1:
+        if 4.6<=d<6 or 9<=d<10.4:return s if x<2 else o
+        if 6<=d<7.3 or d>11.5:return 'i'
+        return l if z<-2 and x<2 else 'j'
+    return b
+
+def tex_salsa(cell,n,L):
+    o,s,b,l=L;x,y,z=cell
+    if n[1]==1:
+        # A viscous pool has a soft dark edge and two connected specular highlights.
+        d=math.hypot(x+1,z+1)
+        if d>7.2:return b if x<0 else s
+        if (x+3)**2+(z+2)**2<5:return 'O'
+        if x<-1 and z<3:return l
+        return b
 
 def tex_bolsa(cell, n, L):
     o, s, b, l = L
@@ -52,7 +115,7 @@ def tex_basura(cell, n, L):
 
 
 # Escala de los ingredientes: la misma que en las bandejas (el pan mide 24 de ancho).
-BUN_R, PATTY_R, SLICE_R, LEAF_R, CHEESE, SAUCE_R, PLATE_R = 12, 12.5, 10.5, 13, 10, 9, 15
+BUN_R, PATTY_R, SLICE_R, LEAF_R, CHEESE, SAUCE_R, PLATE_R = 12, 12.5, 10.5, 13, 10, 9, 19
 
 def plancha(m, width, knobs, depth=36):
     m.box(0, width, -10, 0, depth - 2, depth, 'acero')               # panel frontal
@@ -162,7 +225,33 @@ def tex_molida(cell, n, L):
 
 def tex_bandeja(cell, n, L):
     o, s, b, l = L
-    return l if n[2] == 1 and cell[1] == PAN_H - 2 else None  # veta de brillo del acero cepillado, arriba de la cinta
+    x,y,z=cell
+    if n[2]==1:
+        if y>=PAN_H-2:return 'W' if 3<x<12 else l
+        if x>27:return 'Z'
+        if x<3:return s
+        if 5<x<10:return l if y>6 else b
+        if y==2:return b if x<20 else s
+        if y>7 and (x+2*y)%19<4:return l
+        return b if x<21 else s
+    if n[0]==1:return s
+    if n[1]==1:
+        if z%7==1 and x<24:return l
+        return b
+    return None
+
+def tex_plato(cell,n,L):
+    o,s,b,l=L;x,y,z=cell;d=math.hypot(x+.5,z+.5)*15/PLATE_R
+    if n[1]==1 and 10<d<12.5:return b if x>0 else l
+    if n[1]==1 and d<10 and x>5:return b
+    return None
+
+def tex_bote(cell,n,L):
+    o,s,b,l=L;x,y,z=cell
+    if n[1]==1 and x<-1:return l
+    if n[2]==1 and x<-2 and 2<y<21:return l
+    if n[2]==1 and x>3:return s
+    return None
 
 def build(name, frame=0):
     m = Model()
@@ -209,11 +298,11 @@ def build(name, frame=0):
         if squeeze:
             m.put(0, 35, 0, 'salsa'); m.put(0, 36, 0, 'salsa')
     elif name == 'plancha':
-        PLANCHA['slots'] = [21 + 38 * i for i in range(4)]
-        plancha(m, 156, PLANCHA['slots'])
+        PLANCHA['slots'] = [21 + 38 * i for i in range(3)]
+        plancha(m, 118, PLANCHA['slots'])
     elif name == 'plancha_v':
-        PLANCHA['slots'] = [18 + 33 * i for i in range(4)]
-        plancha(m, 134, PLANCHA['slots'])
+        PLANCHA['slots'] = [15 + 30 * i for i in range(3)]
+        plancha(m, 90, PLANCHA['slots'])
     elif name == 'charola':  # bandeja más ancha y rectangular con carne cruda
         bandeja(m, 'carne', W=38, D=PAN_D)
     elif name.startswith('bandeja_'):
@@ -241,22 +330,22 @@ def build(name, frame=0):
 
 # Materiales: letras (contorno, sombra, base, luz) de cada sprite.
 SPEC = {
-    'pan_base':  ({'pan': PAN}, {'o': 'cafe', 's': 'canela', 'b': 'durazno', 'l': 'crema'}, ['pan'], {'pan': tex_pan}),
-    'pan_medio': ({'pan': PAN}, {'o': 'cafe', 's': 'canela', 'b': 'durazno', 'l': 'crema'}, ['pan'], {'pan': tex_pan}),
+    'pan_base':  ({'pan': PAN}, {'o': 'oxido', 's': 'canela', 'b': 'piel', 'l': 'crema', 'a': 'piel-clara'}, ['pan'], {'pan': tex_pan}),
+    'pan_medio': ({'pan': PAN}, {'o': 'oxido', 's': 'canela', 'b': 'piel', 'l': 'crema', 'a': 'piel-clara'}, ['pan'], {'pan': tex_pan}),
     'pan_tapa':  ({'tapa': ('o', 's', 'b', 'l'), 'semilla': ('e', 'e', 'e', 'e')},
-                  {'o': 'cafe', 's': 'canela', 'b': 'canela', 'l': 'durazno', 'e': 'crema'}, ['pan'], {'tapa': tex_tapa}),
+                  {'o': 'oxido', 's': 'canela', 'b': 'piel', 'l': 'tostado', 'e': 'crema', 'p': 'tostado', 'a': 'piel-clara'}, ['pan'], {'tapa': tex_tapa}),
     'carne':     ({'carne': ('k', 'm', 'n', 'p')}, {'k': 'negro', 'm': 'cafe-oscuro', 'n': 'cafe', 'p': 'canela', 'h': 'piel'}, ['carne'], {'carne': tex_carne}),
-    'queso':     ({'queso': ('q', 'r', 't', 'u')}, {'q': 'oxido', 'r': 'naranja', 't': 'ambar', 'u': 'amarillo'}, ['queso'], None),
-    'lechuga':   ({'lechuga': ('v', 'w', 'x', 'y')}, {'v': 'verde-noche', 'w': 'verde-oscuro', 'x': 'verde', 'y': 'verde-claro'}, ['lechuga'], {'lechuga': tex_lechuga}),
-    'tomate':    ({'tomate': ('A', 'A', 'C', 'D')}, {'A': 'rojo-oscuro', 'C': 'rojo', 'D': 'rosa'}, ['tomate'], {'tomate': tex_tomate}),
-    'cebolla':   ({'cebolla': ('E', 'F', 'G', 'H')}, {'E': 'ciruela', 'F': 'magenta', 'G': 'piel-clara', 'H': 'blanco'}, ['cebolla'], {'cebolla': tex_cebolla}),
-    'salsa':     ({'salsa': ('I', 'J', 'K', 'L')}, {'I': 'cafe-oscuro', 'J': 'rojo-oscuro', 'K': 'rojo', 'L': 'rosa'}, ['catsup'], None),
-    'plato':     ({'plato': ('E', 'F', 'G', 'H')}, {'E': 'gris-azul', 'F': 'gris', 'G': 'gris-claro', 'H': 'blanco'}, ['ceramica'], None),
+    'queso':     ({'queso': ('q', 'r', 't', 'u')}, {'q': 'canela', 'r': 'ambar', 't': 'amarillo', 'u': 'vainilla', 'j': 'tostado'}, ['queso'], {'queso': tex_queso}),
+    'lechuga':   ({'lechuga': ('v', 'w', 'x', 'y')}, {'v': 'verde-noche', 'w': 'verde-oscuro', 'x': 'verde-claro', 'y': 'lima', 'V': 'pistacho'}, ['lechuga'], {'lechuga': tex_lechuga}),
+    'tomate':    ({'tomate': ('A', 'A', 'C', 'D')}, {'A': 'rojo-oscuro', 'C': 'rojo', 'D': 'coral', 'B': 'tostado', 'a': 'rojo-ladrillo', 'P': 'piel-clara'}, ['tomate'], {'tomate': tex_tomate}),
+    'cebolla':   ({'cebolla': ('E', 'F', 'G', 'H')}, {'E': 'ciruela', 'F': 'magenta', 'G': 'gris-claro', 'H': 'blanco', 'i': 'rosa-palido', 'j': 'gris-claro'}, ['cebolla'], {'cebolla': tex_cebolla}),
+    'salsa':     ({'salsa': ('I', 'J', 'K', 'L')}, {'I': 'cafe-oscuro', 'J': 'rojo-oscuro', 'K': 'rojo-ladrillo', 'L': 'rojo', 'O': 'coral'}, ['catsup'], {'salsa': tex_salsa}),
+    'plato':     ({'plato': ('E', 'F', 'G', 'H')}, {'E': 'gris-azul', 'F': 'gris', 'G': 'gris-claro', 'H': 'blanco'}, ['ceramica'], {'plato': tex_plato}),
     'bote':      ({'salsa': ('I', 'J', 'K', 'L'), 'etiqueta': ('R', 'R', 'S', 'S'), 'tapa': ('M', 'N', 'P', 'Q')},
                   {'I': 'cafe-oscuro', 'J': 'rojo-oscuro', 'K': 'rojo', 'L': 'rosa', 'R': 'gris-claro', 'S': 'blanco', 'M': 'negro', 'N': 'pizarra', 'P': 'gris', 'Q': 'gris-claro'},
-                  ['catsup', 'etiqueta', 'metal'], None),
+                  ['catsup', 'etiqueta', 'metal'], {'salsa': tex_bote}),
     'charola':   ({'charola': ('M', 'N', 'P', 'Q'), 'fondo': ('M', 'N', 'N', 'P'), 'cruda': ('k', 'm', 'n', 'p'), 'cruda_b': ('k', 'm', 'n', 'p')},
-                  {'M': 'negro', 'N': 'noche', 'P': 'pizarra', 'Q': 'gris-azul', 'k': 'ciruela', 'm': 'magenta', 'n': 'rosa', 'p': 'piel-clara'},
+                  {'M': 'negro', 'N': 'noche', 'P': 'pizarra', 'Q': 'gris-azul', 'k': 'rojo-oscuro', 'm': 'rosa-viejo', 'n': 'rosa', 'p': 'piel-clara'},
                   ['metal', 'carne-cruda'], None),
     'basura':    ({'aro': ('K', 'R', 'S', 'U'), 'bolsa': ('M', 'M', 'N', 'P'), 'fondo': ('M', 'M', 'M', 'M')},
                   {'K': 'negro', 'R': 'gris-azul', 'S': 'gris', 'U': 'gris-claro', 'M': 'negro', 'N': 'noche', 'P': 'pizarra'},
@@ -277,46 +366,152 @@ def tex_plancha(cell, n, L):
         return None
     d = min(math.hypot((x + .5 - sx) / 19, (z + .5 - PLANCHA['cz']) / 13) for sx in PLANCHA['slots'])
     d += (hashp(x // 3, 0, z // 3, 14) - 500) / 7000  # orillas irregulares de la mancha
-    checker = (x + z) % 2 == 0
     if d < 0.45:
-        return 'M'                                           # centro requemado
-    if d < 0.58:
-        return 'M' if checker else s                         # tramado negro / noche
+        return s if hashp(x//3,0,z//2,61)<120 else 'M'
     if d < 0.85:
         return s                                             # halo de grasa
     if d < 0.97:
-        return s if checker else None                        # tramado noche / acero
+        return b
     if hashp(0, 0, z, 11) % 6 == 0 and hashp(x // 7, 0, z, 12) < 400:
         return 'Q'  # vetas de brillo del acero limpio
     return None
 
 def tex_acero(cell, n, L):
     o, s, b, l = L
-    return l if n[2] == 1 and cell[1] == -1 else None  # filo superior del panel
+    x,y,z=cell
+    if n[2]==1:
+        if y==-1:return 'W' if x%38<20 else l
+        if y==-2:return s
+        if x%38 in (4,5,6):return l
+        if x%38>29:return s
+        return l if y==-8 and x%7<4 else b
+    if n[1]==1 and z<2:return l if x%38<22 else b
+    return None
 
 SPEC.update({
     'plancha': ({'plancha': ('M', 'N', 'N', 'P'), 'acero': ('K', 'R', 'S', 'U'), 'canal': ('M', 'M', 'M', 'N'),
                  'perilla': ('M', 'M', 'N', 'P'), 'perilla_luz': ('U', 'U', 'U', 'U')},
-                {'M': 'negro', 'N': 'noche', 'P': 'pizarra', 'Q': 'gris-azul', 'K': 'negro', 'R': 'gris-azul', 'S': 'gris', 'U': 'gris-claro'},
+                {'M': 'negro', 'N': 'noche', 'P': 'pizarra', 'Q': 'gris-azul', 'K': 'negro', 'R': 'gris-azul', 'S': 'gris', 'U': 'gris-claro', 'W': 'blanco'},
                 ['metal'], {'plancha': tex_plancha, 'acero': tex_acero}),
 })
 SPEC['plancha_v'] = SPEC['plancha']
 STEEL_PAN = {'bandeja': ('K', 'R', 'S', 'U'), 'orilla': ('R', 'S', 'U', 'U')}
-STEEL_COLORS = {'K': 'negro', 'R': 'gris-azul', 'S': 'gris', 'U': 'gris-claro'}
+STEEL_COLORS = {'K': 'negro', 'R': 'gris-azul', 'S': 'gris', 'U': 'gris-claro', 'W': 'blanco', 'Z': 'pizarra'}
 BANDEJAS = ['bandeja_pan', 'bandeja_queso', 'bandeja_lechuga', 'bandeja_tomate', 'bandeja_cebolla']
 for name in BANDEJAS:
     SPEC[name] = (STEEL_PAN, STEEL_COLORS, ['metal'], {'bandeja': tex_bandeja})
 # Pan y queso van en pilas ordenadas modeladas en 3D (la variante que mejor se lee a este tamaño).
 SPEC['bandeja_pan'] = ({**STEEL_PAN, 'bollo': ('o', 's', 'b', 'l'), 'bollo_a': ('o', 's', 'b', 'l'), 'bollo_b': ('o', 's', 'b', 'l'), 'semilla': ('e', 'e', 'e', 'e')},
-                       {**STEEL_COLORS, 'o': 'cafe', 's': 'canela', 'b': 'canela', 'l': 'durazno', 'e': 'crema'}, ['metal', 'pan'], {'bandeja': tex_bandeja})
+                       {**STEEL_COLORS, 'o': 'oxido', 's': 'canela', 'b': 'piel', 'l': 'tostado', 'e': 'crema', 'p': 'tostado', 'a': 'piel-clara'}, ['metal', 'pan'], {'bandeja': tex_bandeja, 'bollo': local_texture(tex_tapa,(PAN_W//2,RIM+3,PAN_D//2)), 'bollo_a': local_texture(tex_pan,(PAN_W//2,0,PAN_D//2)), 'bollo_b': local_texture(tex_pan,(PAN_W//2,0,PAN_D//2))})
 SPEC['bandeja_queso'] = ({**STEEL_PAN, 'queso': ('q', 'r', 't', 'u'), 'queso_a': ('q', 'r', 't', 'u'), 'queso_b': ('q', 'r', 't', 'u')},
-                         {**STEEL_COLORS, 'q': 'oxido', 'r': 'naranja', 't': 'ambar', 'u': 'amarillo'}, ['metal', 'queso'], {'bandeja': tex_bandeja})
+                         {**STEEL_COLORS, 'q': 'canela', 'r': 'ambar', 't': 'amarillo', 'u': 'vainilla', 'j': 'tostado'}, ['metal', 'queso'], {'bandeja': tex_bandeja, 'queso': local_texture(tex_queso,(PAN_W//2,0,PAN_D//2)), 'queso_a': local_texture(tex_queso,(PAN_W//2,0,PAN_D//2)), 'queso_b': local_texture(tex_queso,(PAN_W//2,0,PAN_D//2))})
 SPEC['charola'] = ({**STEEL_PAN, 'molida': ('k', 'm', 'n', 'p')},
-                   {**STEEL_COLORS, 'k': 'ciruela', 'm': 'magenta', 'n': 'rosa', 'p': 'piel-clara', 'h': 'blanco'},
+                   {**STEEL_COLORS, 'k': 'rojo-oscuro', 'm': 'rosa-viejo', 'n': 'rosa', 'p': 'piel-clara', 'h': 'blanco'},
                    ['metal', 'carne-cruda'], {'bandeja': tex_bandeja, 'molida': tex_molida})
 CAMERA = {name: 0 for name in SPEC if name.startswith('plancha') or name.startswith('bandeja_') or name in ('basura', 'charola')}
 
+def native_bottle():
+    """Native elevated-view cylinder: elliptical shoulder, cap, heel and contact shadow."""
+    frames=[]
+    for squeeze in [False,True]:
+        g=[['.']*16 for _ in range(42)]
+        def span(y,l,r,c):
+            for x in range(l,r+1):g[y][x]=c
+        # A small offset footprint sits behind the curved heel, on the worktop.
+        span(39,4,14,'V');span(40,4,15,'V');span(41,7,13,'W')
+        for y in range(9,40):
+            inset={9:5,10:3,11:2,37:2,38:3,39:5}.get(y,1)
+            if squeeze and 20<=y<=32:inset=2
+            left,right=inset,15-inset
+            span(y,left,right,'I')
+            for x in range(left+1,right):
+                u=(x-left)/(right-left)
+                g[y][x]='L' if u<.30 else 'K' if u<.65 else 'D' if u<.82 else 'J'
+            if y>=36:
+                span(y,left+1,right-1,'D' if y==36 else 'J')
+        # The upper shoulder is a visible oval around the neck, not a flat triangle.
+        span(10,4,10,'L');span(11,3,11,'L');span(11,4,6,'O')
+        span(12,2,11,'L');span(12,3,5,'O');span(12,12,13,'D')
+        span(13,3,10,'L');span(13,4,5,'O');span(13,11,13,'D')
+        span(14,5,9,'L')
+        # Broken, tapered reflections follow the round plastic rather than forming stripes.
+        for y in range(14,30):g[y][3 if y<22 else 4]='O' if y<20 else 'L'
+        for y in range(14,18):g[y][4]='L'
+        g[31][3]='L';g[32][3]='L'
+        # A curved lower rim makes the base read as an ellipse in the same projection.
+        span(36,3,5,'K');span(37,4,8,'D');span(38,5,10,'J')
+        g[37][3]='L';g[38][4]='D'
+        if squeeze:
+            for y in range(21,32):g[y][12]='J'
+        # Low screw collar and a long narrow dispensing spout, rather than a bulbous teat.
+        span(6,5,10,'Q');span(6,5,7,'S')
+        span(7,4,11,'P');span(7,5,9,'Q');g[7][5]='S'
+        span(8,5,10,'N');span(8,5,8,'P');g[8][5]='Q'
+        span(9,5,10,'I')
+        for y in (4,5):span(y,6,9,'P');span(y,6,7,'Q')
+        for y in (1,2,3):span(y,7,8,'Q');g[y][7]='S'
+        g[0][7]='N';g[0][8]='P'
+        frames.append([''.join(row) for row in g])
+    return {'size':[16,42],'anchor':[8,38],'frames':frames,'materials':['catsup','metal'],
+        'colors':{'I':'rojo-oscuro','J':'carmesi','D':'rojo-ladrillo','K':'rojo','L':'coral','O':'rosa','S':'blanco','N':'gris-azul','P':'gris','Q':'gris-claro','V':'pizarra','W':'gris-azul'}}
+
+def native_waste():
+    """Squarer raised waste opening, matching the meat tray's 42 × 25 native footprint."""
+    w,h=42,25
+    g=[['.']*w for _ in range(h)]
+    def span(y,left,right,c):
+        for x in range(left,right+1):g[y][x]=c
+    for y in range(23):
+        inset=2 if y in (0,22) else 1 if y in (1,21) else 0
+        span(y,inset,w-1-inset,'k')
+        if 0<y<22:span(y,inset+1,w-2-inset,'s' if y<4 else 'm')
+    # Back lip, lit upper-left edge and a recessed dark liner.
+    span(1,3,38,'l');span(2,2,38,'s');span(2,3,14,'h')
+    for y in range(3,21):
+        span(y,3,38,'m');span(y,4,37,'r' if y<6 else 'n')
+        if 5<=y<=18:
+            span(y,5,36,'a')
+            if y>=15:span(y,12,30,'k')
+        if y<12:g[y][5]='n'
+        g[y][1]='l' if y<11 else 's'
+    for x in (7,16,26,35):g[4][x]='r'
+    # Folded black liner: broad dark facets, with restrained gloss on the lit left crease.
+    for y in range(6,17):
+        left=6+(y-6)//3;right=34-(y-6)//2
+        g[y][left]='b';g[y][left+1]='c' if y<12 else 'b'
+        if y<10:g[y][left+2]='b'
+        g[y][right]='b';g[y][right-1]='c' if y<9 else 'b'
+    span(5,7,16,'b');span(6,9,13,'c');g[7][8]='d';g[8][8]='c'
+    span(15,15,18,'b');span(16,18,21,'b');span(17,23,26,'b')
+    span(19,5,36,'n')
+    # Raised front lip and a short contact shadow; no separate metal cabinet.
+    span(20,2,39,'s');span(20,3,16,'l');span(20,4,10,'h')
+    span(21,2,39,'m');span(21,3,16,'s')
+    span(22,3,38,'r');span(23,4,39,'n');span(24,5,38,'n')
+    return {'size':[w,h],'anchor':[21,12],'frames':[[''.join(row) for row in g]],'materials':['metal','plastico-negro'],
+        'colors':{'k':'negro','n':'noche','r':'pizarra','m':'gris-azul','s':'gris','l':'gris-claro','h':'blanco',
+                  'a':'carbon','b':'grafito','c':'gris-oscuro','d':'gris-neutro'}}
+
+def round_controls(rows,centres):
+    """Native circular knobs on a complete steel control face; never resize the atlas cells."""
+    g=[list(row) for row in rows];h=len(g);w=len(g[0])
+    for y in range(h-10,h):
+        for x in range(w):
+            g[y][x]='P' if y==h-10 else 'U' if y==h-9 else 'K' if y==h-1 else 'P' if y>=h-3 else 'R' if y==h-8 else 'U' if x%38 in (4,5) else 'S'
+    for cx in centres:
+        cy=h-5
+        for dy in range(-3,4):
+            for dx in range(-3,4):
+                d=dx*dx+dy*dy
+                if d>10:continue
+                border=d>=7
+                g[cy+dy][cx+dx]=('Q' if dx+dy<0 else 'M') if border else ('P' if dx+dy<0 else 'N')
+        g[cy-2][cx]='W';g[cy-1][cx]='U'
+    return [''.join(row) for row in g]
+
 def generate(name):
+    if name=='bote':return native_bottle()
+    if name=='basura':return native_waste()
     palette, colors, materials, texture = SPEC[name]
     r34.set_camera(yaw_deg=CAMERA.get(name, 12))
     frames = 2 if name == 'bote' else 1
@@ -335,6 +530,8 @@ def generate(name):
     ys = [j for rows in shaded for j, r in enumerate(rows) if r.strip('.')]
     bbox = (min(xs), max(xs) + 1, min(ys), max(ys) + 1)
     frames_rows = [crop(rows, bbox)[0] for rows in shaded]
+    if name.startswith('plancha'):
+        frames_rows=[round_controls(rows,PLANCHA['slots']) for rows in frames_rows]
     if name == 'basura':
         # La barra (que no se modela) tapa las paredes interiores: se corta en la orilla frontal del aro.
         last = max(j for j, r in enumerate(frames_rows[0]) if r.count('K') > len(r) * 0.8)

@@ -1,0 +1,64 @@
+[
+  {
+    "bottles": [
+      {
+        "height": 33,
+        "width": 16,
+        "x": 194,
+        "y": 113
+      },
+      {
+        "height": 33,
+        "width": 16,
+        "x": 212,
+        "y": 113
+      },
+      {
+        "height": 33,
+        "width": 16,
+        "x": 230,
+        "y": 113
+      }
+    ],
+    "clip": {
+      "height": 424,
+      "width": 640,
+      "x": 82.5,
+      "y": 175.0703125
+    },
+    "layout": "horizontal",
+    "plateRight": 179,
+    "scale": 2
+  },
+  {
+    "bottles": [
+      {
+        "height": 33,
+        "width": 16,
+        "x": 118,
+        "y": 196
+      },
+      {
+        "height": 33,
+        "width": 16,
+        "x": 136,
+        "y": 196
+      },
+      {
+        "height": 33,
+        "width": 16,
+        "x": 154,
+        "y": 196
+      }
+    ],
+    "clip": {
+      "height": 600,
+      "width": 360,
+      "x": 222.5,
+      "y": 175.0703125
+    },
+    "layout": "vertical",
+    "plateRight": 109,
+    "scale": 2
+  }
+]

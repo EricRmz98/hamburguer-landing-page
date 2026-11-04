@@ -1,0 +1,18 @@
+{
+  "customers": 24,
+  "native_frame": [
+    64,
+    80
+  ],
+  "game_frame": [
+    96,
+    120
+  ],
+  "game_magnification": 1.5,
+  "detail_magnification_relative_to_game": 4,
+  "approved_hashes_match": true,
+  "binary_alpha": true,
+  "atlas_tiles_match_individual_exports": true,
+  "sprite_redraw": false,
+  "production_changes": false
+}

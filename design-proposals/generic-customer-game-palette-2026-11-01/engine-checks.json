@@ -1,0 +1,38 @@
+[
+  {
+    "id": "cliente_generico_completo_prueba",
+    "size": [
+      64,
+      118
+    ],
+    "colors": {
+      "o": "gris-azul",
+      "s": "gris",
+      "b": "gris-claro",
+      "l": "blanco"
+    },
+    "validation": "passed",
+    "style": "passed",
+    "native_roundtrip": "pixel_exact",
+    "atlas_copy": "pixel_exact",
+    "layout_fit": "64x80_matches_current_customer_frame_waist_76"
+  },
+  {
+    "id": "cliente_generico_barra_prueba",
+    "size": [
+      64,
+      80
+    ],
+    "colors": {
+      "o": "gris-azul",
+      "s": "gris",
+      "b": "gris-claro",
+      "l": "blanco"
+    },
+    "validation": "passed",
+    "style": "passed",
+    "native_roundtrip": "pixel_exact",
+    "atlas_copy": "pixel_exact",
+    "layout_fit": "64x80_matches_current_customer_frame_waist_76"
+  }
+]

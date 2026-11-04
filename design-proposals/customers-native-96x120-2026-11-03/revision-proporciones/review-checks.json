@@ -1,0 +1,125 @@
+{
+  "faces_are_approximate_reference_guides": true,
+  "results": [
+    {
+      "name": "Lía",
+      "facing": "right",
+      "same_scale_in_both_axes": true,
+      "relative_scale": 1,
+      "top": 15,
+      "face_guide_height": 36.43,
+      "face_clear_of_ticket_and_patience": true,
+      "other_character_pixels_preserved": true
+    },
+    {
+      "name": "Bruno",
+      "facing": "left",
+      "same_scale_in_both_axes": true,
+      "relative_scale": 1,
+      "top": 8,
+      "face_guide_height": 33.53,
+      "face_clear_of_ticket_and_patience": true,
+      "other_character_pixels_preserved": true
+    },
+    {
+      "name": "Zoe",
+      "facing": "right",
+      "same_scale_in_both_axes": true,
+      "relative_scale": 1,
+      "top": 8,
+      "face_guide_height": 42.0,
+      "face_clear_of_ticket_and_patience": true,
+      "other_character_pixels_preserved": true
+    },
+    {
+      "name": "Ciro",
+      "facing": "left",
+      "same_scale_in_both_axes": true,
+      "relative_scale": 1,
+      "top": 8,
+      "face_guide_height": 35.33,
+      "face_clear_of_ticket_and_patience": true,
+      "other_character_pixels_preserved": true
+    },
+    {
+      "name": "Mika",
+      "facing": "right",
+      "same_scale_in_both_axes": true,
+      "relative_scale": 1,
+      "top": 8,
+      "face_guide_height": 39.67,
+      "face_clear_of_ticket_and_patience": true,
+      "other_character_pixels_preserved": true
+    },
+    {
+      "name": "Alma",
+      "facing": "left",
+      "same_scale_in_both_axes": true,
+      "relative_scale": 1,
+      "top": 8,
+      "face_guide_height": 42.94,
+      "face_clear_of_ticket_and_patience": true,
+      "other_character_pixels_preserved": true
+    },
+    {
+      "name": "Rafa",
+      "facing": "right",
+      "same_scale_in_both_axes": true,
+      "relative_scale": 1,
+      "top": 17,
+      "face_guide_height": 38.61,
+      "face_clear_of_ticket_and_patience": true,
+      "other_character_pixels_preserved": true
+    },
+    {
+      "name": "Dante",
+      "facing": "left",
+      "same_scale_in_both_axes": true,
+      "relative_scale": 1,
+      "top": 8,
+      "face_guide_height": 35.72,
+      "face_clear_of_ticket_and_patience": true,
+      "other_character_pixels_preserved": true
+    },
+    {
+      "name": "Vega",
+      "facing": "right",
+      "same_scale_in_both_axes": true,
+      "relative_scale": 1,
+      "top": 23,
+      "face_guide_height": 40.4,
+      "face_clear_of_ticket_and_patience": true,
+      "other_character_pixels_preserved": true
+    },
+    {
+      "name": "Inés",
+      "facing": "left",
+      "same_scale_in_both_axes": true,
+      "relative_scale": 0.85,
+      "top": 24,
+      "face_guide_height": 38.46,
+      "face_clear_of_ticket_and_patience": true,
+      "other_character_pixels_preserved": false
+    },
+    {
+      "name": "Gael",
+      "facing": "right",
+      "same_scale_in_both_axes": true,
+      "relative_scale": 1,
+      "top": 8,
+      "face_guide_height": 35.39,
+      "face_clear_of_ticket_and_patience": true,
+      "other_character_pixels_preserved": true
+    },
+    {
+      "name": "Sasha",
+      "facing": "left",
+      "same_scale_in_both_axes": true,
+      "relative_scale": 1,
+      "top": 21,
+      "face_guide_height": 37.64,
+      "face_clear_of_ticket_and_patience": true,
+      "other_character_pixels_preserved": true
+    }
+  ]
+}

@@ -1,0 +1,218 @@
+[
+  {
+    "id": 1,
+    "name": "Nico",
+    "style": "Hipster",
+    "pronouns": "él",
+    "hair": "quiff",
+    "garment": "flannel",
+    "accessory": "glasses_beard"
+  },
+  {
+    "id": 2,
+    "name": "Ren",
+    "style": "Gótica",
+    "pronouns": "ella",
+    "hair": "long",
+    "garment": "leather",
+    "accessory": "choker"
+  },
+  {
+    "id": 3,
+    "name": "Alex",
+    "style": "Techwear",
+    "pronouns": "elle",
+    "hair": "undercut",
+    "garment": "tech",
+    "accessory": "earbuds"
+  },
+  {
+    "id": 4,
+    "name": "Dani",
+    "style": "Fútbol",
+    "pronouns": "ella",
+    "hair": "ponytail",
+    "garment": "jersey",
+    "accessory": "headband"
+  },
+  {
+    "id": 5,
+    "name": "Beto",
+    "style": "Skater",
+    "pronouns": "él",
+    "hair": "shag",
+    "garment": "hoodie",
+    "accessory": "beanie"
+  },
+  {
+    "id": 6,
+    "name": "Vale",
+    "style": "Punk",
+    "pronouns": "elle",
+    "hair": "mohawk",
+    "garment": "leather",
+    "accessory": "piercing"
+  },
+  {
+    "id": 7,
+    "name": "Mar",
+    "style": "Grunge",
+    "pronouns": "él",
+    "hair": "long",
+    "garment": "flannel",
+    "accessory": "stubble"
+  },
+  {
+    "id": 8,
+    "name": "Sol",
+    "style": "Indie",
+    "pronouns": "ella",
+    "hair": "bob",
+    "garment": "cardigan",
+    "accessory": "roundglasses"
+  },
+  {
+    "id": 9,
+    "name": "Sam",
+    "style": "Streetwear",
+    "pronouns": "elle",
+    "hair": "braids",
+    "garment": "varsity",
+    "accessory": "chain"
+  },
+  {
+    "id": 10,
+    "name": "Ivo",
+    "style": "Metal",
+    "pronouns": "él",
+    "hair": "long",
+    "garment": "band",
+    "accessory": "beard"
+  },
+  {
+    "id": 11,
+    "name": "Luz",
+    "style": "Kawaii",
+    "pronouns": "ella",
+    "hair": "buns",
+    "garment": "sweater",
+    "accessory": "clips"
+  },
+  {
+    "id": 12,
+    "name": "Noa",
+    "style": "Rave",
+    "pronouns": "elle",
+    "hair": "undercut",
+    "garment": "rave",
+    "accessory": "goggles"
+  },
+  {
+    "id": 13,
+    "name": "Teo",
+    "style": "Normcore",
+    "pronouns": "él",
+    "hair": "crop",
+    "garment": "overshirt",
+    "accessory": "tote"
+  },
+  {
+    "id": 14,
+    "name": "Mai",
+    "style": "Coquette",
+    "pronouns": "ella",
+    "hair": "wavy",
+    "garment": "blouse",
+    "accessory": "bow"
+  },
+  {
+    "id": 15,
+    "name": "Jules",
+    "style": "Art school",
+    "pronouns": "elle",
+    "hair": "curly",
+    "garment": "utility",
+    "accessory": "scarf"
+  },
+  {
+    "id": 16,
+    "name": "Moren",
+    "style": "Athleisure",
+    "pronouns": "ella",
+    "hair": "bun",
+    "garment": "tracksuit",
+    "accessory": "headphones"
+  },
+  {
+    "id": 17,
+    "name": "Chema",
+    "style": "Fútbol retro",
+    "pronouns": "él",
+    "hair": "curly",
+    "garment": "retro",
+    "accessory": "moustache"
+  },
+  {
+    "id": 18,
+    "name": "Ari",
+    "style": "Cyber",
+    "pronouns": "elle",
+    "hair": "asym",
+    "garment": "tech",
+    "accessory": "visor"
+  },
+  {
+    "id": 19,
+    "name": "Ros",
+    "style": "Workwear",
+    "pronouns": "él",
+    "hair": "crop",
+    "garment": "utility",
+    "accessory": "cap"
+  },
+  {
+    "id": 20,
+    "name": "Andy",
+    "style": "Rockabilly",
+    "pronouns": "ella",
+    "hair": "quiff",
+    "garment": "leather",
+    "accessory": "bandana"
+  },
+  {
+    "id": 21,
+    "name": "Fer",
+    "style": "Dark academia",
+    "pronouns": "elle",
+    "hair": "bob",
+    "garment": "blazer",
+    "accessory": "roundglasses"
+  },
+  {
+    "id": 22,
+    "name": "Leo",
+    "style": "Surf",
+    "pronouns": "él",
+    "hair": "wavy",
+    "garment": "hawaiian",
+    "accessory": "shells"
+  },
+  {
+    "id": 23,
+    "name": "Pao",
+    "style": "Sneakerhead",
+    "pronouns": "ella",
+    "hair": "braids",
+    "garment": "varsity",
+    "accessory": "capback"
+  },
+  {
+    "id": 24,
+    "name": "Cris",
+    "style": "Vintage",
+    "pronouns": "elle",
+    "hair": "curly",
+    "garment": "vest",
+    "accessory": "glasses"
+  }
+]

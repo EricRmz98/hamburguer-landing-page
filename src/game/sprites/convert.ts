@@ -1,9 +1,9 @@
 import { PALETTE, luminance, rgb, type ColorName } from './palette.ts';
 
 // Conversión de una imagen (por ejemplo, un PNG editado en Aseprite) a una definición de texto.
-// Cada color se lleva al más cercano de Endesga 32; los pixeles casi transparentes quedan como «.».
+// Cada color se lleva al más cercano de Endesga 64; los pixeles casi transparentes quedan como «.».
 
-const LETTER_ORDER = 'osblhacdefgijkmnpqrtuvwxyz';
+const LETTER_ORDER = 'osblhacdefgijkmnpqrtuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%&';
 const COLORS = Object.keys(PALETTE) as ColorName[];
 
 export function nearestColor(r: number, g: number, b: number): { name: ColorName; exact: boolean } {
@@ -59,7 +59,7 @@ export function imageToSprite(data: Uint8ClampedArray, width: number, height: nu
     if (!exact) adjusted++;
     names.push(name);
   }
-  if (adjusted) warnings.push(`${adjusted} pixeles no eran de Endesga 32 y se ajustaron al color más cercano`);
+  if (adjusted) warnings.push(`${adjusted} pixeles no eran de Endesga 64 y se ajustaron al color más cercano`);
 
   // Letras: primero las preferidas; las demás, de oscuro a claro (o = contorno … h = brillo).
   const used = [...new Set(names.filter((n): n is ColorName => n !== null))].sort(

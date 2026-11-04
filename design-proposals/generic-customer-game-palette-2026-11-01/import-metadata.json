@@ -1,0 +1,28 @@
+{
+  "source_bbox": [
+    162,
+    427,
+    726,
+    1532
+  ],
+  "native_full_size": [
+    64,
+    118
+  ],
+  "native_counter_size": [
+    64,
+    80
+  ],
+  "uniform_scale": 0.09954751131221719,
+  "waist_row": 76,
+  "alpha_binary": true,
+  "silhouette_components": 1,
+  "palette": [
+    "gris-azul",
+    "gris",
+    "gris-claro",
+    "blanco"
+  ],
+  "method": "uniform_downsample_of_selected_image_no_anatomy_redraw",
+  "integration": "reference_only"
+}

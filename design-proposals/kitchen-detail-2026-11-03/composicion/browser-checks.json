@@ -1,0 +1,24 @@
+[
+  {
+    "clip": {
+      "height": 400,
+      "width": 640,
+      "x": 82.5,
+      "y": 175.0703125
+    },
+    "layout": "horizontal",
+    "sameGrid": true,
+    "scale": 2
+  },
+  {
+    "clip": {
+      "height": 560,
+      "width": 360,
+      "x": 222.5,
+      "y": 175.0703125
+    },
+    "layout": "vertical",
+    "sameGrid": true,
+    "scale": 2
+  }
+]

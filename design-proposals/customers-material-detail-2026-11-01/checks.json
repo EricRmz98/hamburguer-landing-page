@@ -1,0 +1,170 @@
+[
+  {
+    "id": "nico",
+    "changed_pixels": 127,
+    "silhouette_preserved": true,
+    "face_preserved": true,
+    "bare_skin_base_preserved": true
+  },
+  {
+    "id": "ren",
+    "changed_pixels": 137,
+    "silhouette_preserved": true,
+    "face_preserved": true,
+    "bare_skin_base_preserved": true
+  },
+  {
+    "id": "alex",
+    "changed_pixels": 196,
+    "silhouette_preserved": true,
+    "face_preserved": true,
+    "bare_skin_base_preserved": true
+  },
+  {
+    "id": "dani",
+    "changed_pixels": 118,
+    "silhouette_preserved": true,
+    "face_preserved": true,
+    "bare_skin_base_preserved": true
+  },
+  {
+    "id": "beto",
+    "changed_pixels": 134,
+    "silhouette_preserved": true,
+    "face_preserved": true,
+    "bare_skin_base_preserved": true
+  },
+  {
+    "id": "vale",
+    "changed_pixels": 143,
+    "silhouette_preserved": true,
+    "face_preserved": true,
+    "bare_skin_base_preserved": true
+  },
+  {
+    "id": "mar",
+    "changed_pixels": 222,
+    "silhouette_preserved": true,
+    "face_preserved": true,
+    "bare_skin_base_preserved": true
+  },
+  {
+    "id": "sol",
+    "changed_pixels": 70,
+    "silhouette_preserved": true,
+    "face_preserved": true,
+    "bare_skin_base_preserved": true
+  },
+  {
+    "id": "sam",
+    "changed_pixels": 150,
+    "silhouette_preserved": true,
+    "face_preserved": true,
+    "bare_skin_base_preserved": true
+  },
+  {
+    "id": "ivo",
+    "changed_pixels": 56,
+    "silhouette_preserved": true,
+    "face_preserved": true,
+    "bare_skin_base_preserved": true
+  },
+  {
+    "id": "luz",
+    "changed_pixels": 108,
+    "silhouette_preserved": true,
+    "face_preserved": true,
+    "bare_skin_base_preserved": true
+  },
+  {
+    "id": "noa",
+    "changed_pixels": 164,
+    "silhouette_preserved": true,
+    "face_preserved": true,
+    "bare_skin_base_preserved": true
+  },
+  {
+    "id": "teo",
+    "changed_pixels": 100,
+    "silhouette_preserved": true,
+    "face_preserved": true,
+    "bare_skin_base_preserved": true
+  },
+  {
+    "id": "mai",
+    "changed_pixels": 101,
+    "silhouette_preserved": true,
+    "face_preserved": true,
+    "bare_skin_base_preserved": true
+  },
+  {
+    "id": "jules",
+    "changed_pixels": 117,
+    "silhouette_preserved": true,
+    "face_preserved": true,
+    "bare_skin_base_preserved": true
+  },
+  {
+    "id": "moren",
+    "changed_pixels": 167,
+    "silhouette_preserved": true,
+    "face_preserved": true,
+    "bare_skin_base_preserved": true
+  },
+  {
+    "id": "chema",
+    "changed_pixels": 159,
+    "silhouette_preserved": true,
+    "face_preserved": true,
+    "bare_skin_base_preserved": true
+  },
+  {
+    "id": "ari",
+    "changed_pixels": 188,
+    "silhouette_preserved": true,
+    "face_preserved": true,
+    "bare_skin_base_preserved": true
+  },
+  {
+    "id": "ros",
+    "changed_pixels": 138,
+    "silhouette_preserved": true,
+    "face_preserved": true,
+    "bare_skin_base_preserved": true
+  },
+  {
+    "id": "andy",
+    "changed_pixels": 182,
+    "silhouette_preserved": true,
+    "face_preserved": true,
+    "bare_skin_base_preserved": true
+  },
+  {
+    "id": "fer",
+    "changed_pixels": 119,
+    "silhouette_preserved": true,
+    "face_preserved": true,
+    "bare_skin_base_preserved": true
+  },
+  {
+    "id": "leo",
+    "changed_pixels": 74,
+    "silhouette_preserved": true,
+    "face_preserved": true,
+    "bare_skin_base_preserved": true
+  },
+  {
+    "id": "pao",
+    "changed_pixels": 103,
+    "silhouette_preserved": true,
+    "face_preserved": true,
+    "bare_skin_base_preserved": true
+  },
+  {
+    "id": "cris",
+    "changed_pixels": 53,
+    "silhouette_preserved": true,
+    "face_preserved": true,
+    "bare_skin_base_preserved": true
+  }
+]

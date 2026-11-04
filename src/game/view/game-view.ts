@@ -6,7 +6,7 @@ import type { Game, GameEvent, HintId, RejectReason } from '../game/session.ts';
 import type { Target } from '../game/tutorial.ts';
 import { LAYOUTS } from '../layouts/index.ts';
 import { atlasKey } from '../sprites/atlas.ts';
-import { atlasStyle, bakeAtlas, bakeSprite, type BakedAtlas } from '../sprites/bake.ts';
+import { atlasStyle, bakeAtlas, type BakedAtlas } from '../sprites/bake.ts';
 import { ANCHORS } from '../sprites/anchors.ts';
 import { SPRITES } from '../sprites/index.ts';
 import { CUSTOMERS } from '../sprites/people.ts';
@@ -161,8 +161,8 @@ export class GameView {
     root.replaceChildren();
     const stage = (this.stage = el('div', 'mg-stage', root));
 
-    this.wall = el('div', 'mg-wall', stage);
-    this.wall.style.backgroundImage = `url(${bakeSprite(SPRITES.azulejo).url})`;
+    this.wall = el('div', 'mg-wall mg-sprite', stage);
+    this.wall.setAttribute('aria-hidden', 'true');
 
     this.hud = el('div', 'mg-hud', stage);
     this.lives = el('span', 'mg-lives', this.hud);
@@ -175,8 +175,8 @@ export class GameView {
 
     // Orden de pintado: el cliente queda detrás de la barra, y todo lo de cocina encima de ella.
     this.customer = el('div', 'mg-customer mg-sprite', stage);
-    this.counter = el('div', 'mg-counter', stage);
-    this.counter.style.backgroundImage = `url(${bakeSprite(SPRITES.madera).url})`;
+    this.counter = el('div', 'mg-counter mg-sprite', stage);
+    this.counter.setAttribute('aria-hidden', 'true');
 
     this.ticket = el('div', 'mg-ticket', stage);
     this.ticketName = el('div', 'mg-ticket-name', this.ticket);
@@ -272,6 +272,7 @@ export class GameView {
     const slot = this.sprites.get(node);
     if (!slot) return;
     const s = this.scale;
+    // Clientes y cocina comparten celdas nativas: una única escala entera para todo el atlas.
     Object.assign(node.style, atlasStyle(this.atlas, slot.key, s, slot.frame));
     if (slot.parent) {
       const entry = this.atlas.entries[slot.key];
@@ -310,8 +311,9 @@ export class GameView {
     this.slots.forEach((slot, i) => this.place(slot.button, layout.slots[i]));
     for (const [id, { button }] of this.bottles) this.place(button, layout.bottles[id]);
     for (const [id, { button }] of this.bins) this.place(button, layout.bins[id]);
-    this.wall.style.backgroundSize = `${20 * scale}px`;
-    this.counter.style.backgroundSize = `${20 * scale}px`;
+    this.setSprite(this.wall, layout.name === 'vertical' ? 'comedor_v' : 'comedor');
+    this.setSprite(this.counter, layout.name === 'vertical' ? 'barra_roja_v' : 'barra_roja');
+    this.place(this.wall, [0, 0, layout.w, layout.counter[1]]);
 
     // Sprites que dependen del tamaño de su contenedor.
     this.setSprite(this.plate, 'plato');
@@ -448,7 +450,7 @@ export class GameView {
       slot.button.dataset.state = state ?? '';
       slot.button.setAttribute('aria-label', `Lugar ${i + 1} de la plancha: ${state ? PATTY_LABEL[state] : 'vacío'}`);
       slot.patty.hidden = !state;
-      if (state) this.setSprite(slot.patty, PATTY_SPRITE[state], 0, [0, 0, rect[2], rect[3] - 6]);
+      if (state) this.setSprite(slot.patty, PATTY_SPRITE[state], 0, [0, 0, rect[2], rect[3] - 12]);
       const smoking = state === 'aviso' || state === 'quemada';
       slot.smoke.hidden = !smoking;
       if (smoking) this.setSprite(slot.smoke, state === 'quemada' ? 'humo:negro' : 'humo:blanco', smokeFrame, [0, 0, rect[2], 14]);

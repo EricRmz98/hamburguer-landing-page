@@ -2,7 +2,9 @@
 
 Crear un minijuego de pixel art en la segunda sección de la landing: el visitante prepara hamburguesas para clientes que llegan al mostrador. La primera partida es un tutorial guiado que termina invitando a pedir la hamburguesa real; quien decide seguir jugando entra en un modo infinito, al estilo del dinosaurio de Chrome, donde cada cliente pide una orden distinta y la dificultad sube hasta que el jugador falla.
 
-Estado: **F1 a F4 listas**. El juego completo ya se dibuja con sprites de pixel art (Endesga 32) en vista 3/4, generados desde texto y horneados en un atlas. Siguen el sonido (F5) y la integración final (F6). Este documento reúne las decisiones acordadas, la arquitectura y los valores iniciales que se afinarán jugando. El formato de los sprites (texto con paleta) y sus herramientas se describen en [ASSETS.md](ASSETS.md).
+Estado: **F1 a F4 listas**. El juego completo ya se dibuja con sprites de pixel art (Endesga 64) en vista 3/4, generados desde texto y horneados en un atlas. Siguen el sonido (F5) y la integración final (F6). Este documento reúne las decisiones acordadas, la arquitectura y los valores iniciales que se afinarán jugando. El formato de los sprites (texto con paleta) y sus herramientas se describen en [ASSETS.md](ASSETS.md).
+
+**Cierre visual aprobado · 3 de noviembre de 2026.** Doce clientes nativos de 96 × 120, con proporciones revisadas y perfiles alternados; comedor, barra e ingredientes acordes con su acabado. Se comparte una única escala entera y la paleta oficial Endesga-64. Las composiciones finales miden 320 × 212 y 180 × 300. Plato ampliado a 38 × 22; basura y carne en charolas de 42 × 25 que flanquean una plancha centrada de tres quemadores, todos activos desde el inicio. Salseros alargados de 16 × 42 con boquilla fina, volumen y sombra. Los recursos están aplicados en el juego; `/clientes-prueba` permite revisarlos con la misma vista real, solo en desarrollo. 161 pruebas y compilación correctas; falta comprobar en teléfono físico.
 
 ## Decisiones acordadas
 
@@ -16,8 +18,8 @@ Estado: **F1 a F4 listas**. El juego completo ya se dibuja con sprites de pixel 
 - **Tutorial**: la primera partida es una hamburguesa clásica guiada con flechas y textos. Los tiempos se congelan, así que no se puede fallar. Al entregarla, un cliente de pixel art la recibe y aparecen dos opciones: **«Pídela de verdad»** y **«Seguir jugando»**.
 - **Modo infinito**: al seguir jugando llega el siguiente cliente con otra orden. A partir de aquí se puede fallar. La partida continúa hasta perder, y se guarda el récord.
 - Las órdenes tienen un **orden de ingredientes lógico**: los panes nunca quedan juntos abajo con los ingredientes encima. Hay variantes de doble, triple y cuádruple carne, y de pan intermedio (tres panes en total).
-- **Estética**: pixel art 16-bit en **vista frontal elevada 3/4**, con sombreado plano y contorno selectivo, sobre la paleta **Endesga 32** (ver [ASSETS.md](ASSETS.md#estilo-y-paleta-decididos)).
-- Los sprites son **definiciones de texto**: tamaño, letras asignadas a colores de una paleta global y una matriz de caracteres. La IA los escribe directamente con pocos tokens, y las variantes salen cambiando la paleta. El motor los convierte una vez en imágenes al arrancar, con **un elemento HTML por sprite, no por pixel**. Los fondos se arman con tiles. Ver [ASSETS.md](ASSETS.md).
+- **Estética**: pixel art 16-bit en **vista frontal elevada 3/4**, con sombreado plano y contorno selectivo, sobre la paleta **Endesga 64** (ver [ASSETS.md](ASSETS.md#estilo-y-paleta-decididos)).
+- Los sprites son **definiciones de texto**: tamaño, letras asignadas a colores de una paleta global y una matriz de caracteres. El motor los convierte una vez en imágenes al arrancar, con **un elemento HTML por sprite, no por pixel**. El comedor y la barra usan matrices completas por orientación, con maestros PNG nativos editables. Los clientes parten de una fuente de matrices aprobadas; las variantes de salsa comparten geometría y cambian colores. Ver [ASSETS.md](ASSETS.md).
 - Lleva **efectos de sonido** de estilo 8 bits.
 - El motor es **nativo de HTML/CSS** con la lógica en TypeScript y GSAP, sin una librería de juegos (detalle en la sección «Motor»).
 
@@ -111,17 +113,17 @@ Valores iniciales propuestos (ajustables en el panel):
 | Baja por cliente (después) | 0,2 |
 | Holgura mínima (tope) | ×1,5, desde el cliente 17 |
 
-Con estos valores, la clásica da unos 32 s en los primeros clientes, 21 s en el cliente 10 y 11 s en el tope; una torre de cuatro carnes en el tope, unos 16 s. Ajustes tras las partidas de prueba: con ×3 desde el primer cliente el arranque resultaba apretado, y con la baja de 0,1 (tope en el cliente 33) la dificultad tardaba demasiado en subir.
+El tiempo mínimo cuenta los tres lugares disponibles: una orden de cuatro carnes requiere dos tandas de cocción. Ajustes tras las partidas de prueba: con ×3 desde el primer cliente el arranque resultaba apretado, y con la baja de 0,1 (tope en el cliente 33) la dificultad tardaba demasiado en subir.
 
-Las recetas y la plancha crecen por tramos:
+Las recetas crecen por tramos; los tres lugares de la plancha están disponibles desde el inicio:
 
 | Clientes | Recetas | Lugares en plancha |
 | --- | --- | --- |
-| 1–2 | Sencilla o con queso | 2 |
-| 3–5 | Doble carne, más verduras y salsas | 2 |
+| 1–2 | Sencilla o con queso | 3 |
+| 3–5 | Doble carne, más verduras y salsas | 3 |
 | 6–9 | Triple carne | 3 |
-| 10–14 | Cuádruple o pan intermedio | 4 |
-| 15+ | Cualquiera | 4 |
+| 10–14 | Cuádruple o pan intermedio | 3 |
+| 15+ | Cualquiera | 3 |
 
 ## Recetas
 
@@ -171,7 +173,7 @@ Es un guion de pasos. Cada paso resalta un elemento con una flecha y un texto br
 6. Otra vez la casilla de pan, que ahora pone el de arriba. Entrega y cliente feliz.
 7. Mensaje final con «Pídela de verdad» y «Seguir jugando».
 
-La carne quemada no aparece en el tutorial. En el modo infinito, **la primera vez** que ocurre algo nuevo (primera carne quemada, primera receta con pan intermedio, plancha que crece) aparece una pista contextual breve y el tiempo se pausa un momento. Cada pista se muestra una sola vez por visitante.
+La carne quemada no aparece en el tutorial. En el modo infinito, **la primera vez** que ocurre algo nuevo (primera carne quemada, primera receta con pan intermedio) aparece una pista contextual breve y el tiempo se pausa un momento. Cada pista se muestra una sola vez por visitante.
 
 ## Disposición del escenario
 
@@ -179,14 +181,14 @@ El juego se dibuja en un escenario de resolución lógica fija que se escala por
 
 La disposición es una **barra de preparación** y es la misma en escritorio y en móvil. De abajo hacia arriba:
 
-1. **Plancha**, con las **carnes crudas a su derecha** y la basura del otro lado.
+1. **Plancha**, con las **carnes crudas a su derecha**. La basura está a la izquierda de la plancha, con un labio ligeramente elevado.
 2. **Riel de complementos** (pan, queso, lechuga, tomate, cebolla) justo encima.
 3. **Plato centrado**, con los **aderezos a su derecha** y la **comanda a la izquierda**.
 4. Del otro lado de la barra, el **cliente**, centrado sobre el plato.
 
 **La zona de preparación es la barra**: plancha, complementos, plato y aderezos están sobre el mismo mostrador. La barra es delgada (empieza a media altura de los aderezos) para dar cercanía con el cliente y dejar **amplia la pared del fondo**, donde irán animaciones de pixel art. El cliente está de pie justo detrás, recargado en el borde y con la parte baja del cuerpo tapada por la barra. Es alto, así que su cara queda por encima de las hamburguesas normales. La comanda cuelga a la izquierda, entre la pared y la barra. Si una hamburguesa muy alta llega a su altura, queda delante de él, como en la vida real. Todo lo que se usa en cada hamburguesa queda alrededor del plato y a pocos pasos de la plancha, así que los movimientos son cortos.
 
-**Horizontal, 320 × 200** (escritorio y tableta)
+**Horizontal, 320 × 212** (escritorio y tableta)
 
 ```text
 ┌────────────────────────────────────────────┐
@@ -199,11 +201,11 @@ La disposición es una **barra de preparación** y es la misma en escritorio y e
 │ │       │          │      [CÁT][MOS][MAY]   │
 │ └───────┘       (plato)                     │
 │      [pan][queso][lechuga][tomate][cebolla] │
-│  [🗑]   [ ][ ][ ][ ] PLANCHA    [carne]      │
+│  [🗑]    [ ][ ][ ] PLANCHA      [carne]      │
 └────────────────────────────────────────────┘
 ```
 
-**Vertical, 180 × 280** (móvil): el mismo orden; la comanda ocupa la columna izquierda y la basura queda a la derecha, junto al cliente.
+**Vertical, 180 × 300** (móvil): el mismo orden; la comanda ocupa la columna izquierda y la basura queda a la izquierda de la plancha, del lado de preparación.
 
 Las coordenadas de cada pieza se definen en un mapa por disposición. La lógica del juego no conoce posiciones.
 
@@ -239,11 +241,11 @@ src/game/
     tutorial.ts      Guion de pasos y señales
     session.ts       Máquina de estados, armado, clientes, vidas, pistas y récord
     storage.ts       localStorage protegido, o memoria en pruebas
-  layouts/index.ts   Mapas de piezas horizontal (320 × 200) y vertical (180 × 280)
+  layouts/index.ts   Mapas de piezas horizontal (320 × 212) y vertical (180 × 300)
   view/
     game-view.ts     Vista con sprites desde el atlas (antes, vista con bloques)
     debug.ts         Panel de ajuste (desarrollo o ?ajustes)
-  sprites/           palette.ts (Endesga 32 y rampas) · define.ts · validate.ts (errores y estilo) ·
+  sprites/           palette.ts (Endesga 64 y rampas) · define.ts · validate.ts (errores y estilo) ·
                      atlas.ts · bake.ts · convert.ts (PNG → texto) · index.ts (registro) y las definiciones
 src/dev/sprites.astro   Página de revisión (solo con pnpm dev)
 ```
@@ -300,7 +302,7 @@ El juego se construye primero completo con bloques (`div` y botones de color con
 - [x] **F1 · Flujo completo con bloques**: escenario y escalado, reloj, plancha, armado, recetas (gramática, generador y validador), clientes, vidas, dificultad, modo infinito, récord, tutorial y pistas. Incluye un panel de ajuste para cambiar los tiempos mientras se juega. Tutorial, modo infinito, quema, pistas y disposición vertical revisados en navegador; 37 pruebas de lógica.
 - [x] **F2 · Ajuste de tiempos y sensación**: casilla única de pan, sin pepinillos, indicador de cocción, barra de preparación, pausa, basura funcional y curva de dificultad ajustada tras partidas de prueba. Los valores pueden seguir afinándose con el panel.
 - [x] **F3 · Sprites como texto**: formato `defineSprite`/`defineTilemap`, paleta, validación, horneado, página de revisión y set ancla (pan base, carne, queso y bote). Ver [ASSETS.md](ASSETS.md). Implementado, con atlas único, revisión de estilo e ida y vuelta con Aseprite. Set ancla aprobado.
-- [x] **F4 · Inventario completo de sprites**: 20 sprites (ingredientes, salsas, botes, plato, charola, basura con alerta, clientes hombre y mujer con 3 expresiones y 4 looks cada uno, humo, flecha, corazones, azulejo y madera) que sustituyen a los bloques en el juego. Revisado en escritorio y móvil; 124 pruebas. No hizo falta el importador.
+- [x] **F4 · Inventario completo de sprites**: 30 definiciones registradas, con ingredientes y utensilios detallados, doce variantes de clientes nativos de 96 × 120, cuatro matrices de entorno y efectos/interfaz. Dirección Endesga-64 aprobada, salseros de 16 × 42 y una escala entera común. Los clientes conservan un retrato de espera por personaje; las expresiones adicionales quedan fuera de esta tanda. Revisado en las composiciones horizontal y vertical; 161 pruebas y compilación correctas.
 - [ ] **F5 · Sonido**: efectos sincronizados con las animaciones de los sprites (apretar el bote, chisporroteo, destello de «lista»), silencio y desbloqueo de audio. Va después de los sprites porque su duración y carácter dependen de ellas.
 - [ ] **F6 · Integración y revisión**: sección 2, respaldo sin JS, disposiciones horizontal y vertical, accesibilidad, rendimiento y compilación.
 
@@ -313,7 +315,7 @@ F2 es la fase crítica: si la plancha no se siente bien con bloques, el arte no 
 - Todas las recetas generadas pasan el validador y caben en el plato.
 - Cada cliente da menos tiempo hasta llegar al tope. La paciencia siempre supera el tiempo mínimo de la orden.
 - La pausa detiene todos los tiempos y se activa sola al salir de la sección o de la pestaña.
-- Se juega con mouse, tacto y teclado. Funciona en 320 × 200 escalado en escritorio y en la disposición vertical en móvil.
+- Se juega con mouse, tacto y teclado. Funciona en 320 × 212 escalado en escritorio y en la disposición vertical en móvil.
 - Todas las definiciones de sprites pasan la validación. Cada sprite es un solo elemento en el DOM.
 - El pixel se ve nítido en todas las escalas. No hay saltos de layout al entrar ni al salir de la sección.
 - El juego se pausa fuera de vista y no consume recursos mientras está pausado.
@@ -323,7 +325,7 @@ F2 es la fase crítica: si la plancha no se siente bien con bloques, el arte no 
 
 Cada punto tiene un valor propuesto, que se usará si no se indica otra cosa:
 
-1. **Lugares en la plancha**: empezar con 2 y llegar a 4 con la dificultad (propuesto), o un número fijo.
+1. ~~**Lugares en la plancha**.~~ Resuelto: tres lugares fijos, disponibles desde el primer cliente y también en el tutorial; la dificultad aumenta por recetas y paciencia.
 2. **Fin de partida**: 3 vidas que se pierden cuando un cliente se va (propuesto), o un solo error, como en el dinosaurio de Chrome.
 3. **Ingrediente equivocado**: rechazarlo con penalización de paciencia (propuesto), o permitirlo y que la entrega salga mal.
 4. **Carne quemada**: solo bloquea el lugar (propuesto), o además quita una vida.

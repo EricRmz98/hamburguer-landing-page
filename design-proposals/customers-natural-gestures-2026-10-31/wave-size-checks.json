@@ -1,0 +1,30 @@
+[
+  {
+    "id": 6,
+    "name": "Vale",
+    "before": {
+      "width": 11,
+      "height": 14,
+      "opaque_pixels": 118
+    },
+    "after": {
+      "width": 8,
+      "height": 10,
+      "opaque_pixels": 67
+    }
+  },
+  {
+    "id": 11,
+    "name": "Luz",
+    "before": {
+      "width": 11,
+      "height": 14,
+      "opaque_pixels": 118
+    },
+    "after": {
+      "width": 8,
+      "height": 10,
+      "opaque_pixels": 67
+    }
+  }
+]

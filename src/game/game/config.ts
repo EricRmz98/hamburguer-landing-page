@@ -15,7 +15,7 @@ export const DEFAULT_CONFIG = {
     // Lista durante 2 s en total: perfecta y, al final, el aviso parpadeando; después se quema.
     perfectWindow: 1.2,
     warnTime: 0.8,
-    maxSlots: 4,
+    maxSlots: 3,
   },
   lives: 3,
   wrongPenalty: 2, // segundos de paciencia que cuesta un ingrediente equivocado
@@ -32,12 +32,12 @@ export const DEFAULT_CONFIG = {
     scale: 1, // multiplicador global para pruebas
   },
   levels: [
-    { upTo: 2, tier: 1, slots: 2 },
-    { upTo: 5, tier: 2, slots: 2 },
+    { upTo: 2, tier: 1, slots: 3 },
+    { upTo: 5, tier: 2, slots: 3 },
     { upTo: 9, tier: 3, slots: 3 },
-    { upTo: 14, tier: 4, slots: 4 },
+    { upTo: 14, tier: 4, slots: 3 },
   ] as LevelStep[],
-  endless: { tier: 5, slots: 4 },
+  endless: { tier: 5, slots: 3 },
 };
 
 export type GameConfig = typeof DEFAULT_CONFIG;

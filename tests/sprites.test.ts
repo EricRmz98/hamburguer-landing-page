@@ -1,9 +1,11 @@
 import assert from 'node:assert/strict';
+import { readFileSync } from 'node:fs';
 import { describe, it } from 'node:test';
 import { atlasKey, buildAtlas } from '../src/game/sprites/atlas.ts';
 import { imageToSprite, nearestColor } from '../src/game/sprites/convert.ts';
 import { defineSprite, defineTilemap, rasterize, resolveSprite, rows } from '../src/game/sprites/define.ts';
 import { SPRITES } from '../src/game/sprites/index.ts';
+import { LAYOUTS } from '../src/game/layouts/index.ts';
 import { PALETTE, rgb, type ColorName } from '../src/game/sprites/palette.ts';
 import { lintSprite, validateSprite, validateTilemap } from '../src/game/sprites/validate.ts';
 
@@ -25,10 +27,12 @@ const tiny = defineSprite({
 });
 
 describe('Paleta', () => {
-  it('es Endesga 32: 32 colores distintos', () => {
+  it('contiene los 64 colores originales de Endesga 64, sin sustituciones ni colores añadidos', () => {
     const values = Object.values(PALETTE);
-    assert.equal(values.length, 32);
-    assert.equal(new Set(values).size, 32);
+    const official = JSON.parse(readFileSync(new URL('../scripts/sprites/endesga-64.json', import.meta.url), 'utf8'));
+    assert.equal(values.length, 64);
+    assert.equal(new Set(values).size, 64);
+    assert.deepEqual(values, official.colors.map((hex: string) => `#${hex}`));
   });
 });
 
@@ -112,9 +116,9 @@ describe('Revisión de estilo', () => {
   const flip = (source: string) => rows(source).map((row) => [...row].reverse().join('')).join('\n');
 
   it('avisa si la luz viene del lado contrario', () => {
-    // La carne en 3/4 tiene costado iluminado; volteada, la luz queda a la derecha.
-    const carne = SPRITES.carne;
-    assert.ok(lintSprite({ ...carne, pixels: flip(carne.pixels!) }).some((w) => w.includes('derecha')));
+    const lit = defineSprite({ id: 'luz', size: [8, 3], colors: { l: 'crema', m: 'pizarra', s: 'negro' }, pixels: 'lllmmsss\nlllmmsss\nlllmmsss' });
+    assert.deepEqual(lintSprite(lit), []);
+    assert.ok(lintSprite({ ...lit, pixels: flip(lit.pixels) }).some((w) => w.includes('derecha')));
   });
 
   it('avisa si se usan colores fuera de los materiales', () => {
@@ -157,6 +161,16 @@ describe('Atlas', () => {
 });
 
 describe('Importar desde imagen', () => {
+  it('importa los 64 colores de Endesga sin perder ninguno ni exceder el alfabeto de celdas', () => {
+    const colors = Object.keys(PALETTE) as ColorName[];
+    const raw = new Uint8ClampedArray(colors.flatMap(name => [...rgb(name), 255]));
+    const imported = imageToSprite(raw, 64, 1, { id: 'paleta_completa' });
+    const def = defineSprite({ id: 'paleta_completa', size: [64, 1], colors: imported.colors, pixels: imported.frames[0].join('\n') });
+    assert.equal(imported.adjusted, 0);
+    assert.equal(Object.keys(imported.colors).length, 64);
+    assert.deepEqual(validateSprite(def), []);
+    assert.deepEqual(rasterize(resolveSprite(def)), raw);
+  });
   it('el color más cercano de un tono fuera de la paleta', () => {
     assert.deepEqual(nearestColor(...rgb('rojo')), { name: 'rojo', exact: true });
     const [r, g, b] = rgb('rojo');
@@ -195,4 +209,23 @@ describe('Importar desde imagen', () => {
     const def = defineSprite({ id: 'mini', size: [2, 2], colors: result.colors, pixels: result.frames[0].join('\n') });
     assert.deepEqual(validateSprite(def), []);
   });
+});
+
+
+describe('Entorno del comedor', () => {
+  for (const [name, wall, counter] of [
+    ['horizontal', 'comedor', 'barra_roja'],
+    ['vertical', 'comedor_v', 'barra_roja_v'],
+  ] as const) {
+    it(`cubre exactamente el escenario ${name}, sin estirar ni dejar huecos`, () => {
+      const layout = LAYOUTS[name];
+      assert.deepEqual(SPRITES[wall].size, [layout.w, layout.counter[1]]);
+      assert.deepEqual(SPRITES[counter].size, [layout.counter[2], layout.counter[3]]);
+      assert.equal(SPRITES[wall].size[1] + SPRITES[counter].size[1], layout.h);
+      for (const key of [wall, counter]) {
+        const data = rasterize(resolveSprite(SPRITES[key]));
+        for (let i = 3; i < data.length; i += 4) assert.equal(data[i], 255, `${key}: pixel transparente`);
+      }
+    });
+  }
 });

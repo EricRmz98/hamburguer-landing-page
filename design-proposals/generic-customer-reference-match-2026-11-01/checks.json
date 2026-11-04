@@ -1,0 +1,14 @@
+{
+  "dimensions": [
+    887,
+    1774
+  ],
+  "mode": "RGBA",
+  "alpha_range": [
+    0,
+    255
+  ],
+  "integration": "reference_only",
+  "generation_tool": "built-in image_gen",
+  "pixel_exact_copy": false
+}

@@ -1,4 +1,5 @@
-# Genera los sprites de clientes (48 × 80) trazando formas y sombreando cada material con luz desde la izquierda.
+# Generador histórico (48 × 80), conservado para las propuestas archivadas.
+# Los 12 clientes nativos activos se regeneran con customers_gen.py y write_people.py.
 W, H = 48, 80
 SHADE = {  # material: (base, sombra, luz, ancho de luz, ancho de sombra)
     'piel': ('q', 'p', 'r', 2, 3),

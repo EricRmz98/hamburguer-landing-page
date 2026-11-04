@@ -1,0 +1,324 @@
+{
+  "frame": [
+    96,
+    120
+  ],
+  "columns": 6,
+  "rows": 4,
+  "game_scale": 1.5,
+  "expression": "esperando",
+  "customers": [
+    {
+      "number": 1,
+      "id": "nico",
+      "name": "Nico",
+      "file": "01-nico.png",
+      "rectangle": [
+        0,
+        0,
+        96,
+        120
+      ],
+      "approved_native_sha256": "30ea5daca235025fc4fec1750eb0daaecce83977bf7b5c4a4f7ac6fdb914c275"
+    },
+    {
+      "number": 2,
+      "id": "ren",
+      "name": "Ren",
+      "file": "02-ren.png",
+      "rectangle": [
+        96,
+        0,
+        96,
+        120
+      ],
+      "approved_native_sha256": "6e70190051c5ca8ffb01d780f74e1efc6a82505365d09b8dfaafa7f934cf9235"
+    },
+    {
+      "number": 3,
+      "id": "alex",
+      "name": "Alex",
+      "file": "03-alex.png",
+      "rectangle": [
+        192,
+        0,
+        96,
+        120
+      ],
+      "approved_native_sha256": "0b091a28163f62794638b84f0dd3337806107ae72fc2f3d3c337f8d7ad92b70f"
+    },
+    {
+      "number": 4,
+      "id": "dani",
+      "name": "Dani",
+      "file": "04-dani.png",
+      "rectangle": [
+        288,
+        0,
+        96,
+        120
+      ],
+      "approved_native_sha256": "7239799fe3969901c8f7bf132e6b03036de0082ea1e2017053faf27621dae441"
+    },
+    {
+      "number": 5,
+      "id": "beto",
+      "name": "Beto",
+      "file": "05-beto.png",
+      "rectangle": [
+        384,
+        0,
+        96,
+        120
+      ],
+      "approved_native_sha256": "771b23a981d551fb68f9fb4fda24d7c57e4291268d8709f4ee98263616bd3aa7"
+    },
+    {
+      "number": 6,
+      "id": "vale",
+      "name": "Vale",
+      "file": "06-vale.png",
+      "rectangle": [
+        480,
+        0,
+        96,
+        120
+      ],
+      "approved_native_sha256": "29d169fd4753f7fa5e58f11237b1971bff7784017a4aef78a5b2e1f7d563f377"
+    },
+    {
+      "number": 7,
+      "id": "mar",
+      "name": "Mar",
+      "file": "07-mar.png",
+      "rectangle": [
+        0,
+        120,
+        96,
+        120
+      ],
+      "approved_native_sha256": "f1e4af363c78643fc96ee5a4abc62c6816974502339ccf66860bd966ba1c8a79"
+    },
+    {
+      "number": 8,
+      "id": "sol",
+      "name": "Sol",
+      "file": "08-sol.png",
+      "rectangle": [
+        96,
+        120,
+        96,
+        120
+      ],
+      "approved_native_sha256": "9c3f2ef8550d6e810e12f3af21db367e8aae8ccc734eeb1e22a95881127a1fdb"
+    },
+    {
+      "number": 9,
+      "id": "sam",
+      "name": "Sam",
+      "file": "09-sam.png",
+      "rectangle": [
+        192,
+        120,
+        96,
+        120
+      ],
+      "approved_native_sha256": "34d69282a9fba9d6c65f7a9e6ab3c456b3aa166f748c27ce55c44cc4213ead8a"
+    },
+    {
+      "number": 10,
+      "id": "ivo",
+      "name": "Ivo",
+      "file": "10-ivo.png",
+      "rectangle": [
+        288,
+        120,
+        96,
+        120
+      ],
+      "approved_native_sha256": "006639a718cfb940ff725c61edaa899d31e6ca4fc9faa50756939b077a14e77b"
+    },
+    {
+      "number": 11,
+      "id": "luz",
+      "name": "Luz",
+      "file": "11-luz.png",
+      "rectangle": [
+        384,
+        120,
+        96,
+        120
+      ],
+      "approved_native_sha256": "b675f363834c6e8ca1675a2a6111bacbcdad978768fbdc03c045851485cdc432"
+    },
+    {
+      "number": 12,
+      "id": "noa",
+      "name": "Noa",
+      "file": "12-noa.png",
+      "rectangle": [
+        480,
+        120,
+        96,
+        120
+      ],
+      "approved_native_sha256": "91626bf5c48625171b2422feea13d5642f7fe99a45841ef3028f297af0235298"
+    },
+    {
+      "number": 13,
+      "id": "teo",
+      "name": "Teo",
+      "file": "13-teo.png",
+      "rectangle": [
+        0,
+        240,
+        96,
+        120
+      ],
+      "approved_native_sha256": "c8ca20bded1e4cae930817b5f1e4cf47558dd5771adc976f9b59329861d0150d"
+    },
+    {
+      "number": 14,
+      "id": "mai",
+      "name": "Mai",
+      "file": "14-mai.png",
+      "rectangle": [
+        96,
+        240,
+        96,
+        120
+      ],
+      "approved_native_sha256": "de1baacbe90930806aeb258d09338185f93f1740de09857f345a1ecf0f69f9fd"
+    },
+    {
+      "number": 15,
+      "id": "jules",
+      "name": "Jules",
+      "file": "15-jules.png",
+      "rectangle": [
+        192,
+        240,
+        96,
+        120
+      ],
+      "approved_native_sha256": "eca87e64f3005c733a9206b580de7cbaa1d306fbc48a319368727a485bc87580"
+    },
+    {
+      "number": 16,
+      "id": "moren",
+      "name": "Moren",
+      "file": "16-moren.png",
+      "rectangle": [
+        288,
+        240,
+        96,
+        120
+      ],
+      "approved_native_sha256": "f0420cb9627d111bdfd5d059b252ef04a44869dbf6c152da0f66c26c7d5c6520"
+    },
+    {
+      "number": 17,
+      "id": "chema",
+      "name": "Chema",
+      "file": "17-chema.png",
+      "rectangle": [
+        384,
+        240,
+        96,
+        120
+      ],
+      "approved_native_sha256": "60849a4b72bf7188cc27400475b720dc4dd61a783a3eb9508d3d912f17a9f5a8"
+    },
+    {
+      "number": 18,
+      "id": "ari",
+      "name": "Ari",
+      "file": "18-ari.png",
+      "rectangle": [
+        480,
+        240,
+        96,
+        120
+      ],
+      "approved_native_sha256": "deb82a45ea1f1c080a2bcfe159f4a0953678155d7fe08b4f5b0acad994420c9e"
+    },
+    {
+      "number": 19,
+      "id": "ros",
+      "name": "Ros",
+      "file": "19-ros.png",
+      "rectangle": [
+        0,
+        360,
+        96,
+        120
+      ],
+      "approved_native_sha256": "95b76337613ceacc04423c77f85d018f0667e770d83ae95ad8c2973e9f5f72db"
+    },
+    {
+      "number": 20,
+      "id": "andy",
+      "name": "Andy",
+      "file": "20-andy.png",
+      "rectangle": [
+        96,
+        360,
+        96,
+        120
+      ],
+      "approved_native_sha256": "e99b3f0772adc1259e9b078ab25f0d3f61139cc0f3dce93b5a13a4dacef241ef"
+    },
+    {
+      "number": 21,
+      "id": "fer",
+      "name": "Fer",
+      "file": "21-fer.png",
+      "rectangle": [
+        192,
+        360,
+        96,
+        120
+      ],
+      "approved_native_sha256": "0044d95263c55b950d4685e2609fe34f708860d9f9ffab943970f04a9d93278b"
+    },
+    {
+      "number": 22,
+      "id": "leo",
+      "name": "Leo",
+      "file": "22-leo.png",
+      "rectangle": [
+        288,
+        360,
+        96,
+        120
+      ],
+      "approved_native_sha256": "bac3ebb1db955669b9c3052cdec50c2a6865edc4e8e06ae26f5ba0a7504d1a8d"
+    },
+    {
+      "number": 23,
+      "id": "pao",
+      "name": "Pao",
+      "file": "23-pao.png",
+      "rectangle": [
+        384,
+        360,
+        96,
+        120
+      ],
+      "approved_native_sha256": "3526c66819b22a033e9b89992133ff578038a494d6ffa122a82d1bde19b2cc95"
+    },
+    {
+      "number": 24,
+      "id": "cris",
+      "name": "Cris",
+      "file": "24-cris.png",
+      "rectangle": [
+        480,
+        360,
+        96,
+        120
+      ],
+      "approved_native_sha256": "87e1005b0b6fdf449d052cc2d52b825bb61cae38369d39afd09d68a16d8b5f37"
+    }
+  ]
+}

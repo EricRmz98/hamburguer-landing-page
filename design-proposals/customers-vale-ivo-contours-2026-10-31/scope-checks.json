@@ -1,0 +1,25 @@
+{
+  "vale_original_lower_face_restored_exactly": true,
+  "vale_restored_reference": "customers-final-polish-2026-10-31/face-06-1x.png",
+  "vale_lower_face_unchanged_from_row": 13,
+  "ivo_changed_pixels": [
+    [
+      42,
+      70
+    ],
+    [
+      41,
+      71
+    ],
+    [
+      42,
+      71
+    ],
+    [
+      43,
+      71
+    ]
+  ],
+  "ivo_bottom_edge_level_y70_x32_to47": true,
+  "unchanged_customers": 22
+}

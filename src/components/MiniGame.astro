@@ -30,7 +30,7 @@
 </script>
 
 <style is:global>
-  /* Colores de interfaz tomados de Endesga 32 (los sprites tienen los suyos en src/game/sprites). */
+  /* Colores de interfaz tomados de Endesga 64 (los sprites tienen los suyos en src/game/sprites). */
   .mg-root {
     position: relative;
     display: flex;
@@ -41,13 +41,13 @@
     display: grid;
     gap: 1rem;
     justify-items: center;
-    color: #c0cbdc;
+    color: #c7cfdd;
   }
   .mg-fallback a,
   .mg-overlay-btn {
     border-radius: 0.25em;
-    background: #feae34;
-    color: #181425;
+    background: #ffa214;
+    color: #131313;
     font-weight: 700;
     text-decoration: none;
   }
@@ -60,7 +60,7 @@
     position: relative;
     overflow: hidden;
     border-radius: calc(var(--s) * 2px);
-    background: #262b44;
+    background: #2a2f4e;
     color: #fff;
     /* Pixelify Sans: pixelada pero sin cuadrícula estricta, así que se escala libre. El texto va a
        «medio pixel»: su trazo (1/10 del tamaño) mide 0.6 pixeles del juego y las mayúsculas, 3.8. */
@@ -91,19 +91,12 @@
     image-rendering: pixelated;
     pointer-events: none;
   }
-  .mg-wall {
-    inset: 0;
-    background-repeat: repeat;
-    image-rendering: pixelated;
-  }
-  /* Barra en 3/4: borde trasero claro, superficie de tablones y el frente oscuro abajo. */
+  /* Escenas nativas del atlas: composición propia por orientación, sin estirar ni repetir. */
+  .mg-wall,
   .mg-counter {
-    border-top: calc(var(--s) * 2px) solid #c28569;
-    border-bottom: calc(var(--s) * 5px) solid #733e39;
-    background-color: #b86f50;
-    background-repeat: repeat;
+    background-repeat: no-repeat;
     image-rendering: pixelated;
-    box-shadow: inset 0 calc(var(--s) * 2px) 0 rgb(24 20 37 / 0.35), inset 0 calc(var(--s) * -1px) 0 #3e2731;
+    pointer-events: none;
   }
 
   .mg-btn {
@@ -135,8 +128,8 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    background: rgb(234 212 170 / 0.95);
-    color: #3e2731;
+    background: rgb(249 230 207 / 0.95);
+    color: #391f21;
     font: 600 var(--texto) / 1 'Pixelify Sans', ui-monospace, monospace;
     white-space: nowrap;
     clip-path: polygon(0 0, 100% 0, 97% 25%, 100% 50%, 97% 75%, 100% 100%, 0 100%, 3% 75%, 0 50%, 3% 25%);
@@ -148,7 +141,7 @@
     align-items: center;
     justify-content: space-between;
     font-size: var(--texto);
-    text-shadow: 0 calc(var(--s) * 0.5px) 0 #181425;
+    text-shadow: 0 calc(var(--s) * 0.5px) 0 #131313;
   }
   .mg-lives {
     display: flex;
@@ -179,9 +172,9 @@
     flex-direction: column;
     padding: calc(var(--s) * 1px);
     border-radius: calc(var(--s) * 1px);
-    background: #ead4aa;
-    color: #181425;
-    box-shadow: calc(var(--s) * 1px) calc(var(--s) * 1px) 0 rgb(24 20 37 / 0.45);
+    background: #f9e6cf;
+    color: #131313;
+    box-shadow: calc(var(--s) * 1px) calc(var(--s) * 1px) 0 rgb(19 19 19 / 0.45);
   }
   .mg-ticket-name {
     height: calc(var(--s) * 7px);
@@ -210,14 +203,14 @@
     text-decoration: line-through;
   }
   .mg-ticket-row.is-next {
-    background: #fee761;
-    outline: calc(var(--s) * 0.5px) solid #e43b44;
+    background: #ffc825;
+    outline: calc(var(--s) * 0.5px) solid #ea323c;
   }
   .mg-swatch {
     flex: none;
     width: calc(var(--s) * 4px);
     height: calc(var(--s) * 3px);
-    border: calc(var(--s) * 0.25px) solid rgb(24 20 37 / 0.5);
+    border: calc(var(--s) * 0.25px) solid rgb(19 19 19 / 0.5);
   }
 
   .mg-customer.is-away {
@@ -226,14 +219,14 @@
   .mg-patience {
     overflow: hidden;
     border-radius: calc(var(--s) * 1px);
-    background: rgb(24 20 37 / 0.6);
+    background: rgb(19 19 19 / 0.6);
   }
   .mg-patience-bar {
     height: 100%;
-    background: #63c74d;
+    background: #5ac54f;
   }
   .mg-patience-bar.is-low {
-    background: #ff0044;
+    background: #ff0040;
   }
   .mg-stack {
     inset: 0;
@@ -245,10 +238,10 @@
      dibujan un contorno de 1 pixel. Parpadea a saltos, sin degradados: contorno y contorno doble. */
   .mg-basura.is-alert .mg-sprite {
     --px: calc(var(--s) * 1px);
-    --aro: drop-shadow(var(--px) 0 0 #ff0044) drop-shadow(calc(var(--px) * -1) 0 0 #ff0044)
-      drop-shadow(0 var(--px) 0 #ff0044) drop-shadow(0 calc(var(--px) * -1) 0 #ff0044);
-    --aro-2: drop-shadow(var(--px) 0 0 #a22633) drop-shadow(calc(var(--px) * -1) 0 0 #a22633)
-      drop-shadow(0 var(--px) 0 #a22633) drop-shadow(0 calc(var(--px) * -1) 0 #a22633);
+    --aro: drop-shadow(var(--px) 0 0 #ff0040) drop-shadow(calc(var(--px) * -1) 0 0 #ff0040)
+      drop-shadow(0 var(--px) 0 #ff0040) drop-shadow(0 calc(var(--px) * -1) 0 #ff0040);
+    --aro-2: drop-shadow(var(--px) 0 0 #571c27) drop-shadow(calc(var(--px) * -1) 0 0 #571c27)
+      drop-shadow(0 var(--px) 0 #571c27) drop-shadow(0 calc(var(--px) * -1) 0 #571c27);
     filter: var(--aro);
     animation: mg-glow 0.8s steps(1) infinite;
   }
@@ -279,7 +272,7 @@
     right: 0;
     left: 0;
     height: calc(var(--s) * 19px);
-    background: rgb(24 20 37 / 0.6);
+    background: rgb(19 19 19 / 0.6);
     content: '';
   }
 
@@ -287,28 +280,28 @@
   .mg-gauge {
     position: absolute;
     right: calc(var(--s) * 2px);
-    bottom: calc(var(--s) * 2.5px);
+    bottom: calc(var(--s) * 10px); /* encima de las perillas, para mantenerlas visibles */
     left: calc(var(--s) * 2px);
     height: calc(var(--s) * 3px);
     overflow: hidden;
     border-radius: calc(var(--s) * 1px);
     background: linear-gradient(
       to right,
-      rgb(254 231 97 / 0.3) 0 var(--g1),
-      rgb(99 199 77 / 0.3) var(--g1) var(--g2),
-      rgb(255 0 68 / 0.3) var(--g2)
+      rgb(255 200 37 / 0.3) 0 var(--g1),
+      rgb(90 197 79 / 0.3) var(--g1) var(--g2),
+      rgb(255 0 64 / 0.3) var(--g2)
     );
   }
   .mg-gauge-fill {
     height: 100%;
-    background: #fee761;
+    background: #ffc825;
   }
   .mg-slot[data-state='perfecta'] .mg-gauge-fill {
-    background: #63c74d;
+    background: #5ac54f;
   }
   .mg-slot[data-state='aviso'] .mg-gauge-fill,
   .mg-slot[data-state='quemada'] .mg-gauge-fill {
-    background: #ff0044;
+    background: #ff0040;
   }
   .mg-slot[data-state='aviso'] .mg-gauge {
     animation: mg-signal 0.4s steps(2, jump-none) infinite;
@@ -327,10 +320,10 @@
     align-items: flex-start;
     padding: calc(var(--s) * 2px) calc(var(--s) * 3px);
     border-radius: calc(var(--s) * 2px);
-    background: #ead4aa;
-    color: #181425;
+    background: #f9e6cf;
+    color: #131313;
     font-size: var(--texto);
-    box-shadow: 0 calc(var(--s) * 1px) 0 rgb(24 20 37 / 0.5);
+    box-shadow: 0 calc(var(--s) * 1px) 0 rgb(19 19 19 / 0.5);
   }
   .mg-bubble-text {
     margin: 0;
@@ -339,7 +332,7 @@
     padding: calc(var(--s) * 1px) calc(var(--s) * 3px);
     border: 0;
     border-radius: calc(var(--s) * 1px);
-    background: #e43b44;
+    background: #ea323c;
     color: #fff;
     font: inherit;
     cursor: pointer;
@@ -353,7 +346,7 @@
     left: 50%;
     padding: calc(var(--s) * 1.5px) calc(var(--s) * 3px);
     border-radius: calc(var(--s) * 1px);
-    background: rgb(24 20 37 / 0.85);
+    background: rgb(19 19 19 / 0.85);
     font-size: var(--texto);
     white-space: nowrap;
     opacity: 0;
@@ -374,7 +367,7 @@
     align-items: center;
     justify-content: center;
     padding: calc(var(--s) * 10px);
-    background: rgb(24 20 37 / 0.82);
+    background: rgb(19 19 19 / 0.82);
     text-align: center;
   }
   .mg-overlay-title {
@@ -396,7 +389,7 @@
   }
   .mg-overlay-btn.is-secondary {
     background: transparent;
-    color: #feae34;
+    color: #ffa214;
     text-decoration: underline;
   }
 
@@ -427,10 +420,10 @@
     max-height: 80vh;
     overflow: auto;
     padding: 8px 12px;
-    border: 1px solid #444;
+    border: 1px solid #424c6e;
     border-radius: 8px;
-    background: rgb(17 17 17 / 0.94);
-    color: #eee;
+    background: rgb(19 19 19 / 0.94);
+    color: #c7cfdd;
     font: 12px/1.4 ui-monospace, SFMono-Regular, Menlo, monospace;
   }
   .mg-debug summary {
@@ -458,15 +451,15 @@
   }
   .mg-debug button {
     padding: 2px 8px;
-    border: 1px solid #666;
+    border: 1px solid #657392;
     border-radius: 4px;
-    background: #2a2a2a;
-    color: #eee;
+    background: #2a2f4e;
+    color: #c7cfdd;
     cursor: pointer;
   }
   .mg-debug-info {
     margin: 10px 0 0;
     white-space: pre-wrap;
-    color: #9fd;
+    color: #94fdff;
   }
 </style>

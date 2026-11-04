@@ -1,0 +1,11 @@
+{
+  "customers": 24,
+  "expressions": 3,
+  "validation": "passed",
+  "style": "passed",
+  "palette": "Endesga32",
+  "faces_identical_in_all_reactions": true,
+  "silhouette_identical_in_all_reactions": true,
+  "atlas_pixel_copy": "passed",
+  "integration": "reference_only"
+}

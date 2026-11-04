@@ -1,0 +1,132 @@
+{
+  "customers": 12,
+  "native_size": [
+    96,
+    120
+  ],
+  "game_size": [
+    96,
+    120
+  ],
+  "waist_row": 114,
+  "layouts": "horizontal_and_vertical_anchor_match",
+  "atlas": "pixel_exact",
+  "native_to_layout_scale": 1,
+  "production_cast_changed": false,
+  "results": [
+    {
+      "id": "cliente_nuevo_lia",
+      "validation": "passed",
+      "palette": "exact_Endesga32",
+      "native_roundtrip": "pixel_exact",
+      "style_warnings": [],
+      "global_light_centroid_notes": [
+        "Base, sprite: los tonos claros quedan a la derecha; la luz viene de la izquierda"
+      ]
+    },
+    {
+      "id": "cliente_nuevo_bruno",
+      "validation": "passed",
+      "palette": "exact_Endesga32",
+      "native_roundtrip": "pixel_exact",
+      "style_warnings": [],
+      "global_light_centroid_notes": [
+        "Base, sprite: los tonos claros quedan a la derecha; la luz viene de la izquierda",
+        "Base, sprite: los tonos claros quedan abajo; la luz viene de arriba"
+      ]
+    },
+    {
+      "id": "cliente_nuevo_zoe",
+      "validation": "passed",
+      "palette": "exact_Endesga32",
+      "native_roundtrip": "pixel_exact",
+      "style_warnings": [],
+      "global_light_centroid_notes": [
+        "Base, sprite: los tonos claros quedan abajo; la luz viene de arriba"
+      ]
+    },
+    {
+      "id": "cliente_nuevo_ciro",
+      "validation": "passed",
+      "palette": "exact_Endesga32",
+      "native_roundtrip": "pixel_exact",
+      "style_warnings": [],
+      "global_light_centroid_notes": []
+    },
+    {
+      "id": "cliente_nuevo_mika",
+      "validation": "passed",
+      "palette": "exact_Endesga32",
+      "native_roundtrip": "pixel_exact",
+      "style_warnings": [],
+      "global_light_centroid_notes": []
+    },
+    {
+      "id": "cliente_nuevo_alma",
+      "validation": "passed",
+      "palette": "exact_Endesga32",
+      "native_roundtrip": "pixel_exact",
+      "style_warnings": [],
+      "global_light_centroid_notes": [
+        "Base, sprite: los tonos claros quedan a la derecha; la luz viene de la izquierda",
+        "Base, sprite: los tonos claros quedan abajo; la luz viene de arriba"
+      ]
+    },
+    {
+      "id": "cliente_nuevo_rafa",
+      "validation": "passed",
+      "palette": "exact_Endesga32",
+      "native_roundtrip": "pixel_exact",
+      "style_warnings": [],
+      "global_light_centroid_notes": [
+        "Base, sprite: los tonos claros quedan a la derecha; la luz viene de la izquierda"
+      ]
+    },
+    {
+      "id": "cliente_nuevo_dante",
+      "validation": "passed",
+      "palette": "exact_Endesga32",
+      "native_roundtrip": "pixel_exact",
+      "style_warnings": [],
+      "global_light_centroid_notes": [
+        "Base, sprite: los tonos claros quedan abajo; la luz viene de arriba"
+      ]
+    },
+    {
+      "id": "cliente_nuevo_vega",
+      "validation": "passed",
+      "palette": "exact_Endesga32",
+      "native_roundtrip": "pixel_exact",
+      "style_warnings": [],
+      "global_light_centroid_notes": []
+    },
+    {
+      "id": "cliente_nuevo_ines",
+      "validation": "passed",
+      "palette": "exact_Endesga32",
+      "native_roundtrip": "pixel_exact",
+      "style_warnings": [],
+      "global_light_centroid_notes": [
+        "Base, sprite: los tonos claros quedan abajo; la luz viene de arriba"
+      ]
+    },
+    {
+      "id": "cliente_nuevo_gael",
+      "validation": "passed",
+      "palette": "exact_Endesga32",
+      "native_roundtrip": "pixel_exact",
+      "style_warnings": [],
+      "global_light_centroid_notes": [
+        "Base, sprite: los tonos claros quedan abajo; la luz viene de arriba"
+      ]
+    },
+    {
+      "id": "cliente_nuevo_sasha",
+      "validation": "passed",
+      "palette": "exact_Endesga32",
+      "native_roundtrip": "pixel_exact",
+      "style_warnings": [],
+      "global_light_centroid_notes": []
+    }
+  ]
+}

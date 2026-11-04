@@ -1,0 +1,32 @@
+{
+  "native_size": [
+    80,
+    136
+  ],
+  "palette_colors": 3,
+  "binary_alpha": true,
+  "connected_silhouette": true,
+  "geometry": "compact_neutral_standing",
+  "head_fill_size": [
+    28,
+    27
+  ],
+  "head_to_torso_width_ratio": 0.93,
+  "height_in_head_units": 4.41,
+  "torso_width_with_outline": 32,
+  "closed_legs_max_width_with_outline": 28,
+  "comparison_row": 55,
+  "body_width_including_arms": 58,
+  "plate_width": 31,
+  "body_plate_ratio": 1.87,
+  "waist_row": 85,
+  "horizontal_position": [
+    120,
+    37
+  ],
+  "vertical_position": [
+    50,
+    115
+  ],
+  "integration": "reference_only"
+}

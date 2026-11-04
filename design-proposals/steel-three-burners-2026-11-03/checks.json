@@ -1,0 +1,44 @@
+{
+  "tests_passed": 161,
+  "tests_failed": 0,
+  "build": "passed",
+  "palette": "Endesga 64",
+  "runtime": {
+    "burners": 3,
+    "gaugesAboveKnobs": true,
+    "layout": "vertical",
+    "locked": 0,
+    "occupied": 3
+  },
+  "both_layouts": [
+    {
+      "burners": 3,
+      "clip": {
+        "height": 424,
+        "width": 640,
+        "x": 82.5,
+        "y": 175.0703125
+      },
+      "layout": "horizontal",
+      "locked": 0,
+      "scale": 2,
+      "trashHeight": 20,
+      "trashLeftOfGrill": true
+    },
+    {
+      "burners": 3,
+      "clip": {
+        "height": 600,
+        "width": 360,
+        "x": 222.5,
+        "y": 175.0703125
+      },
+      "layout": "vertical",
+      "locked": 0,
+      "scale": 2,
+      "trashHeight": 20,
+      "trashLeftOfGrill": true
+    }
+  ],
+  "new_console_errors": []
+}

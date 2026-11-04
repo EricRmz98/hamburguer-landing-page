@@ -1,0 +1,34 @@
+{
+  "palette": "Endesga 64",
+  "tests": {
+    "pass": 161,
+    "fail": 0
+  },
+  "build": "passed",
+  "mobile_game": {
+    "viewport": [
+      390,
+      844
+    ],
+    "stage": [
+      360,
+      600
+    ],
+    "layout": "vertical",
+    "integer_scale": 2
+  },
+  "unchanged_customers_background_and_food": true,
+  "plate": [
+    38,
+    22
+  ],
+  "waste": [
+    44,
+    18
+  ],
+  "bottles": [
+    14,
+    35
+  ],
+  "new_console_errors_after_reload": []
+}

@@ -1,0 +1,34 @@
+[
+  {
+    "clearOfBread": true,
+    "clip": {
+      "height": 424,
+      "width": 640,
+      "x": 82.5,
+      "y": 175.0703125
+    },
+    "layout": "horizontal",
+    "plateHeight": 22,
+    "plateWidth": 38,
+    "sameGrid": true,
+    "scale": 2,
+    "wasteHeight": 18,
+    "wasteWidth": 44
+  },
+  {
+    "clearOfBread": true,
+    "clip": {
+      "height": 600,
+      "width": 360,
+      "x": 222.5,
+      "y": 175.0703125
+    },
+    "layout": "vertical",
+    "plateHeight": 22,
+    "plateWidth": 38,
+    "sameGrid": true,
+    "scale": 2,
+    "wasteHeight": 18,
+    "wasteWidth": 44
+  }
+]

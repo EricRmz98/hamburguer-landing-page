@@ -9,7 +9,10 @@ const paginasDeDesarrollo = {
   hooks: {
     /** @param {{ command: string, injectRoute: (route: { pattern: string, entrypoint: string }) => void }} options */
     'astro:config:setup': ({ command, injectRoute }) => {
-      if (command === 'dev') injectRoute({ pattern: '/sprites', entrypoint: './src/dev/sprites.astro' });
+      if (command === 'dev') {
+        injectRoute({ pattern: '/sprites', entrypoint: './src/dev/sprites.astro' });
+        injectRoute({ pattern: '/clientes-prueba', entrypoint: './src/dev/customers.astro' });
+      }
     },
   },
 };

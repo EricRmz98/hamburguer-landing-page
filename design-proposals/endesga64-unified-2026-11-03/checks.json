@@ -1,0 +1,15 @@
+{
+  "palette": "Endesga 64",
+  "official_colors": 64,
+  "definition_variants": 56,
+  "customers": 12,
+  "browser_compositions": 24,
+  "shared_integer_scale": true,
+  "tests": {
+    "pass": 161,
+    "fail": 0
+  },
+  "build": "passed",
+  "console_errors": [],
+  "physical_phone": "not checked"
+}

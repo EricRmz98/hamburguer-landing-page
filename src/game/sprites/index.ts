@@ -1,7 +1,8 @@
 import type { SpriteDef, TilemapDef } from './define.ts';
 import { carne, cebolla, lechuga, panBase, panMedio, panTapa, queso, salsa, tomate } from './ingredients.ts';
-import { cliente, clienta } from './people.ts';
+import { cliente } from './people.ts';
 import { azulejo, madera } from './tiles.ts';
+import { comedor, comedorVertical, barraRoja, barraRojaVertical } from './environment.ts';
 import { corazon, flecha, humo } from './ui.ts';
 import {
   bandejaCebolla, bandejaLechuga, bandejaPan, bandejaQueso, bandejaTomate,
@@ -14,9 +15,9 @@ const list: SpriteDef[] = [
   panBase, panMedio, panTapa, carne, queso, lechuga, tomate, cebolla, salsa,
   bote, plato, charola, basura, plancha, planchaVertical,
   bandejaPan, bandejaQueso, bandejaLechuga, bandejaTomate, bandejaCebolla,
-  cliente, clienta,
+  cliente,
   humo, flecha, corazon,
-  azulejo, madera,
+  azulejo, madera, comedor, comedorVertical, barraRoja, barraRojaVertical,
 ];
 
 export const SPRITES: Record<string, SpriteDef> = Object.fromEntries(list.map((def) => [def.id, def]));

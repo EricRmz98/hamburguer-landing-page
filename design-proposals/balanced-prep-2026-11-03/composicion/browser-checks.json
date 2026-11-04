@@ -1,0 +1,56 @@
+[
+  {
+    "breadContained": true,
+    "burners": 3,
+    "clip": {
+      "height": 424,
+      "width": 640,
+      "x": 82.5,
+      "y": 175.0703125
+    },
+    "grillCentered": true,
+    "groupCentered": true,
+    "layout": "horizontal",
+    "leftGap": 4,
+    "locked": 0,
+    "meatSize": [
+      42,
+      25
+    ],
+    "plateAligned": true,
+    "rightGap": 4,
+    "sameHeight": true,
+    "scale": 2,
+    "wasteSize": [
+      42,
+      25
+    ]
+  },
+  {
+    "breadContained": true,
+    "burners": 3,
+    "clip": {
+      "height": 600,
+      "width": 360,
+      "x": 222.5,
+      "y": 175.0703125
+    },
+    "grillCentered": true,
+    "groupCentered": true,
+    "layout": "vertical",
+    "leftGap": 3,
+    "locked": 0,
+    "meatSize": [
+      42,
+      25
+    ],
+    "plateAligned": true,
+    "rightGap": 3,
+    "sameHeight": true,
+    "scale": 2,
+    "wasteSize": [
+      42,
+      25
+    ]
+  }
+]

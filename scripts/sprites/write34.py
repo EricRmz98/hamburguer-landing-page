@@ -38,22 +38,22 @@ ing = HEADER.format(what='Ingredientes') + '\n' + '\n\n'.join([
     sprite('panBase', 'pan_base'), sprite('panMedio', 'pan_medio'), sprite('panTapa', 'pan_tapa'),
     sprite('carne', 'carne', {
         'perfecta': (None, None),
-        'cruda': (['carne-cruda'], {'k': 'ciruela', 'm': 'magenta', 'n': 'rosa', 'p': 'piel-clara', 'h': 'blanco'}),
+        'cruda': (['carne-cruda'], {'k': 'rojo-oscuro', 'm': 'rosa-viejo', 'n': 'rosa', 'p': 'piel-clara', 'h': 'blanco'}),
         'cocinandose': (['carne-cocinandose'], {'k': 'cafe-oscuro', 'm': 'cafe', 'n': 'canela', 'p': 'piel', 'h': 'piel-clara'}),
         'quemada': (['carne-quemada'], {'k': 'negro', 'm': 'negro', 'n': 'noche', 'p': 'pizarra', 'h': 'gris-azul'}),
     }, extra_colors={'h': 'piel'}),
     sprite('queso', 'queso'), sprite('lechuga', 'lechuga'), sprite('tomate', 'tomate'), sprite('cebolla', 'cebolla'),
     sprite('salsa', 'salsa', {
         'catsup': (None, None),
-        'mostaza': (['mostaza'], {'I': 'oxido', 'J': 'tostado', 'K': 'ambar', 'L': 'amarillo'}),
-        'mayonesa': (['mayonesa'], {'I': 'canela', 'J': 'durazno', 'K': 'crema', 'L': 'blanco'}),
+        'mostaza': (['mostaza'], {'I': 'oxido', 'J': 'ambar', 'K': 'amarillo', 'L': 'vainilla', 'O': 'crema'}),
+        'mayonesa': (['mayonesa'], {'I': 'plata', 'J': 'piel-clara', 'K': 'crema', 'L': 'blanco', 'O': 'blanco'}),
     }),
 ]) + '\n'
 ute = HEADER.format(what='Utensilios') + '\n' + '\n\n'.join([
     sprite('bote', 'bote', {
         'catsup': (None, None),
-        'mostaza': (['mostaza', 'etiqueta', 'metal'], {'I': 'oxido', 'J': 'tostado', 'K': 'ambar', 'L': 'amarillo'}),
-        'mayonesa': (['mayonesa', 'etiqueta', 'metal'], {'I': 'canela', 'J': 'durazno', 'K': 'crema', 'L': 'blanco'}),
+        'mostaza': (['mostaza', 'metal'], {'I': 'oxido', 'J': 'ambar-oscuro', 'D': 'ambar', 'K': 'amarillo', 'L': 'vainilla', 'O': 'crema'}),
+        'mayonesa': (['mayonesa', 'metal'], {'I': 'plata', 'J': 'piel-clara', 'D': 'gris-claro', 'K': 'crema', 'L': 'crema', 'O': 'blanco'}),
     }),
     sprite('plato', 'plato'), sprite('charola', 'charola'),
     sprite('plancha', 'plancha'), sprite('planchaVertical', 'plancha_v'),
