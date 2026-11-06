@@ -8,10 +8,10 @@ export interface Layout {
   w: number;
   h: number;
   hud: Rect;
-  pause: Rect;
+  pause: Rect; // botón independiente, en coordenadas del escenario
   ticket: Rect;
   customer: Rect;
-  patience: Rect;
+  customerBubble: Rect;
   counter: Rect; // barra: superficie de trabajo completa; el cliente se recarga en su borde superior
   plate: Rect;
   bubble: Rect;
@@ -19,7 +19,7 @@ export interface Layout {
   grill: Rect;
   slots: readonly Rect[];
   charola: Rect;
-  basura: Rect;
+  tocino: Rect;
   bins: Record<BinId, Rect>;
 }
 

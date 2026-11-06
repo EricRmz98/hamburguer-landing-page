@@ -22,6 +22,7 @@ export function mountDebug(game: Game, view: GameView) {
 
   const sliders: Slider[] = [
     { label: 'Velocidad del tiempo', min: 0.25, max: 3, step: 0.25, unit: '×', get: () => c.timeScale, set: (v) => (c.timeScale = v) },
+    { label: 'Cocción de tocino', min: 0.5, max: 8, step: 0.25, unit: 's', get: () => c.grill.baconCookTime, set: (v) => (c.grill.baconCookTime = v) },
     { label: 'Cocción hasta lista', min: 1, max: 12, step: 0.25, unit: 's', get: () => c.grill.cookTime, set: (v) => (c.grill.cookTime = v) },
     { label: 'Ventana lista', min: 0.5, max: 8, step: 0.25, unit: 's', get: () => c.grill.perfectWindow, set: (v) => (c.grill.perfectWindow = v) },
     { label: 'Aviso antes de quemarse', min: 0.25, max: 5, step: 0.25, unit: 's', get: () => c.grill.warnTime, set: (v) => (c.grill.warnTime = v) },

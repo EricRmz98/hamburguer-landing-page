@@ -30,9 +30,13 @@ describe('Elenco nativo aprobado en Endesga 64', () => {
   it('conserva la menor escala de Inés y deja el rostro despejado en ambas disposiciones', () => {
     assert.equal(approved.customers.find((p: { id: string }) => p.id === 'ines').proportion_scale, .85);
     for (const person of approved.customers) {
-      const [, top] = person.face_bounds;
+      const [left, top, right, bottom] = person.face_bounds;
       for (const layout of Object.values(LAYOUTS)) {
-        assert.ok(layout.customer[1] + top > layout.patience[1] + layout.patience[3]);
+        assert.ok(layout.customer[1] + top > layout.hud[1] + layout.hud[3]);
+        assert.ok(layout.ticket[0] + layout.ticket[2] < layout.customer[0] + left);
+        const [bx, by, bw, bh] = layout.customerBubble;
+        assert.ok(bx >= layout.customer[0] + right || bx + bw <= layout.customer[0] + left || by + bh + 5 <= layout.customer[1] + top || by >= layout.customer[1] + bottom,
+          `El globo no debe tapar el rostro de ${person.name} en ${layout.name}`);
       }
     }
   });
@@ -46,7 +50,7 @@ describe('Elenco nativo aprobado en Endesga 64', () => {
       assert.equal(x + width / 2, layout.w / 2);
       assert.equal(y + approved.waist, layout.counter[1]);
       assert.ok(x >= 0 && x + width <= layout.w);
-      assert.ok(layout.patience[1] + layout.patience[3] <= y + 8);
+      assert.equal(layout.hud[0] + layout.hud[2] / 2, layout.w / 2);
     }
   });
 });

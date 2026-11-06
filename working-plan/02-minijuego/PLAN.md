@@ -8,8 +8,10 @@ Estado: **F1 a F4 listas**. El juego completo ya se dibuja con sprites de pixel 
 
 ## Decisiones acordadas
 
+**Revisión de UI implementada:** marcador arcade superior centrado con vidas, clientes atendidos y récord, y pausa independiente en la esquina superior derecha; comanda compacta con reloj y pasos en orden de armado; cocción con una **barra continua debajo de cada carne**, dentro de la plancha, con ✓ al estar lista y ! en aviso. Sustituye los diales grandes de la propuesta inicial. Ver [selección y referencias visuales](../../design-proposals/ui-review-2026-11-03/README.md#selección-acordada). El reloj y la barra continua de paciencia se agrupan en un globo junto al cliente; la comanda contiene únicamente receta y avance; los segmentos ocupan dos píxeles lógicos de alto sobre las perillas y muestran × cuando la carne se quema. La cocina y los sprites conservan sus dimensiones y posiciones.
+
 - El juego ocupa la **segunda sección** de la landing. El hero todavía no está definido.
-- Cada carne tiene un **indicador de cocción**: amarillo, verde cuando está lista (a la mitad o un poco más) y rojo con parpadeo de señal cuando se está pasando.
+- Cada carne tiene un **indicador de cocción continuo**: tres zonas permanentes (amarillo, verde y rojo) que se iluminan conforme avanza el tiempo; ✓ al estar lista, ! en aviso y × cuando está quemada. Solo parpadea !; con movimiento reducido permanece fijo.
 - La disposición es una **barra de preparación**, igual en escritorio y móvil: plancha con carnes a la derecha abajo, complementos encima, plato centrado con aderezos a la derecha y comanda a la izquierda. Toda esa zona es la barra, y el cliente está justo del otro lado, recargado en ella (ver «Disposición del escenario»).
 - La mecánica central es la **carne en la plancha**. Todo lo demás (panes, queso, verduras, salsas) se coloca con un solo toque.
 - Se toca la carne cruda y pasa a la plancha, que tiene un número limitado de lugares. Hay que vigilarla: si se quema, se toca para descartarla. Cuando está bien hecha, se toca y pasa **en automático** a la hamburguesa, pero solo si la hamburguesa ya está lista para recibirla (como mínimo, con el pan abajo).
@@ -61,13 +63,13 @@ Cada carne avanza por estados según su tiempo en la plancha:
 
 Una carne quemada **ocupa su lugar** hasta que se descarta: ese es el castigo natural. Se tira tocándola en la plancha o tocando la **basura**, que tira todas las quemadas de una vez. Cuando hay alguna, la basura se ilumina en rojo con un contorno pixelado que parpadea. El estado no depende solo del color (ver accesibilidad).
 
-**Indicador de cocción.** Cada carne en la plancha lleva una barra que avanza con su cocción. La pista de fondo muestra las tres zonas, para anticipar cuánto falta: amarillo mientras se cocina, verde en la ventana perfecta (empieza a la mitad o un poco más de la barra) y rojo después. En el aviso, la barra parpadea en rojo como una señal; quemada, queda roja fija. Las zonas se calculan con los tiempos de la configuración.
+**Indicador de cocción.** Barra continua bajo cada carne, dentro de la plancha, de dos píxeles lógicos de alto y sin tapar las perillas. Las zonas amarilla, verde y roja se muestran desde el principio, atenuadas hasta que el avance las alcanza; se iluminan conservando el color de cada zona. El verde se enciende al estar lista, con ✓; el rojo al comenzar el aviso, con !; quemada muestra ×. Los límites de las tres zonas se calculan con los tiempos configurados. Los lugares vacíos no muestran indicador. Solo ! parpadea y permanece fijo con movimiento reducido.
 
-Tiempos: 3 s hasta que está lista y 2 s lista (1,2 s perfecta y 0,8 s de aviso parpadeando); a los 5 s se quema. Así el verde empieza al 60 % de la barra. Estos tiempos no cambian con la dificultad.
+Tiempos: 3 s hasta que está lista y 2 s lista (1,2 s perfecta y 0,8 s de aviso parpadeando); a los 5 s se quema. El verde aparece cuando se completa la cocción inicial de 3 s. Estos tiempos no cambian con la dificultad.
 
 ### Armado
 
-La hamburguesa se arma de abajo hacia arriba sobre el plato. La comanda del cliente muestra la receta como una pila de íconos, con el siguiente paso resaltado.
+La hamburguesa se arma de abajo hacia arriba sobre el plato. La comanda del cliente muestra una lista de arriba hacia abajo, en orden de armado, con casillas completadas, el siguiente paso resaltado y el avance numérico. Distingue pan base, medio y tapa; su altura se adapta al número de ingredientes.
 
 - Tocar el ingrediente que corresponde lo coloca de inmediato, con una caída corta y un sonido.
 - **Pocos ingredientes**: queso, tres verduras (lechuga, tomate y cebolla) y tres salsas. Los pepinillos se quitaron para simplificar.
@@ -79,14 +81,14 @@ La hamburguesa se arma de abajo hacia arriba sobre el plato. La comanda del clie
 ### Clientes
 
 - Hay un cliente en el mostrador. El siguiente puede asomarse en la fila (opcional).
-- Cada cliente llega con su comanda y una **barra de paciencia**.
+- Cada cliente llega con su comanda y un **globo de diálogo propio**: segundos restantes y barra continua de paciencia sin marco, caritas ni frases. La cola del globo sale de la esquina inferior izquierda hacia el cliente. Tranquilo 🙂 por encima del 60 %, impaciente 😐 por debajo del 60 % y enojado 😠 por debajo del 30 %; la barra cambia de verde a ámbar y rojo según esos umbrales. En el tutorial muestra «Sin prisa» sin límite de tiempo. Al entregar aparece 😄 y «¡Gracias!»; al agotarse el tiempo, 😠 y «Sin tiempo» durante la salida. La comanda queda solo con receta, avance y pasos.
 - Si se entrega a tiempo, el cliente se alegra, sube el contador de clientes atendidos y entra el siguiente.
 - Si se le acaba la paciencia, se va enojado y el jugador pierde una vida (propuesta: 3 vidas; ver pendientes).
 - Las variaciones de cliente (personajes distintos) dan vida sin añadir mecánicas.
 
 ### Pausa
 
-- Un botón ❚❚ en la esquina superior derecha, visible mientras se juega (también en el tutorial), detiene el tiempo: cocción, paciencia y llegada de clientes. Mientras está en pausa no se aceptan toques.
+- Un botón de pausa independiente en la esquina superior derecha, con zona táctil de al menos 44 × 44 px en la composición móvil a escala 2×, visible mientras se juega (también en el tutorial), detiene el tiempo: cocción, paciencia y llegada de clientes. Mientras está en pausa no se aceptan toques.
 - La pantalla de pausa ofrece «Continuar» y «Volver a empezar» (reinicia el modo actual).
 - `P` o `Esc` pausan y reanudan mientras la sección está a la vista.
 - Si el jugador sale de la sección o cambia de pestaña a media partida, el juego queda en pausa. Al volver decide cuándo seguir, en lugar de reanudarse de golpe.
@@ -333,3 +335,10 @@ Cada punto tiene un valor propuesto, que se usará si no se indica otra cosa:
 6. ~~**Fuente pixel** del HUD.~~ Resuelto: Pixelify Sans a medio pixel del juego (Bytesized quedaba chica y Tiny5, enorme).
 7. **Marca y destino** de «Pídela de verdad» (nombre, URL o app de pedidos).
 8. **Ingredientes extra**: tocino, cebolla caramelizada, aguacate u otros que encajen con la marca.
+
+
+### Tocino en la plancha · 2026-11-05
+
+La bandeja de tocino crudo sustituye la basura, conservando su posición y tamaño. Comparte los tres espacios con la carne. Tocino listo en 2 s, carne en 3 s; ambos conservan 1.2 s de estado perfecto y 0.8 s de aviso antes de quemarse. Los ingredientes quemados se retiran tocándolos en la plancha.
+
+El tocino aparece de forma opcional desde el segundo nivel, tras el bloque de carnes y quesos de cada sección. La paciencia contempla la cocción de ambos ingredientes; comanda, pila, barras, etiquetas accesibles y ajustes reconocen el tocino. El tutorial de la clásica se conserva y el aviso del modo infinito explica los dos tiempos.

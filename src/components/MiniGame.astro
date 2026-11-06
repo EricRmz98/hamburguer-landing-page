@@ -62,15 +62,14 @@
     border-radius: calc(var(--s) * 2px);
     background: #2a2f4e;
     color: #fff;
-    /* Pixelify Sans: pixelada pero sin cuadrícula estricta, así que se escala libre. El texto va a
-       «medio pixel»: su trazo (1/10 del tamaño) mide 0.6 pixeles del juego y las mayúsculas, 3.8. */
+    /* Chakra Petch conserva las formas cuadradas del arcade con trazos limpios. */
     --texto: calc(var(--s) * 6px);
     --titulo: calc(var(--s) * 12px);
-    font-family: 'Pixelify Sans', ui-monospace, monospace;
+    font-family: 'Chakra Petch', sans-serif;
     font-size: var(--texto);
     font-weight: 500;
     font-synthesis: none;
-    line-height: calc(var(--s) * 6.5px); /* deja aire a los acentos (0.85 del tamaño) */
+    line-height: calc(var(--s) * 6.5px); /* deja aire a los acentos */
     user-select: none;
     -webkit-user-select: none;
     touch-action: manipulation;
@@ -110,9 +109,6 @@
   .mg-btn:active {
     filter: brightness(0.85);
   }
-  .mg-btn:hover {
-    filter: brightness(1.12);
-  }
   .mg-stage button:focus-visible,
   .mg-stage a:focus-visible {
     outline: calc(var(--s) * 1px) solid #fff;
@@ -130,21 +126,37 @@
     justify-content: center;
     background: rgb(249 230 207 / 0.95);
     color: #391f21;
-    font: 600 var(--texto) / 1 'Pixelify Sans', ui-monospace, monospace;
+    font: 600 var(--texto) / 1 'Chakra Petch', sans-serif;
     white-space: nowrap;
     clip-path: polygon(0 0, 100% 0, 97% 25%, 100% 50%, 97% 75%, 100% 100%, 0 100%, 3% 75%, 0 50%, 3% 25%);
     pointer-events: none; /* la inclinación de cada cinta la pone la vista */
   }
 
+  /* Marcador arcade central: vidas, clientes y récord. Pausa es independiente. */
+  .mg-hud,
+  .mg-pause-icon {
+    border: calc(var(--s) * 1px) solid #f9e6cf;
+    background: #571c27;
+    color: #f9e6cf;
+    box-shadow: 0 0 0 calc(var(--s) * 1px) #391f21,
+      inset 0 calc(var(--s) * 1px) 0 #891e2b,
+      0 calc(var(--s) * 2px) 0 #391f21;
+  }
   .mg-hud {
+    z-index: 1;
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    font-size: var(--texto);
-    text-shadow: 0 calc(var(--s) * 0.5px) 0 #131313;
+    justify-content: center;
+    gap: calc(var(--s) * 4px);
+    padding: 0 calc(var(--s) * 4px);
+    font-size: calc(var(--s) * 7px);
+    font-weight: 700;
+    white-space: nowrap;
+    font-variant-numeric: tabular-nums;
   }
   .mg-lives {
     display: flex;
+    flex: none;
     gap: calc(var(--s) * 1px);
     align-items: center;
   }
@@ -152,108 +164,197 @@
     position: static;
     display: inline-block;
   }
+  .mg-score,
+  .mg-best {
+    border-left: calc(var(--s) * 1px) solid #edab50;
+    padding-left: calc(var(--s) * 5px);
+  }
   .mg-pause {
+    position: absolute;
+    z-index: 2;
+    display: grid;
+    place-items: center;
     padding: 0;
     border: 0;
-    border-radius: calc(var(--s) * 1px);
-    background: rgb(255 255 255 / 0.12);
-    color: #fff;
-    font: inherit;
-    font-size: calc(var(--s) * 4.5px);
-    line-height: 1;
+    background: transparent;
+    color: #f9e6cf;
     cursor: pointer;
+    touch-action: manipulation;
   }
-  .mg-pause:hover {
-    background: rgb(255 255 255 / 0.25);
+  .mg-pause-icon {
+    position: relative;
+    display: block;
+    width: calc(var(--s) * 14px);
+    height: calc(var(--s) * 14px);
+  }
+  .mg-pause-icon::before,
+  .mg-pause-icon::after {
+    position: absolute;
+    top: calc(var(--s) * 3px);
+    bottom: calc(var(--s) * 3px);
+    width: calc(var(--s) * 2px);
+    background: currentColor;
+    content: '';
+  }
+  .mg-pause-icon::before { left: calc(var(--s) * 3px); }
+  .mg-pause-icon::after { right: calc(var(--s) * 3px); }
+  /* Botón independiente en la esquina: solo el icono recibe feedback visual. */
+  .mg-pause:active .mg-pause-icon { background: #391f21; color: #ffc825; }
+  .mg-stage .mg-pause:focus-visible { outline: none; }
+  .mg-pause:focus-visible .mg-pause-icon {
+    outline: calc(var(--s) * 1px) solid #fff;
+    outline-offset: calc(var(--s) * 2px);
+  }
+  .mg-stage[data-layout='vertical'] .mg-hud {
+    gap: calc(var(--s) * 3px);
+    font-size: var(--texto);
+  }
+  .mg-stage[data-layout='vertical'] .mg-pause-icon {
+    width: calc(var(--s) * 16px);
+    height: calc(var(--s) * 16px);
+  }
+  .mg-stage[data-layout='vertical'] .mg-score,
+  .mg-stage[data-layout='vertical'] .mg-best {
+    padding-left: calc(var(--s) * 3px);
   }
 
+  /* Papel corto sujeto al riel; los pasos se leen en el mismo orden del armado. */
   .mg-ticket {
     display: flex;
     flex-direction: column;
-    padding: calc(var(--s) * 1px);
-    border-radius: calc(var(--s) * 1px);
+    padding: calc(var(--s) * 3px);
+    border: calc(var(--s) * 1px) solid #391f21;
     background: #f9e6cf;
-    color: #131313;
-    box-shadow: calc(var(--s) * 1px) calc(var(--s) * 1px) 0 rgb(19 19 19 / 0.45);
+    color: #391f21;
+    box-shadow: calc(var(--s) * 1px) calc(var(--s) * 2px) 0 #391f21;
+    font-weight: 600;
+  }
+  .mg-ticket::before {
+    position: absolute;
+    top: calc(var(--s) * -4px);
+    left: calc(var(--s) * -2px);
+    right: calc(var(--s) * -2px);
+    height: calc(var(--s) * 3px);
+    border: calc(var(--s) * 1px) solid #424c6e;
+    background: #c7cfdd;
+    content: '';
+  }
+  .mg-ticket::after {
+    position: absolute;
+    top: calc(var(--s) * -6px);
+    left: calc(50% - var(--s) * 3px);
+    width: calc(var(--s) * 6px);
+    height: calc(var(--s) * 7px);
+    border: calc(var(--s) * 1px) solid #424c6e;
+    background: #92a1b9;
+    content: '';
   }
   .mg-ticket-name {
-    height: calc(var(--s) * 7px);
+    flex: none;
+    height: calc(var(--s) * 8px);
+    margin-bottom: calc(var(--s) * 2px);
+    border-bottom: calc(var(--s) * 1px) solid #edab50;
     font-size: var(--texto);
+    font-weight: 700;
     text-align: center;
+    white-space: nowrap;
   }
   .mg-ticket-rows {
     display: flex;
-    flex: 1;
     flex-direction: column;
-    justify-content: flex-end;
     margin: 0;
     padding: 0;
     list-style: none;
   }
+  .mg-stage[data-layout='vertical'] .mg-ticket-name { font-size: calc(var(--s) * 5.5px); }
   .mg-ticket-row {
     display: flex;
+    flex: none;
     align-items: center;
-    gap: calc(var(--s) * 1px);
+    gap: calc(var(--s) * 3px);
     padding: 0 calc(var(--s) * 1px);
     font-size: var(--texto);
     white-space: nowrap;
   }
-  .mg-ticket-row.is-done {
-    opacity: 0.35;
-    text-decoration: line-through;
-  }
-  .mg-ticket-row.is-next {
-    background: #ffc825;
-    outline: calc(var(--s) * 0.5px) solid #ea323c;
-  }
-  .mg-swatch {
+  .mg-ticket-row.is-done { color: #131313; }
+  .mg-ticket-check {
+    position: relative;
     flex: none;
-    width: calc(var(--s) * 4px);
-    height: calc(var(--s) * 3px);
-    border: calc(var(--s) * 0.25px) solid rgb(19 19 19 / 0.5);
   }
-
-  .mg-customer.is-away {
-    opacity: 0;
+  .mg-ticket-row.is-done .mg-ticket-label {
+    text-decoration: line-through;
+    text-decoration-color: #131313;
+    text-decoration-thickness: calc(var(--s) * 1px);
   }
+  .mg-ticket-row.is-next { background: #ffc825; font-weight: 700; }
+  .mg-customer.is-away { opacity: 0; }
+  /* Globo compacto del atlas: contador y barra, con curvas escalonadas. */
   .mg-patience {
-    overflow: hidden;
-    border-radius: calc(var(--s) * 1px);
-    background: rgb(19 19 19 / 0.6);
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: calc(var(--s) * 3px);
+    padding: calc(var(--s) * 3px) calc(var(--s) * 4px);
+    color: #391f21;
+    pointer-events: none;
   }
-  .mg-patience-bar {
-    height: 100%;
-    background: #5ac54f;
+  .mg-patience-skin {
+    top: 0;
+    left: calc(var(--s) * -6px);
+    filter: drop-shadow(calc(var(--s) * 1px) calc(var(--s) * 1px) 0 #391f21);
   }
-  .mg-patience-bar.is-low {
-    background: #ff0040;
+  .mg-patience-head {
+    position: relative;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) calc(var(--s) * 4px);
+    gap: calc(var(--s) * 3px);
+    flex: none;
+    align-items: center;
+    justify-content: center;
+    height: calc(var(--s) * 9px);
+    width: calc(var(--s) * 44px);
+    align-self: center;
   }
+  .mg-patience-attention {
+    position: relative;
+    grid-column: 2;
+    justify-self: center;
+  }
+  .mg-patience[data-mood='impaciente'][data-timed='true'] .mg-patience-attention {
+    animation: mg-signal 1.6s steps(2, jump-none) infinite;
+  }
+  .mg-patience[data-mood='enojado'][data-timed='true'] .mg-patience-attention {
+    animation: mg-signal 0.6s steps(2, jump-none) infinite;
+  }
+  .mg-stage:has(.mg-overlay:not([hidden])) .mg-patience-attention { animation-play-state: paused; }
+  @media (prefers-reduced-motion: reduce) {
+    .mg-patience[data-timed='true'] .mg-patience-attention { animation: none; }
+  }
+  .mg-patience-time {
+    text-align: left;
+    font-size: calc(var(--s) * 7px);
+    line-height: calc(var(--s) * 9px);
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+  .mg-patience-track {
+    position: relative;
+    flex: none;
+    align-self: center;
+    width: calc(var(--s) * 44px);
+    height: calc(var(--s) * 3px);
+    background: #c7cfdd;
+    color: #5ac54f;
+  }
+  .mg-patience-fill { width: 100%; height: 100%; background: currentColor; }
+  .mg-patience[data-mood='impaciente'] .mg-patience-track { color: #ffc825; }
+  .mg-patience[data-mood='enojado'] .mg-patience-track { color: #ff0040; }
+  .mg-patience[data-mood='enojado'] .mg-patience-time { color: #891e2b; }
   .mg-stack {
     inset: 0;
     pointer-events: none;
-  }
-
-  /* Basura con carne quemada: un contorno pixelado rojo alrededor de todo el hueco, sin recolorearlo.
-     Cada drop-shadow sin desenfoque copia la silueta un pixel del juego hacia un lado; encadenados,
-     dibujan un contorno de 1 pixel. Parpadea a saltos, sin degradados: contorno y contorno doble. */
-  .mg-basura.is-alert .mg-sprite {
-    --px: calc(var(--s) * 1px);
-    --aro: drop-shadow(var(--px) 0 0 #ff0040) drop-shadow(calc(var(--px) * -1) 0 0 #ff0040)
-      drop-shadow(0 var(--px) 0 #ff0040) drop-shadow(0 calc(var(--px) * -1) 0 #ff0040);
-    --aro-2: drop-shadow(var(--px) 0 0 #571c27) drop-shadow(calc(var(--px) * -1) 0 0 #571c27)
-      drop-shadow(0 var(--px) 0 #571c27) drop-shadow(0 calc(var(--px) * -1) 0 #571c27);
-    filter: var(--aro);
-    animation: mg-glow 0.8s steps(1) infinite;
-  }
-  @keyframes mg-glow {
-    50% {
-      filter: var(--aro) var(--aro-2);
-    }
-  }
-  @media (prefers-reduced-motion: reduce) {
-    .mg-basura.is-alert .mg-sprite {
-      animation: none;
-    }
   }
 
   /* La plancha es un sprite; cada lugar es una zona transparente sobre la placa. */
@@ -276,40 +377,51 @@
     content: '';
   }
 
-  /* Indicador de cocción: la pista muestra las zonas y el relleno avanza con el color de la zona actual. */
+  /* Barra continua compacta: las zonas permanecen fijas mientras avanza la iluminación. */
   .mg-gauge {
     position: absolute;
-    right: calc(var(--s) * 2px);
-    bottom: calc(var(--s) * 10px); /* encima de las perillas, para mantenerlas visibles */
-    left: calc(var(--s) * 2px);
-    height: calc(var(--s) * 3px);
-    overflow: hidden;
-    border-radius: calc(var(--s) * 1px);
-    background: linear-gradient(
-      to right,
-      rgb(255 200 37 / 0.3) 0 var(--g1),
-      rgb(90 197 79 / 0.3) var(--g1) var(--g2),
-      rgb(255 0 64 / 0.3) var(--g2)
-    );
+    z-index: 1;
+    bottom: calc(var(--s) * 10px);
+    left: calc(50% - var(--s) * 10px);
+    display: flex;
+    align-items: center;
+    gap: calc(var(--s) * 1px);
+    height: calc(var(--s) * 2px);
+    color: #ffc825;
+    pointer-events: none;
   }
-  .mg-gauge-fill {
+  .mg-cooking-track {
+    position: relative;
+    width: calc(var(--s) * 20px);
     height: 100%;
-    background: #ffc825;
+    background: linear-gradient(to right,
+      #8a4836 0 var(--cook-end),
+      #134c4c var(--cook-end) var(--ready-end),
+      #571c27 var(--ready-end) 100%);
+    box-shadow: 0 calc(var(--s) * 1px) 0 #131313;
   }
-  .mg-slot[data-state='perfecta'] .mg-gauge-fill {
-    background: #5ac54f;
+  .mg-cooking-fill {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to right,
+      #ffc825 0 var(--cook-end),
+      #5ac54f var(--cook-end) var(--ready-end),
+      #ff0040 var(--ready-end) 100%);
   }
-  .mg-slot[data-state='aviso'] .mg-gauge-fill,
-  .mg-slot[data-state='quemada'] .mg-gauge-fill {
-    background: #ff0040;
+  .mg-gauge-signal {
+    position: absolute;
+    left: calc(var(--s) * 21px);
+    top: calc(var(--s) * -1px);
   }
-  .mg-slot[data-state='aviso'] .mg-gauge {
-    animation: mg-signal 0.4s steps(2, jump-none) infinite;
+  .mg-slot[data-state='aviso'] .mg-gauge-signal {
+    animation: mg-signal 0.8s steps(2, jump-none) infinite;
   }
   @media (prefers-reduced-motion: reduce) {
-    .mg-slot[data-state='aviso'] .mg-gauge {
-      animation-duration: 1.2s;
-    }
+    .mg-slot[data-state='aviso'] .mg-gauge-signal { animation: none; }
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .mg-btn:hover { filter: brightness(1.12); }
+    .mg-pause:hover .mg-pause-icon { background: #c42430; color: #ffc825; }
   }
 
   .mg-bubble {
@@ -342,7 +454,7 @@
   }
   .mg-toast {
     z-index: 4;
-    top: calc(var(--s) * 16px);
+    top: calc(var(--s) * 35px);
     left: 50%;
     padding: calc(var(--s) * 1.5px) calc(var(--s) * 3px);
     border-radius: calc(var(--s) * 1px);
@@ -424,7 +536,7 @@
     border-radius: 8px;
     background: rgb(19 19 19 / 0.94);
     color: #c7cfdd;
-    font: 12px/1.4 ui-monospace, SFMono-Regular, Menlo, monospace;
+    font: 500 12px/1.4 'Chakra Petch', sans-serif;
   }
   .mg-debug summary {
     cursor: pointer;

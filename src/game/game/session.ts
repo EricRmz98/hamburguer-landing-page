@@ -1,6 +1,6 @@
 import type { GameConfig } from './config.ts';
 import { levelFor, patienceFor, type Level } from './difficulty.ts';
-import { Grill, isReady, type PattyState } from './grill.ts';
+import { Grill, isReady, type GrillIngredient, type PattyState } from './grill.ts';
 import { inputFor, type IngredientId, type InputId } from './ingredients.ts';
 import { CATALOG, generateRecipe, type Recipe } from './recipes.ts';
 import type { Store } from './storage.ts';
@@ -14,8 +14,7 @@ export type RejectReason =
   | 'falta-pan'
   | 'todavia'
   | 'plancha-llena'
-  | 'sin-orden'
-  | 'sin-quemadas';
+  | 'sin-orden';
 
 export type GameEvent =
   | { type: 'mode'; mode: Mode }
@@ -212,10 +211,10 @@ export class Game {
     if (this.allows({ kind: 'ok' })) this.signal({ kind: 'ok' });
   }
 
-  tapCharola() {
-    const target: Target = { kind: 'charola' };
+  tapCharola(ingredient: GrillIngredient = 'carne') {
+    const target: Target = { kind: ingredient === 'tocino' ? 'tocino' : 'charola' };
     if (!this.allows(target)) return this.reject(target, this.blockedReason());
-    const slot = this.grill.add();
+    const slot = this.grill.add(ingredient);
     if (slot < 0) return this.reject(target, 'plancha-llena');
     this.emit({ type: 'patty-added', slot });
     this.signal({ kind: 'patty-added' });
@@ -245,21 +244,10 @@ export class Game {
     }
     if (!isReady(state)) return this.reject(target, 'todavia');
     if (!this.order || this.between > 0) return this.reject(target, 'sin-orden');
-    if (this.nextIngredient !== 'carne') return this.reject(target, this.stack.length ? 'no-toca' : 'falta-pan');
+    const ingredient = this.grill.ingredient(index)!;
+    if (this.nextIngredient !== ingredient) return this.reject(target, this.stack.length ? 'no-toca' : 'falta-pan');
     this.grill.remove(index);
-    this.place('carne', index);
-  }
-
-  /** Tira de una vez todas las carnes quemadas de la plancha. */
-  tapBasura() {
-    const target: Target = { kind: 'basura' };
-    if (!this.allows(target)) return this.reject(target, this.blockedReason());
-    const burnt = this.grill.cooking.map((_, i) => i).filter((i) => this.grill.state(i) === 'quemada');
-    if (!burnt.length) return this.reject(target, 'sin-quemadas');
-    for (const slot of burnt) {
-      this.grill.remove(slot);
-      this.emit({ type: 'patty-discarded', slot });
-    }
+    this.place(ingredient, index);
   }
 
   private blockedReason(): RejectReason {

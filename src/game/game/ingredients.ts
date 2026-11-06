@@ -3,7 +3,7 @@ import { PALETTE } from '../sprites/palette.ts';
 // Ingredientes del juego. `height` es el grosor en pantalla (vista 3/4): cuánto sube la pila al
 // poner el ingrediente; `width`, el ancho de su sprite. El color (de Endesga 64) es el de la comanda.
 
-export type IngredientKind = 'pan' | 'carne' | 'queso' | 'verdura' | 'salsa';
+export type IngredientKind = 'pan' | 'carne' | 'tocino' | 'queso' | 'verdura' | 'salsa';
 
 export interface IngredientInfo {
   label: string;
@@ -19,6 +19,7 @@ export const INGREDIENTS = {
   pan_medio: { label: 'Pan de en medio', short: 'Pan ▬', kind: 'pan', width: 24, height: 3, color: PALETTE["canela"] },
   pan_tapa: { label: 'Pan de arriba', short: 'Pan ▀', kind: 'pan', width: 24, height: 7, color: PALETTE["tostado"] },
   carne: { label: 'Carne', short: 'Carne', kind: 'carne', width: 27, height: 3, color: PALETTE["cafe"] },
+  tocino: { label: 'Tocino', short: 'Tocino', kind: 'tocino', width: 26, height: 2, color: PALETTE['oxido'] },
   queso: { label: 'Queso', short: 'Queso', kind: 'queso', width: 24, height: 1, color: PALETTE["ambar"] },
   lechuga: { label: 'Lechuga', short: 'Lechuga', kind: 'verdura', width: 28, height: 2, color: PALETTE["verde"] },
   tomate: { label: 'Tomate', short: 'Tomate', kind: 'verdura', width: 22, height: 2, color: PALETTE["rojo"] },
@@ -35,7 +36,7 @@ export const SALSAS = ['catsup', 'mostaza', 'mayonesa'] as const satisfies reado
 export type SalsaId = (typeof SALSAS)[number];
 
 // Casillas de la parte de abajo. Hay una sola de pan: pone el pan que toque (abajo, en medio o arriba).
-// Las salsas van en botes y la carne sale de la plancha.
+// Las salsas van en botes y la carne y el tocino salen de la plancha.
 export const BIN_IDS = ['pan', 'queso', 'lechuga', 'tomate', 'cebolla'] as const;
 export type BinId = (typeof BIN_IDS)[number];
 
@@ -50,9 +51,9 @@ export function inputColor(input: InputId): string {
   return input === 'pan' ? INGREDIENTS.pan_base.color : INGREDIENTS[input].color;
 }
 
-/** Qué toque pone este ingrediente; la carne no tiene casilla (sale de la plancha). */
+/** Qué toque pone este ingrediente; la carne y el tocino salen de la plancha. */
 export function inputFor(id: IngredientId): InputId | null {
-  if (id === 'carne') return null;
+  if (id === 'carne' || id === 'tocino') return null;
   return INGREDIENTS[id].kind === 'pan' ? 'pan' : (id as InputId);
 }
 

@@ -6,6 +6,7 @@ export const ANCHORS: Record<string, readonly [number, number]> = {
   pan_medio: [12, 9],
   pan_tapa: [12, 10],
   carne: [14, 10],
+  tocino: [13, 6], // Centro de apoyo de las tiras sobre el pan, en lugar de su borde inferior.
   queso: [12, 7],
   lechuga: [15, 9],
   tomate: [11, 7],

@@ -10,6 +10,7 @@ import { atlasStyle, bakeAtlas, type BakedAtlas } from '../sprites/bake.ts';
 import { ANCHORS } from '../sprites/anchors.ts';
 import { SPRITES } from '../sprites/index.ts';
 import { CUSTOMERS } from '../sprites/people.ts';
+import { cookingGauge } from './cooking-gauge.ts';
 
 // Vista del juego: cada pieza es un elemento HTML cuyo fondo es su sprite dentro del atlas.
 // Escucha los eventos del juego para animar; la lógica no conoce el DOM.
@@ -22,13 +23,8 @@ const PATTY_LABEL: Record<PattyState, string> = {
   quemada: 'quemada',
 };
 
-// Variante del sprite de carne para cada estado (en el aviso aún se ve perfecta, pero echa humo).
-const PATTY_SPRITE: Record<PattyState, string> = {
-  cruda: 'carne:cruda',
-  cocinandose: 'carne:cocinandose',
-  perfecta: 'carne:perfecta',
-  aviso: 'carne:perfecta',
-  quemada: 'carne:quemada',
+const BACON_LABEL: Record<PattyState, string> = {
+  cruda: 'crudo', cocinandose: 'cocinándose', perfecta: 'listo', aviso: 'por quemarse', quemada: 'quemado',
 };
 
 const STACK_SPRITE: Record<IngredientId, string> = {
@@ -36,6 +32,7 @@ const STACK_SPRITE: Record<IngredientId, string> = {
   pan_medio: 'pan_medio',
   pan_tapa: 'pan_tapa',
   carne: 'carne:perfecta',
+  tocino: 'tocino:perfecta',
   queso: 'queso',
   lechuga: 'lechuga',
   tomate: 'tomate',
@@ -62,17 +59,16 @@ const REJECT_TEXT: Partial<Record<RejectReason, string>> = {
   'falta-pan': 'Primero el pan de abajo',
   todavia: 'Todavía no está lista',
   'plancha-llena': 'La plancha está llena',
-  'sin-quemadas': 'No hay carne quemada que tirar',
   'sin-orden': 'Espera al siguiente cliente',
 };
 
 const HINT_TEXT: Record<HintId, (game: Game) => string> = {
   infinito: (g) =>
-    `Ahora va en serio: los clientes se impacientan, la carne se puede quemar y tienes ${g.lives} vidas. ¿Cuántos clientes aguantas?`,
+    `La carne tarda ${g.config.grill.cookTime} s y el tocino ${g.config.grill.baconCookTime} s; comparten la plancha. Toca lo quemado para retirarlo. Los clientes se impacientan y tienes ${g.lives} vidas. ¿Cuántos clientes aguantas?`,
   quemada: () =>
-    'Se quemó una carne. Cuando la barra parpadea en rojo, sácala rápido. Si ya se quemó, tócala para tirarla, o toca la basura para tirar todas las quemadas de una vez.',
+    'Se quemó un ingrediente. La zona roja y el humo avisan que debes retirarlo. Toca el ingrediente quemado para retirarlo y liberar su lugar.',
   plancha: (g) => `¡La plancha creció! Ahora tienes ${g.grill.active} lugares.`,
-  'tres-panes': () => 'Esta orden lleva pan en medio. Sigue la comanda de abajo hacia arriba.',
+  'tres-panes': () => 'Esta orden lleva pan en medio. Sigue la comanda de arriba hacia abajo.',
 };
 
 function el<K extends keyof HTMLElementTagNameMap>(tag: K, className: string, parent?: HTMLElement, text?: string) {
@@ -92,7 +88,9 @@ interface SlotView {
   patty: HTMLDivElement;
   smoke: HTMLDivElement;
   gauge: HTMLDivElement;
+  track: HTMLDivElement;
   fill: HTMLDivElement;
+  signal: HTMLSpanElement;
 }
 
 /** Sprite dentro de un contenedor: se centra (o se apoya abajo) en pixeles lógicos enteros. */
@@ -118,13 +116,18 @@ export class GameView {
   private hud: HTMLDivElement;
   private lives: HTMLSpanElement;
   private score: HTMLSpanElement;
+  private best: HTMLSpanElement;
   private pauseButton: HTMLButtonElement;
   private ticket: HTMLDivElement;
   private ticketName: HTMLDivElement;
   private ticketRows: HTMLOListElement;
   private customer: HTMLDivElement;
   private patience: HTMLDivElement;
-  private patienceBar: HTMLDivElement;
+  private patienceSkin: HTMLDivElement;
+  private patienceTime: HTMLSpanElement;
+  private patienceAttention: HTMLSpanElement;
+  private patienceTrack: HTMLDivElement;
+  private patienceFill: HTMLDivElement;
   private counter: HTMLDivElement;
   private plate: HTMLDivElement;
   private stackLayer: HTMLDivElement;
@@ -135,8 +138,9 @@ export class GameView {
   private charola: HTMLButtonElement;
   private charolaSprite: HTMLDivElement;
   private charolaTape: HTMLSpanElement;
-  private basura: HTMLButtonElement;
-  private basuraSprite: HTMLDivElement;
+  private tocino: HTMLButtonElement;
+  private tocinoSprite: HTMLDivElement;
+  private tocinoTape: HTMLSpanElement;
   private bubble: HTMLDivElement;
   private bubbleText: HTMLParagraphElement;
   private okButton: HTMLButtonElement;
@@ -165,10 +169,14 @@ export class GameView {
     this.wall.setAttribute('aria-hidden', 'true');
 
     this.hud = el('div', 'mg-hud', stage);
+    this.hud.setAttribute('role', 'group');
+    this.hud.setAttribute('aria-label', 'Marcador de la partida');
     this.lives = el('span', 'mg-lives', this.hud);
     this.lives.setAttribute('role', 'img');
     this.score = el('span', 'mg-score', this.hud);
-    this.pauseButton = el('button', 'mg-pause', stage, '❚❚');
+    this.best = el('span', 'mg-best', this.hud);
+    this.pauseButton = el('button', 'mg-pause', stage);
+    el('span', 'mg-pause-icon', this.pauseButton).setAttribute('aria-hidden', 'true');
     this.pauseButton.type = 'button';
     this.pauseButton.setAttribute('aria-label', 'Pausar (P)');
     this.pauseButton.addEventListener('click', () => this.act(() => game.pause()));
@@ -183,11 +191,23 @@ export class GameView {
     this.ticketRows = el('ol', 'mg-ticket-rows', this.ticket);
     this.ticket.setAttribute('aria-label', 'Comanda');
 
+    this.patience = el('div', 'mg-patience', stage);
+    this.patience.setAttribute('role', 'group');
+    this.patienceSkin = el('div', 'mg-patience-skin mg-sprite', this.patience);
+    this.patienceSkin.setAttribute('aria-hidden', 'true');
+    const patienceHead = el('div', 'mg-patience-head', this.patience);
+    this.patienceTime = el('span', 'mg-patience-time', patienceHead);
+    this.patienceAttention = el('span', 'mg-patience-attention mg-sprite', patienceHead);
+    this.patienceAttention.setAttribute('aria-hidden', 'true');
+    this.patienceTrack = el('div', 'mg-patience-track', this.patience);
+    this.patienceTrack.setAttribute('role', 'progressbar');
+    this.patienceTrack.setAttribute('aria-label', 'Paciencia del cliente');
+    this.patienceTrack.setAttribute('aria-valuemin', '0');
+    this.patienceTrack.setAttribute('aria-valuemax', '100');
+    this.patienceFill = el('div', 'mg-patience-fill', this.patienceTrack);
+
     this.plate = el('div', 'mg-plate mg-sprite', stage);
     this.stackLayer = el('div', 'mg-stack', stage);
-    // La paciencia va encima de la pila para que una hamburguesa alta no la tape.
-    this.patience = el('div', 'mg-patience', stage);
-    this.patienceBar = el('div', 'mg-patience-bar', this.patience);
 
     for (const id of SALSAS) {
       const button = this.button('mg-bottle', `Bote de ${INGREDIENTS[id].label}`, () => game.tapIngredient(id));
@@ -199,12 +219,17 @@ export class GameView {
       const button = this.button('mg-slot', '', () => game.tapSlot(i));
       const gauge = el('div', 'mg-gauge', button);
       gauge.setAttribute('aria-hidden', 'true');
+      const track = el('div', 'mg-cooking-track', gauge);
+      const fill = el('div', 'mg-cooking-fill', track);
+      const signal = el('span', 'mg-gauge-signal mg-sprite', gauge);
       this.slots.push({
         button,
         patty: el('div', 'mg-patty mg-sprite', button),
         smoke: el('div', 'mg-smoke mg-sprite', button),
         gauge,
-        fill: el('div', 'mg-gauge-fill', gauge),
+        track,
+        fill,
+        signal,
       });
     }
 
@@ -212,8 +237,10 @@ export class GameView {
     this.charolaSprite = el('div', 'mg-sprite', this.charola);
     this.charolaTape = el('span', 'mg-tape', this.charola, 'Carne');
     this.charolaTape.setAttribute('aria-hidden', 'true');
-    this.basura = this.button('mg-basura', 'Tirar las carnes quemadas', () => game.tapBasura());
-    this.basuraSprite = el('div', 'mg-sprite', this.basura);
+    this.tocino = this.button('mg-tocino', 'Poner tocino en la plancha', () => game.tapCharola('tocino'));
+    this.tocinoSprite = el('div', 'mg-sprite', this.tocino);
+    this.tocinoTape = el('span', 'mg-tape', this.tocino, 'Tocino');
+    this.tocinoTape.setAttribute('aria-hidden', 'true');
 
     // Cada casilla: bandeja de metal con su ingrediente y una etiqueta de cinta masking al frente.
     for (const id of BIN_IDS) {
@@ -299,7 +326,8 @@ export class GameView {
     this.place(this.pauseButton, layout.pause);
     this.place(this.ticket, layout.ticket);
     this.place(this.customer, layout.customer);
-    this.place(this.patience, layout.patience);
+    this.place(this.patience, layout.customerBubble);
+    this.setSprite(this.patienceSkin, layout.name === 'vertical' ? 'globo_cliente_v' : 'globo_cliente');
     this.place(this.counter, layout.counter);
     this.place(this.plate, layout.plate);
     this.place(this.bubble, layout.bubble);
@@ -307,7 +335,7 @@ export class GameView {
     this.bubble.style.maxHeight = `${layout.bubble[3] * this.scale}px`;
     this.place(this.grill, layout.grill);
     this.place(this.charola, layout.charola);
-    this.place(this.basura, layout.basura);
+    this.place(this.tocino, layout.tocino);
     this.slots.forEach((slot, i) => this.place(slot.button, layout.slots[i]));
     for (const [id, { button }] of this.bottles) this.place(button, layout.bottles[id]);
     for (const [id, { button }] of this.bins) this.place(button, layout.bins[id]);
@@ -319,7 +347,10 @@ export class GameView {
     this.setSprite(this.plate, 'plato');
     this.setSprite(this.charolaSprite, 'charola', 0, layout.charola, 'bottom');
     this.placeTape(this.charolaTape, 'charola', layout.charola, BIN_IDS.length);
+    this.setSprite(this.tocinoSprite, 'charola_tocino', 0, layout.tocino, 'bottom');
+    this.placeTape(this.tocinoTape, 'charola_tocino', layout.tocino, BIN_IDS.length + 1);
     this.setSprite(this.grill, layout.name === 'vertical' ? 'plancha_v' : 'plancha');
+    this.slots.forEach(slot => this.setSprite(slot.signal, 'paciencia_urgente'));
     BIN_IDS.forEach((id, i) => {
       const { sprite, tape } = this.bins.get(id)!;
       this.setSprite(sprite, BIN_SPRITE[id], 0, layout.bins[id], 'bottom');
@@ -363,8 +394,8 @@ export class GameView {
     switch (target.kind) {
       case 'charola':
         return l.charola;
-      case 'basura':
-        return l.basura;
+      case 'tocino':
+        return l.tocino;
       case 'slot':
         return target.index === undefined ? null : l.slots[target.index];
       case 'ingredient':
@@ -380,8 +411,8 @@ export class GameView {
         return this.okButton;
       case 'charola':
         return this.charola;
-      case 'basura':
-        return this.basura;
+      case 'tocino':
+        return this.tocino;
       case 'slot':
         return target.index === undefined ? null : this.slots[target.index].button;
       case 'ingredient':
@@ -396,30 +427,45 @@ export class GameView {
     const order = g.order;
     const now = performance.now();
 
-    this.hud.hidden = !(g.mode === 'infinito' || g.mode === 'fin');
+    this.hud.hidden = !(g.playing || g.mode === 'fin');
     this.pauseButton.hidden = !g.playing || g.paused;
     const livesKey = `${g.lives}/${g.config.lives}`;
     if (livesKey !== this.livesKey) {
       this.livesKey = livesKey;
+      for (const node of this.lives.children) this.sprites.delete(node as HTMLElement);
       this.lives.replaceChildren();
       this.lives.setAttribute('aria-label', `${g.lives} de ${g.config.lives} vidas`);
       for (let i = 0; i < g.config.lives; i++) {
         this.setSprite(el('span', 'mg-heart mg-sprite', this.lives), i < g.lives ? 'corazon:lleno' : 'corazon:vacio');
       }
     }
-    setText(this.score, `Clientes ${g.served} · Récord ${g.best}`);
+    setText(this.score, `CLIENTES ${String(g.served).padStart(2, '0')}`);
+    setText(this.best, `RÉCORD ${String(g.best).padStart(2, '0')}`);
 
     // Cliente: su look sale de la orden; la cara, de la paciencia (o de cómo se fue).
-    const ratio = order && Number.isFinite(order.patienceMax) ? Math.max(0, order.patience / order.patienceMax) : 1;
+    const ratio = order && Number.isFinite(order.patienceMax) ? Math.min(1, Math.max(0, order.patience / order.patienceMax)) : 1;
     if (this.leaving && (order || now > this.leaving.until)) this.leaving = null;
     const shown = order
       ? { key: CUSTOMERS[order.look % CUSTOMERS.length], face: ratio < 0.3 ? FACE.enojado : FACE.esperando }
       : this.leaving;
     this.customer.classList.toggle('is-away', !shown);
     if (shown) this.setSprite(this.customer, shown.key, shown.face);
-    this.patience.hidden = !order || !Number.isFinite(order.patienceMax);
-    this.patienceBar.style.width = `${ratio * 100}%`;
-    this.patienceBar.classList.toggle('is-low', ratio < 0.3);
+    const timed = !!order && Number.isFinite(order.patienceMax);
+    const happy = !order && this.leaving?.face === FACE.feliz;
+    const mood = !order && this.leaving ? (happy ? 'feliz' : 'enojado') : ratio < 0.3 ? 'enojado' : ratio < 0.6 ? 'impaciente' : 'tranquilo';
+    const timeLabel = order ? (timed ? `${Math.ceil(Math.max(0, order.patience))} s` : 'Sin prisa') : happy ? '¡Gracias!' : 'Sin tiempo';
+    this.patience.hidden = !shown;
+    this.patience.dataset.mood = mood;
+    this.patience.dataset.timed = String(timed);
+    this.patienceAttention.hidden = !timed || ratio >= 0.6;
+    this.setSprite(this.patienceAttention, ratio < 0.3 ? 'paciencia_urgente' : 'paciencia_urgente:amarillo');
+    setText(this.patienceTime, timeLabel);
+    this.patience.setAttribute('aria-label', `Cliente ${mood}. ${timed ? `Tiempo restante: ${timeLabel}` : timeLabel}`);
+    const patienceRatio = order ? ratio : happy ? 1 : 0;
+    this.patienceFill.style.width = `${patienceRatio * 100}%`;
+    this.patienceTrack.setAttribute('aria-valuenow', String(Math.round(patienceRatio * 100)));
+    this.patienceTrack.setAttribute('aria-valuetext', order && !timed ? 'Sin límite de tiempo' : `${Math.round(patienceRatio * 100)} % de paciencia`);
+
 
     const ticketKey = order ? `${order.recipe.name}:${order.recipe.stack.join()}:${g.stack.length}` : '';
     if (ticketKey !== this.ticketKey) {
@@ -432,30 +478,30 @@ export class GameView {
       this.renderStack();
     }
 
-    // Zonas del indicador de cocción: amarillo hasta «lista», verde la ventana perfecta, rojo el resto.
+    // Las tres zonas conservan su color; la iluminación avanza de forma continua.
     const c = g.config.grill;
-    const total = c.cookTime + c.perfectWindow + c.warnTime;
-    this.stage.style.setProperty('--g1', `${(c.cookTime / total) * 100}%`);
-    this.stage.style.setProperty('--g2', `${((c.cookTime + c.perfectWindow) / total) * 100}%`);
-
-    const burnt = g.grill.cooking.some((_, i) => g.grill.state(i) === 'quemada');
-    this.basura.classList.toggle('is-alert', burnt);
-    this.setSprite(this.basuraSprite, 'basura', 0, this.layout.basura);
 
     const smokeFrame = this.reduced ? 0 : Math.floor(now / SMOKE_FRAME_MS);
     this.slots.forEach((slot, i) => {
       const state = g.grill.state(i);
+      const ingredient = g.grill.ingredient(i);
       const rect = this.layout.slots[i];
       slot.button.classList.toggle('is-off', i >= g.grill.active);
       slot.button.dataset.state = state ?? '';
-      slot.button.setAttribute('aria-label', `Lugar ${i + 1} de la plancha: ${state ? PATTY_LABEL[state] : 'vacío'}`);
+      slot.button.setAttribute('aria-label', `Lugar ${i + 1} de la plancha: ${state ? `${ingredient === 'tocino' ? 'Tocino' : 'Carne'}, ${ingredient === 'tocino' ? BACON_LABEL[state] : PATTY_LABEL[state]}` : 'vacío'}`);
       slot.patty.hidden = !state;
-      if (state) this.setSprite(slot.patty, PATTY_SPRITE[state], 0, [0, 0, rect[2], rect[3] - 12]);
+      if (state) this.setSprite(slot.patty, `${ingredient === 'tocino' ? 'tocino_plancha' : 'carne'}:${state === 'aviso' ? 'perfecta' : state}`, 0, [0, 0, rect[2], rect[3] - 12]);
       const smoking = state === 'aviso' || state === 'quemada';
       slot.smoke.hidden = !smoking;
       if (smoking) this.setSprite(slot.smoke, state === 'quemada' ? 'humo:negro' : 'humo:blanco', smokeFrame, [0, 0, rect[2], 14]);
       slot.gauge.hidden = !state;
-      if (state) slot.fill.style.width = `${Math.min(1, g.grill.progress(i, c)) * 100}%`;
+      if (state) {
+        const gauge = cookingGauge(g.grill.cooking[i] ?? 0, g.grill.configFor(i, c));
+        slot.track.style.setProperty('--cook-end', `${gauge.cookingEnd}%`);
+        slot.track.style.setProperty('--ready-end', `${gauge.readyEnd}%`);
+        slot.fill.style.clipPath = `inset(0 ${100 - gauge.progress}% 0 0)`;
+        slot.signal.hidden = state !== 'aviso';
+      }
     });
 
     this.syncTutorial();
@@ -467,7 +513,7 @@ export class GameView {
     const tutorial = g.mode === 'tutorial';
     const dim = (node: HTMLElement, target: Target) => node.classList.toggle('is-dim', tutorial && !g.allows(target));
     dim(this.charola, { kind: 'charola' });
-    dim(this.basura, { kind: 'basura' });
+    dim(this.tocino, { kind: 'tocino' });
     for (const [id, { button }] of this.bins) dim(button, { kind: 'ingredient', id });
     for (const [id, { button }] of this.bottles) dim(button, { kind: 'ingredient', id });
     this.slots.forEach((slot, index) => dim(slot.button, { kind: 'slot', index }));
@@ -522,7 +568,7 @@ export class GameView {
       action('Volver a empezar', () => g.restart()).classList.add('is-secondary');
     } else if (g.mode === 'inicio') {
       title('¡Arma la hamburguesa!');
-      text('Un minijuego rapidito: cocina la carne y arma la orden del cliente.');
+      text('Un minijuego rapidito: cocina la carne y el tocino y arma la orden del cliente.');
       action('Jugar', () => g.play());
       if (g.tutorialDone) action('Ver tutorial', () => g.startTutorial()).classList.add('is-secondary');
     } else if (g.mode === 'oferta') {
@@ -548,19 +594,27 @@ export class GameView {
     const g = this.game;
     const order = g.order;
     this.ticket.hidden = !order;
+    for (const node of this.ticketRows.querySelectorAll('.mg-sprite')) this.sprites.delete(node as HTMLElement);
     this.ticketRows.replaceChildren();
     if (!order) return;
-    setText(this.ticketName, order.recipe.name);
     const items = order.recipe.stack;
-    const rowH = Math.min(8, Math.floor((this.layout.ticket[3] - 10) / items.length));
-    for (let i = items.length - 1; i >= 0; i--) {
+    setText(this.ticketName, `${order.recipe.name} · ${g.stack.length}/${items.length}`);
+    const rowH = Math.min(9, Math.floor((this.layout.ticket[3] - 18) / items.length));
+    this.ticket.style.height = `${(18 + rowH * items.length) * this.scale}px`;
+    for (let i = 0; i < items.length; i++) {
       const info = INGREDIENTS[items[i]];
       const li = el('li', 'mg-ticket-row', this.ticketRows);
       li.style.height = `${rowH * this.scale}px`;
       li.classList.toggle('is-done', i < g.stack.length);
       li.classList.toggle('is-next', i === g.stack.length);
-      el('span', 'mg-swatch', li).style.background = info.color;
-      el('span', 'mg-ticket-label', li, info.short);
+      if (i === g.stack.length) li.setAttribute('aria-current', 'step');
+      li.setAttribute('aria-label', `${info.label}${i < g.stack.length ? ', completado' : i === g.stack.length ? ', siguiente' : ''}`);
+      const checkbox = el('span', 'mg-ticket-check mg-sprite', li);
+      checkbox.setAttribute('aria-hidden', 'true');
+      const checkboxSprite = rowH < 7 ? 'casilla_comanda_compacta' : 'casilla_comanda';
+      this.setSprite(checkbox, i < g.stack.length ? `${checkboxSprite}:marcada` : checkboxSprite);
+      const label = items[i] === 'pan_base' ? 'Pan base' : items[i] === 'pan_medio' ? 'Pan medio' : items[i] === 'pan_tapa' ? 'Pan tapa' : info.short;
+      el('span', 'mg-ticket-label', li, label);
     }
   }
 
@@ -597,6 +651,7 @@ export class GameView {
   }
 
   private onEvent(event: GameEvent) {
+    const g = this.game;
     const s = this.scale;
     const anim = !this.reduced;
     switch (event.type) {
@@ -621,14 +676,13 @@ export class GameView {
         if (anim) gsap.fromTo(this.slots[event.slot].patty, { y: -8 * s }, { y: 0, duration: 0.2, ease: 'bounce.out', clearProps: 'transform' });
         break;
       case 'patty-state':
-        if (event.state === 'perfecta') this.announce(`Carne lista en el lugar ${event.slot + 1}`);
-        if (event.state === 'quemada') this.announce(`Se quemó la carne del lugar ${event.slot + 1}`);
+        if (event.state === 'perfecta') this.announce(`${g.grill.ingredient(event.slot) === 'tocino' ? 'Tocino listo' : 'Carne lista'} en el lugar ${event.slot + 1}`);
+        if (event.state === 'quemada') this.announce(`Se quemó ${g.grill.ingredient(event.slot) === 'tocino' ? 'el tocino' : 'la carne'} del lugar ${event.slot + 1}`);
         if (event.state === 'perfecta' && anim) {
           gsap.fromTo(this.slots[event.slot].button, { filter: 'brightness(1.8)' }, { filter: 'brightness(1)', duration: 0.4, clearProps: 'filter' });
         }
         break;
       case 'patty-discarded':
-        if (anim) gsap.fromTo(this.basura, { scale: 1.2 }, { scale: 1, duration: 0.3, ease: 'back.out(3)', clearProps: 'transform' });
         break;
       case 'customer-arrived':
         this.leaving = null;

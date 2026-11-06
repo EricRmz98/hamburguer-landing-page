@@ -9,9 +9,10 @@ const gameStyles = miniGameSource.match(/<style is:global>([\s\S]*?)<\/style>/)?
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width" />
     <title>Clientes nuevos · Prueba de composición</title>
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@400..700&display=swap" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;500;600;700&display=swap" />
     <style is:inline set:html={gameStyles} />
     <style is:global>
+      astro-dev-toolbar { display: none; }
       body { margin: 0; background: #0a0a0a; color: white; font: 16px/1.4 system-ui, sans-serif; }
       main { padding: 24px 0; }
       h1 { margin: 0 16px 8px; text-align: center; font-size: clamp(24px, 4vw, 42px); }
@@ -32,6 +33,16 @@ const gameStyles = miniGameSource.match(/<style is:global>([\s\S]*?)<\/style>/)?
       <p class="preview-note">12 clientes · misma cuadrícula y paleta que el minijuego.</p>
       <div class="preview-controls">
         <label>Cliente <select id="preview-customer" aria-label="Cliente"></select></label>
+        <label>Pedido <select id="preview-recipe" aria-label="Pedido">
+          <option value="clasica">Clásica</option>
+          <option value="conTocino">Con tocino</option>
+        </select></label>
+        <button id="preview-tick">Avanzar 1 s</button>
+        <label>Tiempo <select id="preview-patience" aria-label="Estado del tiempo">
+          <option value="48">Tranquilo · 48 s</option>
+          <option value="27">Atención · 27 s</option>
+          <option value="9">Urgente · 9 s</option>
+        </select></label>
         <button id="preview-wide" aria-pressed="true">Adaptable</button>
         <button id="preview-tall" aria-pressed="false">Vista móvil</button>
         <label><input type="checkbox" id="preview-burger" checked /> Hamburguesa</label>
@@ -62,8 +73,22 @@ const gameStyles = miniGameSource.match(/<style is:global>([\s\S]*?)<\/style>/)?
         caption.textContent = `${CUSTOMER_PROFILES[index].name} · 96 × 120 píxeles nativos · Endesga 64`;
       };
       select.addEventListener('change', sync);
+      document.querySelector<HTMLSelectElement>('#preview-recipe')!.addEventListener('change', event => {
+        const key = (event.target as HTMLSelectElement).value as 'clasica' | 'conTocino';
+        game.order!.recipe = CATALOG[key];
+        game.stack = [];
+        sync();
+      });
+      document.querySelector('#preview-tick')!.addEventListener('click', () => {
+        game.update(1);
+        view.sync();
+      });
+      document.querySelector<HTMLSelectElement>('#preview-patience')!.addEventListener('change', event => {
+        game.order!.patience = Number((event.target as HTMLSelectElement).value);
+        sync();
+      });
       document.querySelector<HTMLInputElement>('#preview-burger')!.addEventListener('change', (event) => {
-        game.stack = (event.target as HTMLInputElement).checked ? [...CATALOG.clasica.stack] : [];
+        game.stack = (event.target as HTMLInputElement).checked ? [...game.order!.recipe.stack] : [];
         sync();
       });
       for (const [id, vertical] of [['preview-wide', false], ['preview-tall', true]] as const) {

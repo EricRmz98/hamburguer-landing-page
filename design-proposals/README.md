@@ -6,6 +6,7 @@ Las carpetas conservan referencias, propuestas, fuentes de revisión y capturas 
 
 | Revisión | Qué documenta |
 | --- | --- |
+| [UI arcade y cocción compacta](ui-review-2026-11-03/README.md) | Marcador central, comanda con reloj y checklist, cocción segmentada; implementación y capturas reales |
 | [Salseros finales](sauce-dispensers-2026-11-03/README.md) | Cuerpo alargado de 16 × 42, tapa baja y boquilla fina; capturas de ambas composiciones |
 | [Acero vigente](matched-steel-2026-11-03/README.md) | Reflejos estrechos y tonos acordes con puerta y plancha |
 | [Conjunto de preparación](balanced-prep-2026-11-03/README.md) | Plancha centrada, basura y carne de 42 × 25 a la misma altura |

@@ -14,18 +14,18 @@ function setup(store: Store = memoryStore()) {
   return { game, events, store };
 }
 
-const readySlot = (game: Game) => game.grill.cooking.findIndex((_, i) => game.grill.state(i) === 'perfecta');
+const readySlot = (game: Game, ingredient = 'carne') => game.grill.cooking.findIndex((_, i) => game.grill.state(i) === 'perfecta' && game.grill.ingredient(i) === ingredient);
 
 /** Prepara la orden actual tocando lo que corresponde, esperando la carne cuando hace falta. */
 function cookOrder(game: Game) {
   while (game.order && game.nextIngredient) {
     const next = game.nextIngredient;
-    if (next === 'carne') {
-      if (readySlot(game) < 0) {
-        if (game.grill.cooking.every((t) => t === null)) game.tapCharola();
-        game.update(game.config.grill.cookTime);
+    if (next === 'carne' || next === 'tocino') {
+      if (readySlot(game, next) < 0) {
+        if (game.grill.cooking.every((t) => t === null)) game.tapCharola(next);
+        game.update(next === 'tocino' ? game.config.grill.baconCookTime : game.config.grill.cookTime);
       }
-      game.tapSlot(readySlot(game));
+      game.tapSlot(readySlot(game, next));
     } else {
       game.tapIngredient(inputFor(next)!);
     }
@@ -118,21 +118,19 @@ describe('Modo infinito', () => {
     assert.deepEqual(panes, ['pan_base', 'pan_medio', 'pan_tapa']);
   });
 
-  it('la basura tira de una vez todas las carnes quemadas y deja las demás', () => {
+  it('toca cada ingrediente quemado para liberar su lugar sin una basura', () => {
     const { game, events } = setup();
-    game.debugJumpTo(13); // plancha de tres lugares
+    game.debugJumpTo(13);
     while (game.hint) game.dismissHint();
     game.tapCharola();
-    game.tapCharola();
-    game.update(30);
+    game.tapCharola('tocino');
+    game.update(6);
     while (game.hint) game.dismissHint();
-    game.tapCharola(); // esta queda cruda
-    assert.deepEqual([0, 1, 2].map((i) => game.grill.state(i)), ['quemada', 'quemada', 'cruda']);
-    game.tapBasura();
-    assert.deepEqual([0, 1, 2].map((i) => game.grill.state(i)), [null, null, 'cruda']);
-    assert.equal(events.filter((e) => e.type === 'patty-discarded').length, 2);
-    game.tapBasura();
-    assert.ok(events.some((e) => e.type === 'rejected' && e.reason === 'sin-quemadas'));
+    game.tapCharola();
+    game.tapSlot(0);
+    game.tapSlot(1);
+    assert.deepEqual([0, 1, 2].map(i => game.grill.state(i)), [null, null, 'cruda']);
+    assert.equal(events.filter(e => e.type === 'patty-discarded').length, 2);
   });
 
   it('un ingrediente equivocado cuesta paciencia', () => {

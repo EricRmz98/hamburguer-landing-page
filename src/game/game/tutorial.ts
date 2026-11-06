@@ -4,7 +4,7 @@ import type { IngredientId, InputId } from './ingredients.ts';
 export type Target =
   | { kind: 'ok' }
   | { kind: 'charola' }
-  | { kind: 'basura' }
+  | { kind: 'tocino' }
   | { kind: 'ingredient'; id: InputId }
   | { kind: 'slot'; index?: number };
 
@@ -30,7 +30,7 @@ const place = (input: InputId, text: string, placed: IngredientId = input as Ing
 // Guion para la hamburguesa clásica (CATALOG.clasica). Los tiempos están congelados.
 export const TUTORIAL_STEPS: TutorialStep[] = [
   {
-    text: '¡Llegó tu primer cliente! Quiere una clásica. La comanda dice qué lleva, de abajo hacia arriba.',
+    text: '¡Llegó tu primer cliente! Quiere una clásica. Sigue la comanda de arriba hacia abajo: el siguiente ingrediente está resaltado.',
     target: { kind: 'ok' },
     until: { kind: 'ok' },
   },
@@ -41,7 +41,7 @@ export const TUTORIAL_STEPS: TutorialStep[] = [
   },
   place('pan', 'Mientras se cocina, pon el pan en el plato.', 'pan_base'),
   {
-    text: 'Mira la barra de la carne: amarillo es que se está cocinando; en verde, está lista.',
+    text: 'Mira la barra bajo la carne: avanza por amarillo, verde y rojo. En verde está lista.',
     target: null,
     until: { kind: 'perfecta' },
   },

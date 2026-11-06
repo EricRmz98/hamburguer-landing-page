@@ -108,7 +108,7 @@ export const carne = defineSprite({
     perfecta: {  },
     cruda: { materials: ['carne-cruda'], colors: { k: 'rojo-oscuro', m: 'rosa-viejo', n: 'rosa', p: 'piel-clara', h: 'blanco' } },
     cocinandose: { materials: ['carne-cocinandose'], colors: { k: 'cafe-oscuro', m: 'cafe', n: 'canela', p: 'piel', h: 'piel-clara' } },
-    quemada: { materials: ['carne-quemada'], colors: { k: 'negro', m: 'negro', n: 'noche', p: 'pizarra', h: 'gris-azul' } },
+    quemada: { materials: ['carne-quemada'], colors: { k: 'negro', m: 'negro', n: 'carbon', p: 'gris-neutro', h: 'gris-claro' } },
   },
 });
 

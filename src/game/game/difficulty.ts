@@ -16,14 +16,20 @@ export function levelFor(customer: number, config: GameConfig): Level {
 }
 
 /**
- * Tiempo mínimo para preparar la orden sin errores: las carnes se cocinan en tandas
- * según los lugares de la plancha, y cada toque (ingredientes, poner y sacar carne) cuesta tapTime.
+ * Tiempo mínimo para preparar la orden sin errores: carne y tocino se reparten entre los lugares
+ * de la plancha con su duración propia; cada toque cuesta tapTime.
  */
 export function minimumTime(stack: readonly IngredientId[], slots: number, config: GameConfig): number {
-  const carnes = stack.filter((id) => id === 'carne').length;
-  const batches = Math.ceil(carnes / Math.max(1, slots));
-  const taps = stack.length + carnes;
-  return batches * config.grill.cookTime + taps * config.patience.tapTime;
+  const durations = stack.filter(id => id === 'carne' || id === 'tocino')
+    .map(id => id === 'tocino' ? config.grill.baconCookTime : config.grill.cookTime)
+    .sort((a, b) => b - a);
+  const lanes = Array(Math.max(1, slots)).fill(0) as number[];
+  for (const duration of durations) {
+    const lane = lanes.indexOf(Math.min(...lanes));
+    lanes[lane] += duration;
+  }
+  const taps = stack.length + durations.length;
+  return Math.max(...lanes) + taps * config.patience.tapTime;
 }
 
 /** Paciencia del cliente: siempre mayor que el tiempo mínimo mientras la holgura sea mayor que 1. */

@@ -262,13 +262,14 @@ Tamaños en pixeles lógicos dentro del escenario de 320 × 200 (sprite completo
 | `humo` | 8 × 8 | 4 cuadros; `blanco` (carne por quemarse) y `negro` (quemada) |
 | `flecha` | 9 × 8 | Flecha del tutorial |
 | `corazon` | 7 × 6 | `lleno` y `vacio` (vidas) |
+| `globo_cliente` / `globo_cliente_v` | 60 × 23 / 62 × 23 | Globo compacto de paciencia, contador ampliado y barra continua; cola triangular pequeña y puntiaguda (3 píxeles de saliente), centrada en el lateral izquierdo. Incluye seis columnas de saliente |
 | `azulejo` · `madera` | 20 × 20 | Tiles que se repiten en la pared y en la barra |
 
 Los sprites de cocina se generaron con `scripts/sprites/` (ver su README): cada objeto se modela con vóxeles y se proyecta con la cámara 3/4; el sombreado sale de las caras (arriba = luz, frente = base, derecha y contacto = sombra), con contorno selectivo, texturas por material (costra de la carne, venas de la lechuga, semillas del tomate, ajonjolí con sombra) y limpieza de escalones. Cada sprite trae un **ancla** (`anchors.ts`): la posición de su base, con la que la vista apila los ingredientes sobre el centro del plato; `INGREDIENTS.height` es el grosor en pantalla de cada capa. 
 
 Los clientes activos proceden de la tanda nativa aprobada y su revisión de proporciones del 3 de noviembre. La fuente editable y autónoma es `scripts/sprites/customers-native.json`; `customers_gen.py` y `write_people.py` regeneran `people.ts` sin las propuestas ni Pillow. Se preservan las celdas de los dibujos, la menor escala de Inés y las orientaciones alternadas; solo se convierte el color a Endesga 64. La fuente anterior de 24 clientes se conserva en `customers-approved.json`.
 
-Las casillas son bandejas de metal con su ingrediente y una etiqueta de cinta masking. **Todo el texto del juego usa [Pixelify Sans](https://fonts.google.com/specimen/Pixelify+Sans)** (Google Fonts, pesos 400–700). Es pixelada pero sin cuadrícula estricta, así que se escala libre y el texto va a «medio pixel» del juego: tamaño 6 × escala (trazo de 0.6 pixeles del juego, mayúsculas de 3.8, interlineado de 6.5) y títulos al doble en negrita. El texto normal va en 500 y las cintas en 600. Se descartaron Bytesized (demasiado chica) y Tiny5: las fuentes de cuadrícula estricta tienen que ir a 1 pixel de la fuente = 1 del juego y quedan enormes y anchas. La comanda, el globo de texto y los indicadores se hacen con HTML y CSS en colores de Endesga 64. Las piezas rectangulares (plancha y bandejas) se generan sin el giro de cámara de 12° para que queden alineadas con la cuadrícula del juego.
+Las casillas son bandejas de metal con su ingrediente y una etiqueta de cinta masking. **Todo el texto del juego usa [Chakra Petch](https://fonts.google.com/specimen/Chakra+Petch)**, cargada desde Google Fonts con pesos 400, 500, 600 y 700. La tipografía tiene trazos limpios y formas cuadradas; reemplaza Pixelify Sans en marcador, comanda, contador, etiquetas, menús y señales. El texto base mide 6 × escala; las cintas usan tamaño base y peso 600; el contador mide 7 × escala con peso 600 y los títulos usan peso 700. El globo muestra el contador a la izquierda y una exclamación de grosor intermedio de 2 × 5 a la derecha, sin fondo, contorno ni sombra. La alerta ámbar oscura contrasta con el crema (ciclo lento de 1.6 s); la roja parpadea cada 0.6 s. Sin alerta con ≥60 % de paciencia ni con tiempo ilimitado. Los dígitos y el signo tienen alturas visuales similares. La comanda, el globo de texto y los indicadores se hacen con HTML y CSS en colores de Endesga 64. Las piezas rectangulares (plancha y bandejas) se generan sin el giro de cámara de 12° para que queden alineadas con la cuadrícula del juego.
 
 ## Renovación aplicada · 3 de noviembre · Endesga 64
 
@@ -334,3 +335,33 @@ Ajuste final de intimidad: la base de la pared baja a 97 px en horizontal y 152 
 Ajuste de las sillas: se recuperó la silueta anterior del respaldo acolchado (esquinas redondeadas, costura inferior y brillos originales), manteniendo la profundidad del asiento, el canto lateral y las cuatro patas del giro en tres cuartos. El resto del fondo se conserva. 159 pruebas y compilación correctas; revisión visual en el juego.
 
 Perspectiva central: los extremos de profundidad de la barra convergen hacia el centro del escenario. Las dos sillas de la izquierda giran hacia la derecha y la derecha hacia la izquierda, manteniendo el modelo acolchado. La sombra de cada silla se centra en el promedio de los cuatro puntos proyectados de contacto, con sombra puntual bajo cada pata; no se usa una elipse fija desplazada. Los apoyos de la barra llegan al suelo, tienen pie visible y sombra de contacto. Mismo criterio en vertical (una silla a cada lado). Revisión visual de ambos formatos, 159 pruebas y compilación correctas.
+
+
+### Tocino · 2026-11-05
+
+`src/game/sprites/bacon.ts` añade `tocino` de 26 × 13, con dos tiras onduladas y cruzadas en la hamburguesa, grasa visible, pliegues y sombra de contacto; variantes cruda, cocinándose, perfecta y quemada en Endesga 64. Ancla [13,6], centrada sobre la superficie del pan; grosor de pila 2. `charola_tocino` de 42 × 25 comparte el metal y las proporciones de la charola de carne; ocupa la anterior posición de la basura y lleva cinta «Tocino». El contenido forma un bloque con vetas de grasa irregulares y canto sombreado. `tocino_plancha` comparte las variantes y dimensiones de `tocino`, con dos tiras independientes casi rectas, con una ligera curva en los extremos y un hueco visible entre ellas; la hamburguesa conserva el cruce. Ambas bandejas mantienen la cuadrícula nativa.
+
+
+### Comanda y barras sin checks ni equis
+
+La comanda muestra solo los nombres: ingredientes colocados en verde y siguiente ingrediente resaltado en amarillo; se conservan el contador y las etiquetas accesibles de progreso. Las barras de cocción quedan centradas, continuas y sin ✓ ni ×. El aviso previo al quemado conserva una exclamación del atlas pixelado, en lugar de un glifo tipográfico. Instrucciones actualizadas.
+
+
+### Comanda con checkboxes pixelados y tachado
+
+La comanda recupera casillas del atlas: `casilla_comanda` de 7 × 7 y `casilla_comanda_compacta` de 5 × 5 para filas de menos de siete píxeles. La variante marcada dibuja el check en celdas crema sobre verde oscuro, sin glifos tipográficos. Los ingredientes colocados se tachan; el siguiente sigue resaltado en amarillo. Las barras de cocción conservan la versión sin checks ni equis.
+
+
+### Tocino aprobado: opción D «Vetas anchas»
+
+La opción D de `design-proposals/tocino-2026-11-05/propuestas-tocino-a-b-c-d.png` se adapta a matrices nativas: dos tiras más anchas con vetas grandes de grasa crema e islas irregulares de carne coral. Al cocinarse, la grasa se dora y la carne pasa a rojo tostado. Plancha con dos tiras independientes casi rectas; hamburguesa con dos tiras cruzadas; bandeja con rebanadas de vetas anchas superpuestas. Las variantes quemadas conservan la misma silueta y luz desde arriba a la izquierda. Sin cambios de escala, anclas ni cocción de 2 s.
+
+
+### Contraste del tocino quemado en la plancha
+
+La variante quemada de `tocino_plancha` usa la rampa `tocino-quemado`: negro, carbón, gris neutro y gris claro de Endesga 64. Borde superior de ceniza en ambas tiras, grasa carbonizada gris y centro oscuro para distinguir la silueta sobre la plancha. Se conservan humo, barra roja y retirada directa al tocar.
+
+
+### Quemado unificado
+
+La carne quemada usa los mismos cuatro tonos que el tocino quemado en plancha: negro, carbón, gris neutro y gris claro. Se conserva el dibujo de la carne y se aplican esos tonos también a la variante quemada del tocino de hamburguesa.

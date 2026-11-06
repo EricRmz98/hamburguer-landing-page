@@ -2,7 +2,7 @@ import { INGREDIENTS, SALSAS, VERDURAS, stackHeight, type IngredientId } from '.
 
 // Una receta es una pila de abajo hacia arriba que cumple la gramática del plan:
 //   hamburguesa  = pan_base  sección  [ pan_medio  sección ]  pan_tapa
-//   sección      = bloque_carne+  verdura*  salsa*
+//   sección      = bloque_carne+  [ tocino ]  verdura*  salsa*
 //   bloque_carne = carne  [ queso ]
 
 export interface Recipe {
@@ -12,6 +12,7 @@ export interface Recipe {
 
 export const CATALOG = {
   clasica: { name: 'Clásica', stack: ['pan_base', 'carne', 'queso', 'lechuga', 'tomate', 'catsup', 'pan_tapa'] },
+  conTocino: { name: 'Con tocino', stack: ['pan_base', 'carne', 'queso', 'tocino', 'cebolla', 'catsup', 'pan_tapa'] },
   sencilla: { name: 'Sencilla', stack: ['pan_base', 'carne', 'catsup', 'mostaza', 'pan_tapa'] },
   doble: {
     name: 'Doble',
@@ -74,6 +75,8 @@ export function validateRecipe(stack: readonly IngredientId[], maxHeight = Infin
     if (sectionCarnes === 0) errors.push(`La sección ${s + 1} no tiene carne`);
     carnes += sectionCarnes;
 
+    if (section[i] === 'tocino') i++;
+
     const verduras = new Set<IngredientId>();
     while (i < section.length && isVerdura(section[i])) {
       if (verduras.has(section[i])) errors.push(`${section[i]} repetido en la sección ${s + 1}`);
@@ -114,12 +117,13 @@ interface SectionShape {
   salsas: [number, number];
 }
 
-function buildSection(shape: SectionShape, rng: Rng): IngredientId[] {
+function buildSection(shape: SectionShape, rng: Rng, withBacon: boolean): IngredientId[] {
   const out: IngredientId[] = [];
   for (let i = 0; i < shape.carnes; i++) {
     out.push('carne');
     if (rng() < shape.queso) out.push('queso');
   }
+  if (withBacon && rng() < 0.45) out.push('tocino');
   out.push(...sample(VERDURAS, randInt(...shape.verduras, rng), rng));
   out.push(...sample(SALSAS, randInt(...shape.salsas, rng), rng));
   return out;
@@ -156,7 +160,7 @@ function nameFor(stack: readonly IngredientId[]): string {
 export function generateRecipe(tier: number, maxHeight: number, rng: Rng = Math.random): Recipe {
   if (tier === 1 && rng() < 0.3) return pick([CATALOG.clasica, CATALOG.sencilla], rng);
   for (let attempt = 0; attempt < 50; attempt++) {
-    const sections = shapesForTier(tier, rng).map((shape) => buildSection(shape, rng));
+    const sections = shapesForTier(tier, rng).map((shape) => buildSection(shape, rng, tier >= 2));
     const stack: IngredientId[] = ['pan_base', ...sections.flatMap((s, i) => (i ? ['pan_medio' as const, ...s] : s)), 'pan_tapa'];
     if (validateRecipe(stack, maxHeight).length === 0) return { name: nameFor(stack), stack };
   }
